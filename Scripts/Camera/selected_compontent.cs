@@ -5,19 +5,18 @@ using UnityEngine;
 
 public class selection_component : MonoBehaviour{
     private Entity entity;
-    private Material material;
+    private Renderer renderer;
     // Start is called before the first frame update
     void Start(){
         //only Entities can be selected
         entity = GetComponent<Entity>();
         if (entity != null){
-            material = entity.gameObject.GetComponent<Renderer>().material;
+            renderer = entity.gameObject.GetComponent<Renderer>();
         }
-
-        material = entity.selectedMaterial;
+        renderer.material = entity.selectedMaterial;
     }
 
     private void OnDestroy(){
-        material = entity.material;
+        renderer.material = entity.material;
     }
 }

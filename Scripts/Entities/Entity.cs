@@ -30,7 +30,6 @@ public class Entity : MonoBehaviour{
 
     protected void Awake(){
         vision = transform.GetChild(0).GetComponent<Vision>();
-        
     }
 
     protected void Start(){
@@ -41,11 +40,19 @@ public class Entity : MonoBehaviour{
         if (hp <= 0){
             Destroy(gameObject);
         }
+
+        if (target == null && entitiesInVision.Count > 0){
+            SetNewTarget();
+        }
         if (target != null && !isAttacking){
             StartCoroutine(Attack());
         }
     }
-    
+
+    private void SetNewTarget(){
+        target = entitiesInVision[0];
+    }
+
 
     private IEnumerator Attack(){
         float timeTillAttack = attackTime;
