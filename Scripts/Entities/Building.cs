@@ -11,6 +11,8 @@ public class Building : Entity{
 
     private void Start(){
         base.Start();
+        material = MaterialManager.Instance.GetMaterial("M_Tower");
+        selectedMaterial = MaterialManager.Instance.GetMaterial("M_SelectedTower");
     }
 
     // Update is called once per frame

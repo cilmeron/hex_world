@@ -8,18 +8,16 @@ public class selection_component : MonoBehaviour{
     private Material material;
     // Start is called before the first frame update
     void Start(){
-        Entity e = GetComponent<Entity>();
-        if (e != null){
-            entity = e;
-            material = entity.material;
+        //only Entities can be selected
+        entity = GetComponent<Entity>();
+        if (entity != null){
+            material = entity.gameObject.GetComponent<Renderer>().material;
         }
-        else{
-            material = GetComponent<Renderer>().material;
-        }
-        material.shader = Shader.Find("Custom/S_Outline");
+
+        material = entity.selectedMaterial;
     }
 
     private void OnDestroy(){
-        material.shader = Shader.Find("Standard");
+        material = entity.material;
     }
 }

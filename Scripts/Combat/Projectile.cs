@@ -31,16 +31,20 @@ public class Projectile : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        Entity entity = other.gameObject.GetComponent<Entity>();
-        if (entity != null){
-            Debug.Log("Bullet hit " + entity.name);
-            if (entity != owner){
-                entity.RemoveHp(damage);
-                Destroy(gameObject);
-            }
+    private void OnTriggerEnter(Collider other){
+        GameObject colliderGameObject = other.gameObject;
+        if (colliderGameObject == owner.gameObject){
+            return;
         }
+        if (colliderGameObject.layer == LayerMask.NameToLayer("IgnoreProjectiles")){
+            return;
+        }
+
+        Entity entity = colliderGameObject.GetComponent<Entity>();
+        if (entity != null){
+            entity.RemoveHp(damage);
+        }
+        Destroy(gameObject);
     }
 
 
