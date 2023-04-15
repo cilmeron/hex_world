@@ -59,9 +59,12 @@ public class global_selection : MonoBehaviour
             {
                 Ray ray = Camera.main.ScreenPointToRay(p1);
 
-                if(Physics.Raycast(ray,out hit, 50000.0f)){
+                if(Physics.Raycast(ray,out hit, 500.0f))
+                {
                     Entity hitEntity = hit.transform.gameObject.GetComponent<Entity>();
-                    if (hitEntity == null){
+                    if (hitEntity == null)
+                    {
+                        selected_table.deselectAll();
                         return;
                     }
                     if (Input.GetKey(KeyCode.LeftShift)) //inclusive select
@@ -74,12 +77,12 @@ public class global_selection : MonoBehaviour
                     }
                     else //exclusive selected
                     {
-                        selected_table.deselectAll();
-                        selected_table.addSelected(hitEntity);
+                        selected_table.select(hitEntity);
                     }
                 }
                 else //if we didnt hit something
                 {
+                    Debug.Log("No hit");
                     if (Input.GetKey(KeyCode.LeftShift))
                     {
                         //do nothing

@@ -34,7 +34,7 @@ public class CameraManager : MonoBehaviour
         {
             float mousex = Input.GetAxis("Mouse X");
             float mousey = Input.GetAxis("Mouse Y");
-            transform.Rotate(Vector3.down *(-mousex) * 10f);
+            transform.Rotate(Vector3.up *(mousex) * 10f, Space.World);
             transform.Rotate(Vector3.right *(-mousey) * 10f);
         }
         float wheel = Input.GetAxis("Mouse ScrollWheel");
