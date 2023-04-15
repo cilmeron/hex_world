@@ -59,20 +59,23 @@ public class global_selection : MonoBehaviour
             {
                 Ray ray = Camera.main.ScreenPointToRay(p1);
 
-                if(Physics.Raycast(ray,out hit, 50000.0f))
-                {
+                if(Physics.Raycast(ray,out hit, 50000.0f)){
+                    Entity hitEntity = hit.transform.gameObject.GetComponent<Entity>();
+                    if (hitEntity == null){
+                        return;
+                    }
                     if (Input.GetKey(KeyCode.LeftShift)) //inclusive select
                     {
-                        selected_table.addSelected(hit.transform.gameObject);
+                        selected_table.addSelected(hitEntity);
                     }
                     else if(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
                     {
-                        selected_table.removeSelected(hit.transform.gameObject);
+                        selected_table.removeSelected(hitEntity);
                     }
                     else //exclusive selected
                     {
                         selected_table.deselectAll();
-                        selected_table.addSelected(hit.transform.gameObject);
+                        selected_table.addSelected(hitEntity);
                     }
                 }
                 else //if we didnt hit something
@@ -187,9 +190,10 @@ public class global_selection : MonoBehaviour
         return selectionMesh;
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        selected_table.addSelected(other.gameObject);
+    private void OnTriggerEnter(Collider other){
+        Entity entity = other.GetComponent<Entity>();
+        if (entity != null){
+            selected_table.addSelected(entity);
+        }
     }
-
 }
