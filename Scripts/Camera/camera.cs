@@ -22,13 +22,13 @@ public class CameraManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.UpArrow))
+        if (Input.GetAxis("Vertical") > 0)
             _TranslateCamera(0);
-        if (Input.GetKey(KeyCode.RightArrow))
+        if (Input.GetAxis("Horizontal") > 0)
             _TranslateCamera(1);
-        if (Input.GetKey(KeyCode.DownArrow))
+        if (Input.GetAxis("Vertical") < 0)
             _TranslateCamera(2);
-        if (Input.GetKey(KeyCode.LeftArrow))
+        if (Input.GetAxis("Horizontal") < 0)
             _TranslateCamera(3);
         if (Input.GetMouseButton(1))
         {
