@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 public class Unit : Entity{
-    [SerializeField] private Transform movePositionTransform;
+    [SerializeField] private Vector3 movePosition;
     [SerializeField] private float stoppingDistance = 2f;
     
     private NavMeshAgent navMeshAgent;
@@ -17,15 +17,20 @@ public class Unit : Entity{
 
     private void Start(){
         base.Start();
-        navMeshAgent.destination = movePositionTransform.position;
         navMeshAgent.stoppingDistance = stoppingDistance;
+        material = MaterialManager.Instance.GetMaterial("M_Unit");
+        selectedMaterial = MaterialManager.Instance.GetMaterial("M_SelectedUnit");
     }
     
 
     // Update is called once per frame
     private void Update(){
         base.Update();
-        
+        navMeshAgent.destination = movePosition;
     }
-    
+
+    public Vector3 MovePosition{
+        get => movePosition;
+        set => movePosition = value;
+    }
 }

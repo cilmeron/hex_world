@@ -120,6 +120,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 10
   damage: 10
-  timeToLive: 50
+  timeToLive: 10
   owner: {fileID: 0}
   target: {fileID: 0}

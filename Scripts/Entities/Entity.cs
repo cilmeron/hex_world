@@ -13,6 +13,7 @@ public class Entity : MonoBehaviour{
     [SerializeField] private int attackDmg;
     [SerializeField] private GameObject projectile;
     public Material material;
+    public Material selectedMaterial;
     private bool isAttacking = false;
 
     public Vector3 GetPosition(){
@@ -72,4 +73,5 @@ public class Entity : MonoBehaviour{
         get => target;
         set => target = value;
     }
+    
 }

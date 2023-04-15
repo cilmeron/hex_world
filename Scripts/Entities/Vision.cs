@@ -14,12 +14,15 @@ public class Vision : MonoBehaviour{
     
     private void OnTriggerEnter(Collider other){
         Entity triggerEntity = other.gameObject.GetComponent<Entity>();
+        
         if (triggerEntity != null && triggerEntity.GetType() != e.GetType()){
+            if (triggerEntity.GetType() == typeof(Building)){
+                Debug.Log("Tower detected");
+            }
             if (e.Target == null){
                 e.Target = triggerEntity;
             }
             e.EntitiesInVision.Add(triggerEntity);
-            Debug.Log("Entity In");
         }
         
     }
@@ -31,7 +34,6 @@ public class Vision : MonoBehaviour{
                 e.Target = null;
             }
             e.EntitiesInVision.Remove(triggerEntity);
-            Debug.Log("Entity Out");
         }
        
     }
