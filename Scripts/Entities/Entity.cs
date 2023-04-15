@@ -12,6 +12,7 @@ public class Entity : MonoBehaviour{
     [SerializeField] private float attackTime;
     [SerializeField] private int attackDmg;
     [SerializeField] private GameObject projectile;
+    public Material material;
     private bool isAttacking = false;
 
     public Vector3 GetPosition(){
