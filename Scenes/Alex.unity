@@ -147,7 +147,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 91248202}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 14.52433, y: 12.930309, z: -15.204726}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -770,7 +770,7 @@ MonoBehaviour:
   attackTime: 5
   attackDmg: 20
   projectile: {fileID: 3164007927888127725, guid: 5a2606daf4c8b7041acd31a60968cf68, type: 3}
-  material: {fileID: 0}
+  material: {fileID: 2100000, guid: 5fa881481f7de55489bc680bff7946ef, type: 2}
   movePositionTransform: {fileID: 1463832172}
   stoppingDistance: 5
 --- !u!54 &1293398469
@@ -931,7 +931,7 @@ MonoBehaviour:
   attackTime: 3
   attackDmg: 10
   projectile: {fileID: 3164007927888127725, guid: 5a2606daf4c8b7041acd31a60968cf68, type: 3}
-  material: {fileID: 0}
+  material: {fileID: 2100000, guid: 1656be71dbfdc664981da400278d3916, type: 2}
 --- !u!54 &1463832178
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1229,7 +1229,7 @@ MonoBehaviour:
   attackTime: 5
   attackDmg: 20
   projectile: {fileID: 3164007927888127725, guid: 5a2606daf4c8b7041acd31a60968cf68, type: 3}
-  material: {fileID: 0}
+  material: {fileID: 2100000, guid: 5fa881481f7de55489bc680bff7946ef, type: 2}
   movePositionTransform: {fileID: 1463832172}
   stoppingDistance: 5
 --- !u!1001 &1250284897605716045

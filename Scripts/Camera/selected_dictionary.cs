@@ -4,28 +4,28 @@ using UnityEngine;
 
 public class selected_dictionary : MonoBehaviour
 {
-    public Dictionary<int, GameObject> selectedTable = new Dictionary<int, GameObject>();
+    public Dictionary<int, Entity> selectedTable = new Dictionary<int, Entity>();
 
-    public void addSelected(GameObject go)
+    public void addSelected(Entity entity)
     {
-        int id = go.GetInstanceID();
+        int id = entity.gameObject.GetInstanceID();
 
         if (!(selectedTable.ContainsKey(id)))
         {
-            selectedTable.Add(id, go);
-            go.AddComponent<selection_component>();
+            selectedTable.Add(id, entity);
+            entity.gameObject.AddComponent<selection_component>();
             Debug.Log("Added " + id + " to selected dict");
         }
     }
 
-    public void removeSelected(GameObject go)
+    public void removeSelected(Entity entity)
     {
-        int id = go.GetInstanceID();
+        int id = entity.gameObject.GetInstanceID();
 
         if (selectedTable.ContainsKey(id))
         {
             selectedTable.Remove(id);
-            Destroy(go.GetComponent<selection_component>());
+            Destroy(entity.gameObject.GetComponent<selection_component>());
             Debug.Log("Removed " + id + " from selected dict");
         }
     }
@@ -38,7 +38,7 @@ public class selected_dictionary : MonoBehaviour
 
     public void deselectAll()
     {
-        foreach(KeyValuePair<int,GameObject> pair in selectedTable)
+        foreach(KeyValuePair<int,Entity> pair in selectedTable)
         {
             if(pair.Value != null)
             {
@@ -49,12 +49,12 @@ public class selected_dictionary : MonoBehaviour
     }
     public void selectAll()
     {
-        foreach(KeyValuePair<int,GameObject> pair in selectedTable)
+        foreach(KeyValuePair<int,Entity> pair in selectedTable)
         {
             if (pair.Value != null)
             {
                 selectedTable.Add(pair.Key, pair.Value);
-                pair.Value.AddComponent<selection_component>();
+                pair.Value.gameObject.AddComponent<selection_component>();
             }
         }
     }
