@@ -17,13 +17,16 @@ public class Entity : MonoBehaviour{
     public Material selectedMaterial;
     private bool isAttacking = false;
     private HpSlider hpSlider;
+    [SerializeField] private Transform bulletStart;
 
     public Vector3 GetPosition(){
         return transform.position;
     }
 
-    public void RemoveHp(int hpToRemove){
-        currentHP -= hpToRemove;
+    public void RemoveHp(Entity e,int hpToRemove){
+        if (this == e){
+            currentHP -= hpToRemove;
+        }
     }
     
     public void AddHp(int hpToAdd){
@@ -36,22 +39,31 @@ public class Entity : MonoBehaviour{
     }
 
     protected void Start(){
+        EventManager.Instance.deathEvent.AddListener(SetNewTarget);
+        EventManager.Instance.damageEvent.AddListener(RemoveHp);
     }
     
     protected void Update(){
         if (currentHP <= 0){
-            Destroy(gameObject);
+            OnDeath();
         }
 
-        if (target == null && entitiesInVision.Count > 0){
-            SetNewTarget();
-        }
         if (target != null && !isAttacking){
             StartCoroutine(Attack());
         }
     }
 
-    private void SetNewTarget(){
+    private void SetNewTarget(Entity e){
+        if (entitiesInVision.Contains(e)){
+            entitiesInVision.Remove(e);
+        }
+        if (target==null || target != e){
+            return;
+        }
+        if (entitiesInVision.Count == 0){
+            target = null;
+            return;
+        }
         target = entitiesInVision[0];
     }
 
@@ -62,6 +74,7 @@ public class Entity : MonoBehaviour{
     
         GameObject projectileObject = Instantiate(projectile, transform.position, transform.rotation);
         Projectile bullet = projectileObject.GetComponent<Projectile>();
+        bullet.StartPos = bulletStart.position;
         bullet.Owner = this;
         bullet.Target = target;
         bullet.Damage = attackDmg;
@@ -96,5 +109,9 @@ public class Entity : MonoBehaviour{
     public void SetHpSliderActive(bool active){
         hpSlider.IsActive = active;
     }
-    
+
+    protected virtual void OnDeath(){
+        EventManager.Instance.deathEvent.Invoke(this);
+        Destroy(gameObject);
+    }
 }

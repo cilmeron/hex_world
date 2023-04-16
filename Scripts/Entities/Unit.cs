@@ -26,11 +26,23 @@ public class Unit : Entity{
     // Update is called once per frame
     private void Update(){
         base.Update();
-        navMeshAgent.destination = movePosition;
+        if (navMeshAgent != null && navMeshAgent.enabled)
+        {
+            navMeshAgent.SetDestination(movePosition);
+        }
     }
 
     public Vector3 MovePosition{
         get => movePosition;
         set => movePosition = value;
     }
+
+    protected override void OnDeath(){
+        base.OnDeath();
+        if (navMeshAgent != null && navMeshAgent.enabled)
+        {
+            navMeshAgent.enabled = false;
+        }
+    }
+    
 }

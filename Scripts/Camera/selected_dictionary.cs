@@ -14,7 +14,6 @@ public class selected_dictionary : MonoBehaviour
         {
             selectedTable.Add(id, entity);
             entity.gameObject.AddComponent<selection_component>();
-            Debug.Log("Added " + id + " to selected dict");
         }
     }
     public void select(Entity entity)
@@ -38,7 +37,6 @@ public class selected_dictionary : MonoBehaviour
         {
             selectedTable.Remove(id);
             Destroy(entity.gameObject.GetComponent<selection_component>());
-            Debug.Log("Removed " + id + " from selected dict");
         }
     }
     private void removeAllBut(int id)
@@ -49,7 +47,6 @@ public class selected_dictionary : MonoBehaviour
             {
                 Destroy(selectedTable[pair.Key].gameObject.GetComponent<selection_component>());
                 selectedTable.Remove(pair.Key);
-                Debug.Log("Removed " + pair.Key + " from selected dict");
             }
         }
     }
@@ -60,7 +57,6 @@ public class selected_dictionary : MonoBehaviour
             if(pair.Value != null)
             {
                 Destroy(selectedTable[pair.Key].gameObject.GetComponent<selection_component>());
-                Debug.Log("Removed " + pair.Key + " from selected dict");
             }
         }
         selectedTable.Clear();
