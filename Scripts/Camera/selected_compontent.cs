@@ -14,9 +14,11 @@ public class selection_component : MonoBehaviour{
             renderer = entity.gameObject.GetComponent<Renderer>();
         }
         renderer.material = entity.selectedMaterial;
+        entity.SetHpSliderActive(true);
     }
 
     private void OnDestroy(){
         renderer.material = entity.material;
+        entity.SetHpSliderActive(false);
     }
 }

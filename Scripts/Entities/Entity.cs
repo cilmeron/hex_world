@@ -5,7 +5,8 @@ using UnityEngine;
 using UnityEngine.Search;
 
 public class Entity : MonoBehaviour{
-    [SerializeField] private int hp;
+    [SerializeField] private int maxHP = 100;
+    [SerializeField] private int currentHP;
     private Vision vision;
     [SerializeField] private List<Entity> entitiesInVision  = new List<Entity>();
     [SerializeField] private Entity target;
@@ -15,29 +16,30 @@ public class Entity : MonoBehaviour{
     public Material material;
     public Material selectedMaterial;
     private bool isAttacking = false;
+    private HpSlider hpSlider;
 
     public Vector3 GetPosition(){
         return transform.position;
     }
 
     public void RemoveHp(int hpToRemove){
-        hp -= hpToRemove;
+        currentHP -= hpToRemove;
     }
     
     public void AddHp(int hpToAdd){
-        hp += hpToAdd;
+        currentHP += hpToAdd;
     }
 
     protected void Awake(){
         vision = transform.GetChild(0).GetComponent<Vision>();
+        hpSlider = transform.GetChild(1).GetComponent<HpSlider>();
     }
 
     protected void Start(){
-        
     }
     
     protected void Update(){
-        if (hp <= 0){
+        if (currentHP <= 0){
             Destroy(gameObject);
         }
 
@@ -79,6 +81,20 @@ public class Entity : MonoBehaviour{
     public Entity Target{
         get => target;
         set => target = value;
+    }
+
+    public int MAXHp{
+        get => maxHP;
+        set => maxHP = value;
+    }
+
+    public int CurrentHp{
+        get => currentHP;
+        set => currentHP = value;
+    }
+
+    public void SetHpSliderActive(bool active){
+        hpSlider.IsActive = active;
     }
     
 }
