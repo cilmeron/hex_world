@@ -7,6 +7,9 @@ using UnityEngine.AI;
 public class Unit : Entity{
     [SerializeField] private Vector3 movePosition;
     [SerializeField] private float stoppingDistance = 2f;
+    [SerializeField] private Formation formation;
+    public Material leaderMaterial;
+    public Vector3 relativeFormationPos = Vector3.zero;
     
     private NavMeshAgent navMeshAgent;
 
@@ -20,6 +23,8 @@ public class Unit : Entity{
         navMeshAgent.stoppingDistance = stoppingDistance;
         material = MaterialManager.Instance.GetMaterial("M_Unit");
         selectedMaterial = MaterialManager.Instance.GetMaterial("M_SelectedUnit");
+        leaderMaterial = MaterialManager.Instance.GetMaterial("M_LeaderUnit");
+        movePosition = transform.position;
     }
     
 
@@ -28,6 +33,12 @@ public class Unit : Entity{
         base.Update();
         if (navMeshAgent != null && navMeshAgent.enabled)
         {
+            if (IsInFormation()){
+                navMeshAgent.stoppingDistance = 0;
+            }
+            else{
+                navMeshAgent.stoppingDistance = stoppingDistance;
+            }
             navMeshAgent.SetDestination(movePosition);
         }
     }
@@ -43,6 +54,20 @@ public class Unit : Entity{
         {
             navMeshAgent.enabled = false;
         }
+    }
+
+    public void AddUnitToFormation(Formation f,Vector3 relativePos){
+        formation = f;
+        relativeFormationPos = relativePos;
+    }
+    
+    public void RemoveUnitFromFormation(){
+        formation = null;
+        relativeFormationPos = Vector3.zero;
+    }
+
+    public bool IsInFormation(){
+        return formation != null;
     }
     
 }
