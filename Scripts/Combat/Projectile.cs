@@ -41,7 +41,7 @@ public class Projectile : MonoBehaviour
         if (colliderGameObject == null || colliderGameObject == owner.gameObject){
             return;
         }
-        if (colliderGameObject.layer == LayerMask.NameToLayer("IgnoreProjectiles")){
+        if (colliderGameObject.layer == LayerMask.NameToLayer("Ignore Raycast")){
             return;
         }
 

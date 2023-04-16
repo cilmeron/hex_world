@@ -1869,10 +1869,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Unit (1)
       objectReference: {fileID: 0}
-    - target: {fileID: 766192534122867932, guid: 4065503216b9ddd4d9af84ba63c6e3cd, type: 3}
-      propertyPath: currentHP
-      value: 100
-      objectReference: {fileID: 0}
     - target: {fileID: 3715898178651583584, guid: 4065503216b9ddd4d9af84ba63c6e3cd, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
