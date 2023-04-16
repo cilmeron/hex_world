@@ -6,7 +6,7 @@ using UnityEngine;
 public class CameraManager : MonoBehaviour
 {
     public float translationSpeed = 60f;
-    public float altitude = 40f;
+    public float altitude = 20f;
 
     private Camera _camera;
     private RaycastHit _hit;
@@ -37,17 +37,25 @@ public class CameraManager : MonoBehaviour
             transform.Rotate(Vector3.up *(mousex) * 10f, Space.World);
             transform.Rotate(Vector3.right *(-mousey) * 10f);
         }
-        float wheel = Input.GetAxis("Mouse ScrollWheel");
+        float wheel = 0f;
+        if (Input.GetAxis("Height") != 0f)
+        {
+            wheel = Input.GetAxis("Height")*0.3f;
+        }
+        else
+        {
+            wheel = Input.GetAxis("Mouse ScrollWheel");
+        }
         if (wheel != 0.0f)
         {
-            wheel *= 5.0f;
-            if (altitude >= 20f && altitude <= 80f)
+            wheel *= (translationSpeed/3f);
+            if (altitude >= 10f && altitude <= 80f)
             {
                 altitude += -wheel;
             }
-            else if (altitude <= 20f)
+            else if (altitude <= 10f)
             {
-                altitude = 20f;
+                altitude = 10f;
             }
             else if (altitude >= 80f)
             {
@@ -74,8 +82,8 @@ public class CameraManager : MonoBehaviour
         if (Physics.Raycast(
                 _ray,
                 out _hit,
-                1000f
-              //  Globals.TERRAIN_LAYER_MASK
+                5000f,
+              1 << 8
             ))
             transform.position = _hit.point + Vector3.up * altitude;
     }
