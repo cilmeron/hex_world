@@ -7,6 +7,7 @@ public class Projectile : MonoBehaviour
     [SerializeField] private float timeToLive = 5f; // TTL in seconds
     [SerializeField] private Entity owner;
     [SerializeField] private Entity target;
+    [SerializeField] private Vector3 startPos;
 
     private float remainingTimeToLive; // Remaining TTL in seconds
 
@@ -14,6 +15,7 @@ public class Projectile : MonoBehaviour
     {
         remainingTimeToLive = timeToLive;
         SetProjectileDirection();
+        EventManager.Instance.deathEvent.AddListener(EntityDead);
     }
 
     private void FixedUpdate()
@@ -32,8 +34,11 @@ public class Projectile : MonoBehaviour
     }
 
     private void OnTriggerEnter(Collider other){
+        if (owner == null || target == null || other == null){
+            Destroy(gameObject); // TODO improveable Logic
+        }
         GameObject colliderGameObject = other.gameObject;
-        if (colliderGameObject == owner.gameObject){
+        if (colliderGameObject == null || colliderGameObject == owner.gameObject){
             return;
         }
         if (colliderGameObject.layer == LayerMask.NameToLayer("IgnoreProjectiles")){
@@ -42,13 +47,14 @@ public class Projectile : MonoBehaviour
 
         Entity entity = colliderGameObject.GetComponent<Entity>();
         if (entity != null){
-            entity.RemoveHp(damage);
+            EventManager.Instance.damageEvent.Invoke(entity,damage);
         }
         Destroy(gameObject);
     }
 
 
     private void SetProjectileDirection(){
+        transform.position = startPos;
         Vector3 directionToTarget = target.transform.position - transform.position;
 
         Quaternion rotation = Quaternion.LookRotation(directionToTarget);
@@ -56,6 +62,15 @@ public class Projectile : MonoBehaviour
         transform.rotation = rotation;
     }
 
+    private void EntityDead(Entity e){
+        if (e == owner){
+            owner = null;
+        }
+        else if(e == target){
+            target = null;
+        }
+    }
+    
     public int Damage{
         get => damage;
         set => damage = value;
@@ -69,5 +84,10 @@ public class Projectile : MonoBehaviour
     public Entity Target{
         get => target;
         set => target = value;
+    }
+
+    public Vector3 StartPos{
+        get => startPos;
+        set => startPos = value;
     }
 }
