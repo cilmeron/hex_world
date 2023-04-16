@@ -36,7 +36,7 @@ Transform:
   m_Children:
   - {fileID: 9130411790576446432}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &5827751014861284205
 MeshFilter:
@@ -193,7 +193,7 @@ GameObject:
   - component: {fileID: 9130411790576446432}
   - component: {fileID: 4905018473455452194}
   - component: {fileID: 2055146010229057523}
-  m_Layer: 9
+  m_Layer: 2
   m_Name: Vision
   m_TagString: Untagged
   m_Icon: {fileID: 0}
