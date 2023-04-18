@@ -10,6 +10,7 @@ public class Unit : Entity{
     [SerializeField] private Formation formation;
     public Material leaderMaterial;
     public Vector3 relativeFormationPos = Vector3.zero;
+    [SerializeField] private bool shouldMove = true;
     
     private NavMeshAgent navMeshAgent;
 
@@ -21,10 +22,12 @@ public class Unit : Entity{
     private void Start(){
         base.Start();
         navMeshAgent.stoppingDistance = stoppingDistance;
-        material = MaterialManager.Instance.GetMaterial("M_Unit");
-        selectedMaterial = MaterialManager.Instance.GetMaterial("M_SelectedUnit");
-        leaderMaterial = MaterialManager.Instance.GetMaterial("M_LeaderUnit");
+        SetMaterials();
         movePosition = transform.position;
+        
+        if (!shouldMove){
+            navMeshAgent.enabled = false;
+        }
     }
     
 
@@ -69,5 +72,15 @@ public class Unit : Entity{
     public bool IsInFormation(){
         return formation != null;
     }
-    
+
+    public void SetMaterials(){
+        material = player.unit;
+        selectedMaterial = player.selectedUnit;
+        leaderMaterial = player.leaderUnit;
+        GetComponent<Renderer>().material = material;
+    }
+
+    public void EnableNavMesh(bool enabled){
+        navMeshAgent.enabled = enabled;
+    }
 }

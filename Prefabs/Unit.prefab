@@ -184,8 +184,12 @@ MonoBehaviour:
   material: {fileID: 2100000, guid: 5fa881481f7de55489bc680bff7946ef, type: 2}
   selectedMaterial: {fileID: 0}
   bulletStart: {fileID: 1481204226429979991}
+  player: {fileID: 0}
   movePosition: {x: 0, y: 0, z: 0}
   stoppingDistance: 5
+  formation: {fileID: 0}
+  leaderMaterial: {fileID: 0}
+  relativeFormationPos: {x: 0, y: 0, z: 0}
 --- !u!1 &5661450486948951003
 GameObject:
   m_ObjectHideFlags: 0
@@ -338,11 +342,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6960763757807782553, guid: b065b751bc7d14c47abbe72d6e86f9c9, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 940
+      value: 160
       objectReference: {fileID: 0}
     - target: {fileID: 6960763757807782553, guid: b065b751bc7d14c47abbe72d6e86f9c9, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 510
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 6960763757807782553, guid: b065b751bc7d14c47abbe72d6e86f9c9, type: 3}
       propertyPath: m_LocalScale.y
