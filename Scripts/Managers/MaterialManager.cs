@@ -28,7 +28,6 @@ public class MaterialManager : MonoBehaviour{
         {
             Destroy(gameObject);
         }
-        
         foreach (Material material in materials){
             AddMaterial(material);
         }

@@ -34,14 +34,40 @@ public class FormationManager : MonoBehaviour
                 }
             }
         }
+        if (Input.GetKeyDown(KeyCode.Alpha2)){
+            List<Unit> selectedUnits = selectionManager.selectedDictionary.selectedTable.Values.OfType<Unit>().ToList();
+            if (selectedUnits.Count == 0){
+                return;
+            }
+            CircleFormation circleFormation =  CreateCircleFormation();
+            foreach (Unit unit in selectedUnits){
+                if (unit.IsInFormation()){
+                    return;
+                }
+                bool successfull = circleFormation.AddUnitToFormation(unit);
+                if (!successfull){
+                    circleFormation = CreateCircleFormation();
+                    circleFormation.AddUnitToFormation(unit);
+                }
+            }
+        }
     }
     
     private RectFormation CreateRectFormation(){
-        GameObject formation = new GameObject("Formation");
+        GameObject formation = new GameObject("RectFormation");
         formation.transform.position = new Vector3(0, 0, 0);
         formation.transform.parent = transform;
         RectFormation rectFormation = formation.AddComponent<RectFormation>();
         rectFormation.Initialize(3);
         return rectFormation;
+    }
+    
+    private CircleFormation CreateCircleFormation(){
+        GameObject formation = new GameObject("CircleFormation");
+        formation.transform.position = new Vector3(0, 0, 0);
+        formation.transform.parent = transform;
+        CircleFormation circleFormation = formation.AddComponent<CircleFormation>();
+        circleFormation.Initialize(3);
+        return circleFormation;
     }
 }

@@ -18,6 +18,7 @@ public class Entity : MonoBehaviour{
     private bool isAttacking = false;
     private HpSlider hpSlider;
     [SerializeField] private Transform bulletStart;
+    [SerializeField] protected Player player;
 
     public Vector3 GetPosition(){
         return transform.position;
@@ -114,4 +115,13 @@ public class Entity : MonoBehaviour{
         EventManager.Instance.deathEvent.Invoke(this);
         Destroy(gameObject);
     }
+
+    public void SetPlayer(Player p){
+        player = p;
+    }
+
+    public Player GetPlayer(){
+        return player;
+    }
+    
 }
