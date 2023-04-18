@@ -17,9 +17,10 @@ public class NetworkManager : MonoBehaviour
     public string playername;
     bool ping = false;
     bool connected = false;
+    public bool chatactive = false;
      private void Start() 
      {
-        chat.SetActive(true);
+         ingamechat = "";
         if (Connect())
         {
             connected = true;
@@ -28,6 +29,14 @@ public class NetworkManager : MonoBehaviour
             ClientReceiveThread.Start();
         }
     }    
+    private void Update()
+    {
+        if (Input.GetButtonUp("Submit"))
+        {
+            chat.SetActive(true);
+            chatactive = true;
+        }
+    }
     public bool Connect()
     {
         try

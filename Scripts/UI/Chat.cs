@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Chat : MonoBehaviour
 {
-    NetworkManager networkManager = new NetworkManager();
+    public NetworkManager networkManager;
     public TMPro.TMP_Text ingamechat;
     public ScrollRect scrollRect;
     public int index = 0;
@@ -68,7 +68,8 @@ public class Chat : MonoBehaviour
             this.GetComponent<TMPro.TMP_InputField>().text = "";
           //  World.Instance.chatactive = false;
           //  World.Instance.inUI = false;
-          //  player.disablechat = true;
+            networkManager.chatactive = false;
+            this.gameObject.SetActive(false);
             index = 0;
         }
 
