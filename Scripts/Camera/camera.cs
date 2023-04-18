@@ -5,6 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(Camera))]
 public class CameraManager : MonoBehaviour
 {
+    public NetworkManager networkManager;
     public float translationSpeed = 60f;
     public float altitude = 20f;
 
@@ -22,25 +23,22 @@ public class CameraManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetAxis("Vertical") > 0)
-            _TranslateCamera(0);
-        if (Input.GetAxis("Horizontal") > 0)
-            _TranslateCamera(1);
-        if (Input.GetAxis("Vertical") < 0)
-            _TranslateCamera(2);
-        if (Input.GetAxis("Horizontal") < 0)
-            _TranslateCamera(3);
-        if (Input.GetMouseButton(1))
+        if (!networkManager.chatactive)
         {
-            float mousex = Input.GetAxis("Mouse X");
-            float mousey = Input.GetAxis("Mouse Y");
-            transform.Rotate(Vector3.up *(mousex) * 10f, Space.World);
-            transform.Rotate(Vector3.right *(-mousey) * 10f);
+            if (Input.GetAxis("Vertical") > 0)
+                _TranslateCamera(0);
+            if (Input.GetAxis("Horizontal") > 0)
+                _TranslateCamera(1);
+            if (Input.GetAxis("Vertical") < 0)
+                _TranslateCamera(2);
+            if (Input.GetAxis("Horizontal") < 0)
+                _TranslateCamera(3);
+            
         }
         float wheel = 0f;
-        if (Input.GetAxis("Height") != 0f)
+        if (Input.GetAxis("Height") != 0f && !networkManager.chatactive)
         {
-            wheel = Input.GetAxis("Height")*0.3f;
+            wheel = Input.GetAxis("Height")*0.01f;
         }
         else
         {
@@ -63,6 +61,14 @@ public class CameraManager : MonoBehaviour
             }
             _TranslateCamera(4);
         }
+        if (Input.GetMouseButton(1))
+        {
+            float mousex = Input.GetAxis("Mouse X");
+            float mousey = Input.GetAxis("Mouse Y");
+            transform.Rotate(Vector3.up *(mousex) * 10f, Space.World);
+            transform.Rotate(Vector3.right *(-mousey) * 10f);
+        }
+       
     }
 
     private void _TranslateCamera(int dir)
