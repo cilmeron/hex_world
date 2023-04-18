@@ -7,7 +7,7 @@ using UnityEngine.Search;
 public class Entity : MonoBehaviour{
     [SerializeField] private int maxHP = 100;
     [SerializeField] private int currentHP;
-    private Vision vision;
+    protected Vision vision;
     [SerializeField] private List<Entity> entitiesInVision  = new List<Entity>();
     [SerializeField] private Entity target;
     [SerializeField] private float attackTime;

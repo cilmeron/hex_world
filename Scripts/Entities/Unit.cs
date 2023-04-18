@@ -76,6 +76,7 @@ public class Unit : Entity{
     public void SetMaterials(){
         material = player.unit;
         selectedMaterial = player.selectedUnit;
+        selectedMaterial.shader = Shader.Find("Custom/S_Outline");
         leaderMaterial = player.leaderUnit;
         GetComponent<Renderer>().material = material;
     }
@@ -83,4 +84,9 @@ public class Unit : Entity{
     public void EnableNavMesh(bool enabled){
         navMeshAgent.enabled = enabled;
     }
+
+    public void SetRange(int range){
+        vision.UpdateRange(range);
+    }
+    
 }

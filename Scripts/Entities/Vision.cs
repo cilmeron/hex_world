@@ -33,5 +33,10 @@ public class Vision : MonoBehaviour{
         }
        
     }
+
+    public void UpdateRange(int range){
+        radius = range;
+        visionCollider.radius = radius;
+    }
     
 }

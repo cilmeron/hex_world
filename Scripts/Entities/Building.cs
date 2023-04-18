@@ -19,15 +19,18 @@ public class Building : Entity{
         base.Start();
         material = player.tower;
         selectedMaterial = player.selectedTower;
+        selectedMaterial.shader = Shader.Find("Custom/S_Outline");
         GetComponent<Renderer>().material = material;
         foreach (Transform t in spawnPositions){
-            GameObject go = Instantiate(unitPrefab, t.position, Quaternion.identity);
-            go.transform.parent = archerContainer;
+            GameObject go = Instantiate(unitPrefab,archerContainer);
+            go.transform.localPosition = t.localPosition;
+            go.transform.localScale /= transform.localScale.x; // Assumption: Entity is scaled similar in each direction
             Unit unit = go.GetComponent<Unit>();
             unit.SetPlayer(player);
             player.AddEntity(unit);
             unit.SetMaterials();
-            unit.EnableNavMesh(enabled);
+            unit.SetRange(50);
+            unit.EnableNavMesh(false);
         }
     }
 
