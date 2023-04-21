@@ -142,5 +142,10 @@ public class Entity : MonoBehaviour, IEntityUI{
     public Sprite GetSprite(){
         return sprite;
     }
+
+    public Entity GetEntity(){
+        return this;
+    }
+    
     
 }

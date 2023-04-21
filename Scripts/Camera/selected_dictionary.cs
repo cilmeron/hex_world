@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class selected_dictionary : MonoBehaviour
+public class selected_dictionary : MonoBehaviour //Evtl auf Static classe reduzieren - wie GameResourceManager
 {
     public Dictionary<int, Entity> selectedTable = new Dictionary<int, Entity>();
 

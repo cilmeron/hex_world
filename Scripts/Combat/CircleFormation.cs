@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CircleFormation : Formation
 {
-    private int numUnits = 8;
+    private int numUnits = 20;
     private float radius = 5f;
 
     protected override void Awake()

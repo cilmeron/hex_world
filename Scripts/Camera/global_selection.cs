@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class global_selection : MonoBehaviour
 {
@@ -29,7 +30,6 @@ public class global_selection : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
         selected_table = GetComponent<selected_dictionary>();
         dragSelect = false;
     }
@@ -53,7 +53,7 @@ public class global_selection : MonoBehaviour
         }
 
         //3. when mouse button comes up
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(0) && !EventSystem.current.IsPointerOverGameObject())
         {
             if(dragSelect == false) //single select
             {

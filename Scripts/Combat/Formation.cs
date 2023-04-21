@@ -26,8 +26,8 @@ public class Formation : MonoBehaviour, IFormation
     protected void Update()
     {
         if (units.Count == 0){
-            GameManager.Instance.player.RemoveFormation(this);
             Destroy(gameObject);
+            EventManager.Instance.formationDeletedEvent.Invoke(this);
             return;
         }
 
@@ -46,6 +46,7 @@ public class Formation : MonoBehaviour, IFormation
         leader.GetComponent<Renderer>().material = leader.material;
         units.Add(u);
         u.AddUnitToFormation(this,Vector3.zero);
+        InvokeFormationChangedEvent();
     }
 
     public Unit GetLeader()
@@ -53,9 +54,12 @@ public class Formation : MonoBehaviour, IFormation
         return leader;
     }
 
-    public List<Unit> GetUnitsInFormation()
-    {
-        return relativePositions.Values.ToList();
+    public Dictionary<Vector3,Unit> GetRelativePositions(){
+        return relativePositions;
+    }
+    
+    public List<Unit> GetUnitsInFormation(){
+        return units.ToList();
     }
 
     public void SetFormation()
@@ -108,10 +112,13 @@ public class Formation : MonoBehaviour, IFormation
         relativePositions[relativePosition] = u;
         units.Add(u);
         u.AddUnitToFormation(this,relativePosition);
+        InvokeFormationChangedEvent();
         return true;
     }
 
-
+    private void InvokeFormationChangedEvent(){
+        EventManager.Instance.formationChangedEvent.Invoke(this);
+    }
 
     public void RemoveUnitFromFormation(Unit u)
     {
@@ -121,7 +128,7 @@ public class Formation : MonoBehaviour, IFormation
             u.RemoveUnitFromFormation();
             if (units.Count == 0){
                 leader = null;
-                Destroy(this);
+                Destroy(gameObject);
                 return;
             }
             if (u == leader){
@@ -132,6 +139,7 @@ public class Formation : MonoBehaviour, IFormation
             else{
                 ResetPosition(u.relativeFormationPos);
             }
+            InvokeFormationChangedEvent();
         }
     }
 
@@ -170,6 +178,17 @@ public class Formation : MonoBehaviour, IFormation
 
     private void ResetPosition(Vector3 pos){
         relativePositions[pos] = null;
+    }
+
+    public float GetOverallHp(){
+        float maxHP = 0f;
+        float currentHP = 0;
+        foreach (Entity entity in units){
+            maxHP += entity.MAXHp;
+            currentHP += entity.CurrentHp;
+        }
+
+        return currentHP / maxHP;
     }
     
 }

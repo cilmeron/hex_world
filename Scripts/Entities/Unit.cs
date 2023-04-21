@@ -56,6 +56,9 @@ public class Unit : Entity{
         {
             navMeshAgent.enabled = false;
         }
+        if (IsInFormation()){
+            formation.RemoveUnitFromFormation(this);
+        }
     }
 
     public void AddUnitToFormation(Formation f,Vector3 relativePos){
@@ -70,6 +73,13 @@ public class Unit : Entity{
 
     public bool IsInFormation(){
         return formation != null;
+    }
+
+    public Formation GetFormation(){
+        if (IsInFormation()){
+            return formation;
+        }
+        return null;
     }
 
     public override void SetMaterials(){
@@ -89,6 +99,8 @@ public class Unit : Entity{
         vision.UpdateRange(range);
     }
 
-    
-    
+
+    public bool IsLeaderOfFormation(){
+        return IsInFormation() && formation.GetLeader() == this;
+    }
 }
