@@ -7,7 +7,7 @@ using UnityEngine.Search;
 public class Entity : MonoBehaviour{
     [SerializeField] private int maxHP = 100;
     [SerializeField] private int currentHP;
-    protected Vision vision;
+    public Vision vision;
     [SerializeField] private List<Entity> entitiesInVision  = new List<Entity>();
     [SerializeField] private Entity target;
     [SerializeField] private float attackTime;
@@ -19,6 +19,7 @@ public class Entity : MonoBehaviour{
     private HpSlider hpSlider;
     [SerializeField] private Transform bulletStart;
     [SerializeField] protected Player player;
+    [SerializeField] private int goldAmount;
 
     public Vector3 GetPosition(){
         return transform.position;
@@ -118,10 +119,15 @@ public class Entity : MonoBehaviour{
 
     public void SetPlayer(Player p){
         player = p;
+        GameResourceManager.AddResourceAmount(player,GameResourceManager.ResourceType.Gold,goldAmount);
     }
 
     public Player GetPlayer(){
         return player;
+    }
+
+    public virtual void SetMaterials(){
+        
     }
     
 }
