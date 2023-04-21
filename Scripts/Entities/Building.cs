@@ -42,4 +42,10 @@ public class Building : Entity{
         selectedMaterial.shader = Shader.Find("Custom/S_Outline");
         GetComponent<Renderer>().material = material;
     }
+
+    public override string GetStats(){
+        return "HP: " + currentHP + " / " + maxHP + "\n" +
+               "CREW: " +   archerContainer.transform.childCount + " / " + spawnPositions.Count;
+        
+    }
 }

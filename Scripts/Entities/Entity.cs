@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Search;
 
-public class Entity : MonoBehaviour{
-    [SerializeField] private int maxHP = 100;
-    [SerializeField] private int currentHP;
-    public Vision vision;
+public class Entity : MonoBehaviour, IEntityUI{
+    [SerializeField] protected int maxHP = 100;
+    [SerializeField] protected int currentHP;
+    protected Vision vision;
     [SerializeField] private List<Entity> entitiesInVision  = new List<Entity>();
     [SerializeField] private Entity target;
     [SerializeField] private float attackTime;
@@ -20,6 +20,7 @@ public class Entity : MonoBehaviour{
     [SerializeField] private Transform bulletStart;
     [SerializeField] protected Player player;
     [SerializeField] private int goldAmount;
+    [SerializeField] private Sprite sprite;
 
     public Vector3 GetPosition(){
         return transform.position;
@@ -128,6 +129,18 @@ public class Entity : MonoBehaviour{
 
     public virtual void SetMaterials(){
         
+    }
+
+    public float GetHpPercentage(){
+        return  (float)currentHP/maxHP;
+    }
+
+    public virtual string GetStats(){
+        return currentHP + " / " + maxHP;
+    }
+
+    public Sprite GetSprite(){
+        return sprite;
     }
     
 }

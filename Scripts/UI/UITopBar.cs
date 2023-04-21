@@ -13,7 +13,9 @@ public class UITopBar : MonoBehaviour{
     // Update is called once per frame
     void Update()
     {
-        
+        foreach (UITopBarNode node in nodes){
+            node.SetImageColor(GameManager.Instance.player.PlayerColor);
+        }
     }
 
     public List<UITopBarNode> Nodes{

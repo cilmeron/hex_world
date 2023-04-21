@@ -230,7 +230,7 @@ Transform:
   - {fileID: 4847938598794579027}
   - {fileID: 3362265532259617252}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &486689314040814620
 MeshFilter:
@@ -355,6 +355,7 @@ MonoBehaviour:
   bulletStart: {fileID: 4867162927568051766}
   player: {fileID: 0}
   goldAmount: 300
+  sprite: {fileID: 21300000, guid: 7150bde22cea6ef409e845a72c2ce4a7, type: 3}
   unitPrefab: {fileID: 534056306596123124, guid: 4065503216b9ddd4d9af84ba63c6e3cd, type: 3}
   spawnPositions:
   - {fileID: 791005426714844902}

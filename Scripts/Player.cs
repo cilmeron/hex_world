@@ -69,10 +69,6 @@ public class Player : MonoBehaviour{
         leaderUnit.color = DarkenPlayerColorByPercentage(70);
         tower.color = DarkenPlayerColorByPercentage(70);
         selectedTower.color = DarkenPlayerColorByPercentage(70);
-        
-        //tower.color = playerColor;
-        //leaderUnit.color = playerColor;
-        //selectedTower.color = playerColor;
     }
 
     public void InitializeEntities(){
@@ -135,6 +131,9 @@ public class Player : MonoBehaviour{
 
         return buildingCount;
     }
-    
-    
+
+    public Color PlayerColor{
+        get => playerColor;
+        set => playerColor = value;
+    }
 }
