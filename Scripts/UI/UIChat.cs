@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Chat : MonoBehaviour
+public class UIChat : MonoBehaviour
 {
     public NetworkManager networkManager;
     public TMPro.TMP_Text ingamechat;

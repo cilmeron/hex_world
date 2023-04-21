@@ -39,7 +39,7 @@ Transform:
   - {fileID: 1481204226429979991}
   - {fileID: 6505614056248889301}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &5827751014861284205
 MeshFilter:
@@ -188,6 +188,7 @@ MonoBehaviour:
   bulletStart: {fileID: 1481204226429979991}
   player: {fileID: 0}
   goldAmount: 20
+  sprite: {fileID: 21300000, guid: 77319b2f2301fd84bb1cbb4a93c1d8fe, type: 3}
   movePosition: {x: 0, y: 0, z: 0}
   stoppingDistance: 5
   formation: {fileID: 0}
