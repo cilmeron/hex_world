@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private bool floatingDamageText;
     [SerializeField] private GameObject damageTextPrefab;
+    public Player player;
 
     void Awake()
     {

@@ -17,10 +17,6 @@ public class Building : Entity{
 
     private void Start(){
         base.Start();
-        material = player.tower;
-        selectedMaterial = player.selectedTower;
-        selectedMaterial.shader = Shader.Find("Custom/S_Outline");
-        GetComponent<Renderer>().material = material;
         foreach (Transform t in spawnPositions){
             GameObject go = Instantiate(unitPrefab,archerContainer);
             go.transform.localPosition = t.localPosition;
@@ -37,5 +33,13 @@ public class Building : Entity{
     // Update is called once per frame
     private void Update(){
         base.Update();
+    }
+
+    public override void SetMaterials(){
+        base.SetMaterials();
+        material = player.Tower;
+        selectedMaterial = player.SelectedTower;
+        selectedMaterial.shader = Shader.Find("Custom/S_Outline");
+        GetComponent<Renderer>().material = material;
     }
 }

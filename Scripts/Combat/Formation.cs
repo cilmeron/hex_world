@@ -18,6 +18,7 @@ public class Formation : MonoBehaviour, IFormation
 
     protected virtual void Awake(){
         EventManager.Instance.deathEvent.AddListener(OnEntityDeath);
+        GameManager.Instance.player.AddFormation(this);
     }
     
 
@@ -25,6 +26,7 @@ public class Formation : MonoBehaviour, IFormation
     protected void Update()
     {
         if (units.Count == 0){
+            GameManager.Instance.player.RemoveFormation(this);
             Destroy(gameObject);
             return;
         }

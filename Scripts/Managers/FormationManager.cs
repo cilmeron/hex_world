@@ -24,7 +24,7 @@ public class FormationManager : MonoBehaviour
             }
             RectFormation rectFormation =  CreateRectFormation();
             foreach (Unit unit in selectedUnits){
-                if (unit.IsInFormation()){
+                if (unit.IsInFormation() || unit.GetPlayer()!=GameManager.Instance.player){
                     return;
                 }
                 bool successfull = rectFormation.AddUnitToFormation(unit);

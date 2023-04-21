@@ -22,7 +22,6 @@ public class Unit : Entity{
     private void Start(){
         base.Start();
         navMeshAgent.stoppingDistance = stoppingDistance;
-        SetMaterials();
         movePosition = transform.position;
         
         if (!shouldMove){
@@ -73,11 +72,12 @@ public class Unit : Entity{
         return formation != null;
     }
 
-    public void SetMaterials(){
-        material = player.unit;
-        selectedMaterial = player.selectedUnit;
+    public override void SetMaterials(){
+        base.SetMaterials();
+        material = player.Unit;
+        selectedMaterial = player.SelectedUnit;
         selectedMaterial.shader = Shader.Find("Custom/S_Outline");
-        leaderMaterial = player.leaderUnit;
+        leaderMaterial = player.LeaderUnit;
         GetComponent<Renderer>().material = material;
     }
 
@@ -88,5 +88,7 @@ public class Unit : Entity{
     public void SetRange(int range){
         vision.UpdateRange(range);
     }
+
+    
     
 }

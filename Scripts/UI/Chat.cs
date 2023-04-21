@@ -69,7 +69,7 @@ public class Chat : MonoBehaviour
           //  World.Instance.chatactive = false;
           //  World.Instance.inUI = false;
             networkManager.chatactive = false;
-            this.gameObject.SetActive(false);
+            transform.parent.gameObject.SetActive(false);
             index = 0;
         }
 

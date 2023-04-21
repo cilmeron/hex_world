@@ -4,25 +4,27 @@ using UnityEngine;
 
 public class Player : MonoBehaviour{
     [SerializeField] private List<Entity> entities = new List<Entity>();
+    [SerializeField] private List<Formation> formations = new List<Formation>();
 
     [SerializeField] private Color playerColor;
-    [SerializeField] public Material unit;
-    [SerializeField] public Material selectedUnit;
-    [SerializeField] public Material leaderUnit;
-    [SerializeField] public Material tower;
-    [SerializeField] public Material selectedTower;
+    private Material unit;
+    private Material selectedUnit;
+    private Material leaderUnit;
+    private Material tower;
+    private Material selectedTower;
     
     void Awake(){
+        GameResourceManager.AddPlayer(this);
         foreach (Entity e in entities){
             e.SetPlayer(this);
         }
-       
-        
     }
 
     void Start(){
         EventManager.Instance.deathEvent.AddListener(RemoveEntity);
+        
         SetupMaterials();
+        InitializeEntities();
     }
     
     public List<Entity> Entities{
@@ -72,5 +74,67 @@ public class Player : MonoBehaviour{
         //leaderUnit.color = playerColor;
         //selectedTower.color = playerColor;
     }
+
+    public void InitializeEntities(){
+        foreach (Entity e in entities){
+            e.SetMaterials();
+        }
+    }
+    
+    public Material Unit{
+        get => unit;
+    }
+
+    public Material SelectedUnit{
+        get => selectedUnit;
+    }
+
+    public Material LeaderUnit{
+        get => leaderUnit;
+    }
+
+    public Material Tower{
+        get => tower;
+    }
+
+    public Material SelectedTower{
+        get => selectedTower;
+    }
+
+    public void AddFormation(Formation formation){
+        formations.Add(formation);
+    }
+    
+    public void RemoveFormation(Formation formation){
+        formations.Remove(formation);
+    }
+
+    public List<Formation> Formations{
+        get => formations;
+        set => formations = value;
+    }
+
+    public int CalculateUnits(){
+        int unitCount = 0;
+        foreach(Entity e in entities){
+            if (e.GetType() == typeof(Unit)){
+                unitCount++;
+            }
+        }
+
+        return unitCount;
+    }
+    
+    public int CalculateBuildings(){
+        int buildingCount = 0;
+        foreach(Entity e in entities){
+            if (e.GetType() == typeof(Building)){
+                buildingCount++;
+            }
+        }
+
+        return buildingCount;
+    }
+    
     
 }
