@@ -22,7 +22,7 @@ public class Player : MonoBehaviour{
 
     void Start(){
         EventManager.Instance.deathEvent.AddListener(RemoveEntity);
-        
+        EventManager.Instance.formationDeletedEvent.AddListener(RemoveFormation);
         SetupMaterials();
         InitializeEntities();
     }
@@ -102,7 +102,9 @@ public class Player : MonoBehaviour{
     }
     
     public void RemoveFormation(Formation formation){
-        formations.Remove(formation);
+        if (formations.Contains(formation)){
+            formations.Remove(formation);
+        }
     }
 
     public List<Formation> Formations{

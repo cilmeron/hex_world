@@ -17,12 +17,13 @@ public class UIEntity : MonoBehaviour{
     [SerializeField] private Slider slider;
     [SerializeField] private Image image;
     [SerializeField] private TextMeshProUGUI statsTMP;
-    
-    
+
+    private UIManager uiManager;
     // Start is called before the first frame update
     void Start()
     {
-        
+        uiManager = UIManager.Instance;
+        EventManager.Instance.deathEvent.AddListener(ResetEntiyUIViaEvent);
     }
 
     // Update is called once per frame
@@ -39,12 +40,22 @@ public class UIEntity : MonoBehaviour{
     public void SetEntityUI(IEntityUI eUI){
         entityUI = eUI;
     }
-
+    
     public void ResetEntityUI(){
-        entityUI = null;
-        entityUISprite = null;
-        entityUIStats =  null;
+            entityUI = null;
+            entityUISprite = null;
+            entityUIStats =  null;
     }
+
+    public void ResetEntiyUIViaEvent(Entity e){
+        if (entityUI == null){
+            return;
+        }
+        if (e == entityUI.GetEntity()){
+            ResetEntityUI();
+        }
+    }
+    
 
     public void SetValues(){
         PrepareSlider();
@@ -64,6 +75,21 @@ public class UIEntity : MonoBehaviour{
         slider.value = hpPercentage;
         // Set the color of the slider based on the HP percentage
         slider.fillRect.GetComponentInChildren<Image>().color = Color.Lerp(Color.red, Color.green, hpPercentage);
+    }
+
+    public void OpenFormationMenu(){
+        if (entityUI == null){
+            return;
+        }
+        if (entityUI.GetEntity().GetType() != typeof(Unit)){
+            return;
+        }
+        Unit u = (Unit)entityUI.GetEntity();
+        if (!u.IsInFormation()){
+            return;
+        }
+
+        uiManager.SelectedFormation = u.GetFormation();
     }
     
 }

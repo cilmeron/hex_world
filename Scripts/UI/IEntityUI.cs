@@ -6,4 +6,5 @@ public interface IEntityUI{
     float GetHpPercentage();
     Sprite GetSprite();
     String GetStats();
+    Entity GetEntity();
 }

@@ -3,6 +3,8 @@ using UnityEngine.Events;
 
 public class DeathEvent : UnityEvent<Entity> { }
 public class DamageEvent : UnityEvent<Entity, int> { }
+public class FormationChanged : UnityEvent<Formation> { }
+public class FormationDeleted : UnityEvent<Formation> { }
 
 public class EventManager : MonoBehaviour
 {
@@ -10,6 +12,8 @@ public class EventManager : MonoBehaviour
 
     public DeathEvent deathEvent;
     public DamageEvent damageEvent;
+    public FormationChanged formationChangedEvent;
+    public FormationDeleted formationDeletedEvent;
 
     void Awake()
     {
@@ -27,5 +31,7 @@ public class EventManager : MonoBehaviour
         // Initialize the events
         deathEvent = new DeathEvent();
         damageEvent = new DamageEvent();
+        formationChangedEvent = new FormationChanged();
+        formationDeletedEvent = new FormationDeleted();
     }
 }

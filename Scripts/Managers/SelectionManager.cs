@@ -20,11 +20,12 @@ public class SelectionManager : MonoBehaviour
 
         // Set the instance to this script
         Instance = this;
+        selectedDictionary = gameObject.AddComponent<selected_dictionary>();
     }
 
     // Start is called before the first frame update
     void Start(){
-        selectedDictionary = gameObject.AddComponent<selected_dictionary>();
+        
         globalSelection = gameObject.AddComponent<global_selection>();
     }
 

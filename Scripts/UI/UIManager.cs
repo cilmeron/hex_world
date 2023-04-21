@@ -14,8 +14,10 @@ public class UIManager : MonoBehaviour{
     private Player player;
     [SerializeField] private UITopBar uiTopbar;
     [SerializeField] private UIEntity uiEntity;
+    [SerializeField] private UIFormation uiFormation;
 
     [SerializeField] private Entity selectedEntity;
+    [SerializeField] private Formation selectedFormation;
 
     [SerializeField] private CanvasScaler canvasScaler;
     
@@ -41,6 +43,7 @@ public class UIManager : MonoBehaviour{
     void Start(){
         ScaleUI();
         selectionManager = SelectionManager.Instance;
+        EventManager.Instance.formationDeletedEvent.AddListener(ResetFormation);
     }
 
     private void ScaleUI(){
@@ -56,7 +59,26 @@ public class UIManager : MonoBehaviour{
     }
 
     // Update is called once per frame
-    void Update(){
+    void Update(){ 
+        player = GameManager.Instance.player;
+        if (selectedFormation == null){
+            SetEntityUI();
+        }
+        else{
+            SetFormationUI();
+        }
+        
+        SetTopBarUI();
+    }
+
+    public void SetFormationUI(){
+        uiEntity.gameObject.SetActive(false);
+        uiFormation.gameObject.SetActive(true);
+        uiFormation.SetFormation(selectedFormation);
+        
+    }
+    
+    public void SetEntityUI(){
         int selectionCount = selectionManager.selectedDictionary.selectedTable.Values.Count;
         if (selectionCount == 0){
             uiEntity.ResetEntityUI();
@@ -64,11 +86,14 @@ public class UIManager : MonoBehaviour{
         }else if ( selectionCount == 1){
             selectedEntity = selectionManager.selectedDictionary.selectedTable.Values.First();
             uiEntity.gameObject.SetActive(true);
+            uiFormation.gameObject.SetActive(false);
             uiEntity.SetEntityUI(selectedEntity);
         }else{
             //Multiple Selection   
         }
-        player = GameManager.Instance.player;
+    }
+    
+    public void SetTopBarUI(){
         uiTopbar.Nodes[0].SetText(GameResourceManager.GetResourceAmount(player,GameResourceManager.ResourceType.Gold).ToString());
         uiTopbar.Nodes[1].SetText(player.CalculateUnits().ToString());
         uiTopbar.Nodes[2].SetText(player.CalculateBuildings().ToString());
@@ -79,4 +104,14 @@ public class UIManager : MonoBehaviour{
         get => selectedEntity;
         set => selectedEntity = value;
     }
+    
+    public Formation SelectedFormation{
+        get => selectedFormation;
+        set => selectedFormation = value;
+    }
+
+    private void ResetFormation(Formation f){
+        selectedFormation = null;
+    }
+    
 }
