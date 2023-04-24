@@ -97,6 +97,8 @@ public class Formation : MonoBehaviour, IFormation
             SetLeader(u);
             return true;
         }
+        
+        //TODO REMOVE UNIT FROM OLD FORMATION
 
         // Find the first available relative position
         Vector3 relativePosition = Vector3.zero;

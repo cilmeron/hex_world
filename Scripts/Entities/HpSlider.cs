@@ -34,7 +34,7 @@ public class HpSlider : MonoBehaviour{
             // Set the color of the slider based on the HP percentage
             slider.fillRect.GetComponentInChildren<Image>().color = Color.Lerp(Color.red, Color.green, hpPercentage);
             
-            transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
+            
         }
     }
 
