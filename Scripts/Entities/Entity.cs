@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Search;
 
 public class Entity : MonoBehaviour, IEntityUI{
@@ -21,6 +22,9 @@ public class Entity : MonoBehaviour, IEntityUI{
     [SerializeField] protected Player player;
     [SerializeField] private int goldAmount;
     [SerializeField] private Sprite sprite;
+    
+    [SerializeField] private Vector3 startPosition;
+    [SerializeField] private Transform startParent;
 
     public Vector3 GetPosition(){
         return transform.position;
@@ -146,6 +150,7 @@ public class Entity : MonoBehaviour, IEntityUI{
     public Entity GetEntity(){
         return this;
     }
+    
     
     
 }
