@@ -46,10 +46,11 @@ public class NetworkManager : MonoBehaviour
                 return true;
             }
         }
-        catch (System.Exception e)
-        {
-           
+        catch (System.Exception e){
+            Debug.LogError(e.ToString());
+            Debug.LogError(e.StackTrace);
         }
+
         client = new TcpClient();
         string host = "pirotess.duckdns.org";
         System.Net.IPAddress ip = GetIp(host);

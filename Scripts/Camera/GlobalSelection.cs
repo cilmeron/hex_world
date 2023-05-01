@@ -61,23 +61,23 @@ public class global_selection : MonoBehaviour
 
                 if(Physics.Raycast(ray,out hit, 500.0f))
                 {
-                    Entity hitEntity = hit.transform.gameObject.GetComponent<Entity>();
-                    if (hitEntity == null)
+                    ISelectable hitSelectable = hit.transform.gameObject.GetComponent<ISelectable>();
+                    if (hitSelectable == null)
                     {
                         selected_table.deselectAll();
                         return;
                     }
                     if (Input.GetKey(KeyCode.LeftShift)) //inclusive select
                     {
-                        selected_table.addSelected(hitEntity);
+                        selected_table.addSelected(hitSelectable);
                     }
                     else if(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
                     {
-                        selected_table.removeSelected(hitEntity);
+                        selected_table.removeSelected(hitSelectable);
                     }
                     else //exclusive selected
                     {
-                        selected_table.select(hitEntity);
+                        selected_table.select(hitSelectable);
                     }
                 }
                 else //if we didnt hit something
@@ -194,9 +194,9 @@ public class global_selection : MonoBehaviour
     }
 
     private void OnTriggerEnter(Collider other){
-        Entity entity = other.GetComponent<Entity>();
-        if (entity != null){
-            selected_table.addSelected(entity);
+        ISelectable selectable = other.GetComponent<ISelectable>();
+        if (selectable != null){
+            selected_table.addSelected(selectable);
         }
     }
 }

@@ -355,7 +355,7 @@ MonoBehaviour:
   bulletStart: {fileID: 4867162927568051766}
   player: {fileID: 0}
   goldAmount: 300
-  sprite: {fileID: 21300000, guid: 7150bde22cea6ef409e845a72c2ce4a7, type: 3}
+  sprite: {fileID: 21300000, guid: 031ede89bd96126478fe6bfbacf1aeaf, type: 3}
   startPosition: {x: 0, y: 0, z: 0}
   startParent: {fileID: 0}
   unitPrefab: {fileID: 534056306596123124, guid: 4065503216b9ddd4d9af84ba63c6e3cd, type: 3}
@@ -377,6 +377,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1015fe98282d0f144a24130fae090836, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  startPosition: {x: 0, y: 0, z: 0}
+  offsetToMouse: {x: 0, y: 0, z: 0}
+  draggingTransform: {fileID: 0}
+  entity: {fileID: 0}
 --- !u!1 &7156132051979568103
 GameObject:
   m_ObjectHideFlags: 0

@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -29,12 +29,12 @@ public class GameManager : MonoBehaviour
         EventManager.Instance.damageEvent.AddListener(SetFloatingDamageText);
     }
     
-    private void SetFloatingDamageText(Entity entity, int damage)
+    private void SetFloatingDamageText(ICombatElement combatElement, int damage)
     {
         if (floatingDamageText)
         {
-            GameObject damageTextObject = Instantiate(damageTextPrefab, entity.transform.position, Quaternion.identity);
-            damageTextObject.transform.parent = entity.transform;
+            GameObject damageTextObject = Instantiate(damageTextPrefab, combatElement.GetGameObject().transform.position, Quaternion.identity);
+            damageTextObject.transform.SetParent(combatElement.GetGameObject().transform,false);
             Billboard billboard = damageTextObject.GetComponent<Billboard>();
             billboard.TMP.text = damage.ToString();
         }

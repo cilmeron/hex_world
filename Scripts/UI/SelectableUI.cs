@@ -5,31 +5,24 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIEntity : MonoBehaviour{
-    [SerializeField] private IEntityUI entityUI;
-
-    private HpSlider entityUIHpSlider;
-
-    private Sprite entityUISprite;
-
-    private String entityUIStats;
+public class SelectableUI : MonoBehaviour{
+    private ISelectable _selectable;
 
     [SerializeField] private Slider slider;
     [SerializeField] private Image image;
     [SerializeField] private TextMeshProUGUI statsTMP;
 
     private UIManager uiManager;
-    // Start is called before the first frame update
     void Start()
     {
         uiManager = UIManager.Instance;
-        EventManager.Instance.deathEvent.AddListener(ResetEntiyUIViaEvent);
+        EventManager.Instance.deathEvent.AddListener(ResetSelectableUIViaEvent);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (entityUI != null){
+        if (_selectable != null){
             SetValues();
         }
         else{
@@ -37,30 +30,28 @@ public class UIEntity : MonoBehaviour{
         }
     }
 
-    public void SetEntityUI(IEntityUI eUI){
-        entityUI = eUI;
+    public void SetSelectable(ISelectable selectable){
+        _selectable = selectable;
     }
     
-    public void ResetEntityUI(){
-            entityUI = null;
-            entityUISprite = null;
-            entityUIStats =  null;
+    public void ResetSelectableUI(){
+            _selectable = null;
     }
 
-    public void ResetEntiyUIViaEvent(Entity e){
-        if (entityUI == null){
+    public void ResetSelectableUIViaEvent(ICombatElement combatElement){
+        if (_selectable == null){
             return;
         }
-        if (e == entityUI.GetEntity()){
-            ResetEntityUI();
+        if (combatElement.GetGameObject() == _selectable.GetGameObject()){
+            ResetSelectableUI();
         }
     }
     
 
     public void SetValues(){
         PrepareSlider();
-        image.sprite = entityUI.GetSprite();
-        statsTMP.text = entityUI.GetStats();
+        image.sprite = _selectable.GetSprite();
+        statsTMP.text = _selectable.GetStats();
     }
 
     public void ResetValues(){
@@ -70,7 +61,7 @@ public class UIEntity : MonoBehaviour{
     public void PrepareSlider(){
 
         // Calculate the HP percentage (as a value between 0 and 1)
-        float hpPercentage = entityUI.GetHpPercentage();
+        float hpPercentage = _selectable.GetHpPercentage();
         
         slider.value = hpPercentage;
         // Set the color of the slider based on the HP percentage
@@ -78,18 +69,18 @@ public class UIEntity : MonoBehaviour{
     }
 
     public void OpenFormationMenu(){
-        if (entityUI == null){
+        if (_selectable == null){
             return;
         }
-        if (entityUI.GetEntity().GetType() != typeof(Unit)){
+        if (!_selectable.IsFormationElement()){
             return;
         }
-        Unit u = (Unit)entityUI.GetEntity();
-        if (!u.IsInFormation()){
+        IFormationElement formationElement = _selectable.GetGameObject().GetComponent<IFormationElement>();
+        if (!formationElement.IsInFormation()){
             return;
         }
 
-        uiManager.SelectedFormation = u.GetFormation();
+        uiManager.SetFormationUI(formationElement.GetFormation());
     }
     
 }

@@ -5,61 +5,69 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SocialPlatforms.Impl;
+using Debug = System.Diagnostics.Debug;
 
 public class Formation : MonoBehaviour, IFormation
 {
+    //TODO Alle Entities sollen wieder anklickbar sein, derzeit funktionieren nur türme
+    //TODO Einfügen von Schwerkämpfern
     
-    [SerializeField] protected Unit leader;
-    [SerializeField] protected Dictionary<Vector3,Unit> relativePositions = new Dictionary<Vector3, Unit>();
-    [SerializeField] protected HashSet<Unit> units = new HashSet<Unit>();
-    protected Vector3 targetPos;
-    protected int spacingBetweenUnits;
-    [SerializeField] protected int maxCapacity;
+    #region Fields
+        protected IFormationElement leader;
+        protected Dictionary<Vector3,IFormationElement> relativePositions = new Dictionary<Vector3, IFormationElement>();
+        protected HashSet<IFormationElement> formationElements = new HashSet<IFormationElement>();
+        protected Vector3 targetPos;
+        protected int spacingBetweenUnits;
+        [SerializeField] protected int maxCapacity;
+        #endregion
 
+    #region Formation
     protected virtual void Awake(){
         EventManager.Instance.deathEvent.AddListener(OnEntityDeath);
         GameManager.Instance.player.AddFormation(this);
     }
-    
 
-// Update is called once per frame
+    // Update is called once per frame
     protected void Update()
     {
-        if (units.Count == 0){
-            Destroy(gameObject);
+        if (formationElements.Count == 0){
             EventManager.Instance.formationDeletedEvent.Invoke(this);
+            Destroy(gameObject);
             return;
         }
 
         UpdateUnitDestinations();
     }
-
     public void Initialize(int spacing){
         SetSpacing(spacing);
         CalculateRelativePositions();
     }
 
-    public void SetLeader(Unit u)
+    #endregion
+
+    #region IFormation
+ public void SetLeader(IFormationElement formationElement)
     {
-        leader = u;
-        leader.material = u.leaderMaterial;
-        leader.GetComponent<Renderer>().material = leader.material;
-        units.Add(u);
-        u.AddUnitToFormation(this,Vector3.zero);
+        leader = formationElement;
+        if (leader.IsSelectable()){
+            leader.GetRenderer().material = leader.GetSelectable().GetSelectableMas().MLeader;
+        }
+        formationElements.Add(formationElement);
+        formationElement.AddEntityToFormation(this,Vector3.zero);
         InvokeFormationChangedEvent();
     }
 
-    public Unit GetLeader()
+    public IFormationElement GetLeader()
     {
         return leader;
     }
 
-    public Dictionary<Vector3,Unit> GetRelativePositions(){
+    public Dictionary<Vector3,IFormationElement> GetRelativePositions(){
         return relativePositions;
     }
     
-    public List<Unit> GetUnitsInFormation(){
-        return units.ToList();
+    public List<IFormationElement> GetFormationElements(){
+        return formationElements.ToList();
     }
 
     public void SetFormation()
@@ -77,43 +85,61 @@ public class Formation : MonoBehaviour, IFormation
         targetPos = pos;
     }
 
-    public void SetUnitsInFormation(List<Unit> units)
+    public void SetFormationElements(List<IFormationElement> formationElements)
     {
         //this.units = units;
-        foreach (Unit unit in units){
-            AddUnitToFormation(unit);
+        foreach (IFormationElement element in formationElements){
+            AddFormationElement(element);
         }
     }
 
-    public bool AddUnitToFormation(Unit u)
+    public bool AddFormationElement(IFormationElement u)
     {
-        if (units.Count == maxCapacity)
+        if (formationElements.Count == maxCapacity)
         {
             return false;
         }
 
-        if (units.Count == 0)
+        if (formationElements.Count == 0)
         {
             SetLeader(u);
             return true;
         }
-        
-        //TODO REMOVE UNIT FROM OLD FORMATION
 
         // Find the first available relative position
         Vector3 relativePosition = Vector3.zero;
+        bool nonAllocatedRelativePositionFound = false;
         foreach (Vector3 pos in relativePositions.Keys)
         {
-            if (!relativePositions[pos])
+            if (relativePositions[pos] == null)
             {
                 relativePosition = pos;
+                nonAllocatedRelativePositionFound = true;
                 break;
             }
         }
+
+        if (!nonAllocatedRelativePositionFound){
+            return false;
+        }
+
+        return AddFormationElementAt(u, relativePosition);
+    }
+
+    public bool AddFormationElementAt(IFormationElement u, Vector3 relPos){
         // Add the unit to the dictionary at the relative position
-        relativePositions[relativePosition] = u;
-        units.Add(u);
-        u.AddUnitToFormation(this,relativePosition);
+        if (!relativePositions.Keys.Contains(relPos)){
+            return false;
+        }
+
+        if (relativePositions[relPos] != null){
+            IFormationElement unitToRemove = relativePositions[relPos];
+            this.RemoveFormationElement(unitToRemove);
+        }
+        
+        relativePositions[relPos] = u;
+        formationElements.Add(u);
+        u.AddEntityToFormation(this,relPos);
         InvokeFormationChangedEvent();
         return true;
     }
@@ -122,36 +148,36 @@ public class Formation : MonoBehaviour, IFormation
         EventManager.Instance.formationChangedEvent.Invoke(this);
     }
 
-    public void RemoveUnitFromFormation(Unit u)
+    public void RemoveFormationElement(IFormationElement formationElement)
     {
-        if (units.Contains(u))
+        if (formationElements.Contains(formationElement))
         {
-            units.Remove(u);
-            u.RemoveUnitFromFormation();
-            if (units.Count == 0){
+            formationElements.Remove(formationElement);
+            if (formationElements.Count == 0){
                 leader = null;
+                EventManager.Instance.formationDeletedEvent.Invoke(this);
                 Destroy(gameObject);
                 return;
             }
-            if (u == leader){
-                Unit newLeader = units.ElementAt(0);
-                ResetPosition(newLeader.relativeFormationPos);
+            if (formationElement == leader){
+                IFormationElement newLeader = formationElements.ElementAt(0);
+                ResetPosition(newLeader.GetRelativePosition());
                 SetLeader(newLeader);
             }
             else{
-                ResetPosition(u.relativeFormationPos);
+                ResetPosition(formationElement.GetRelativePosition());
             }
+            formationElement.RemoveEntityFromFormation();
             InvokeFormationChangedEvent();
         }
     }
 
-    private void OnEntityDeath(Entity e)
-    {
-        if (e.GetType() != typeof(Unit)){
+    private void OnEntityDeath(ICombatElement combatElement){
+        IFormationElement formationElement = combatElement.GetFormationElement();
+        if (formationElement == null){
             return;
         }
-        Unit u = (Unit) e;
-        RemoveUnitFromFormation(u);
+        RemoveFormationElement(formationElement);
     }
 
     public virtual void CalculateCapacity(){
@@ -164,17 +190,22 @@ public class Formation : MonoBehaviour, IFormation
     
     private void UpdateUnitDestinations()
     {
-        foreach (KeyValuePair<Vector3, Unit> entry in relativePositions)
+        foreach (KeyValuePair<Vector3, IFormationElement> entry in relativePositions)
         {
             if (leader == null){
                 return;
             }
-            Unit unit = entry.Value;
-            if (unit == leader || unit == null){
+            IFormationElement element = entry.Value;
+            if (element == leader || element == null){
                 continue;
             }
             Vector3 relativePosition = entry.Key;
-            unit.MovePosition = leader.transform.position + relativePosition;
+            if (element.IsMoveable()){
+                IMoveable moveable = element.GetMoveable();
+                Debug.Assert(moveable != null, nameof(moveable) + " != null");
+                moveable.SetMoveToPosition(leader.GetGameObject().transform.position + relativePosition);
+            }
+            
         }
     }
 
@@ -183,14 +214,20 @@ public class Formation : MonoBehaviour, IFormation
     }
 
     public float GetOverallHp(){
-        float maxHP = 0f;
-        float currentHP = 0;
-        foreach (Entity entity in units){
-            maxHP += entity.MAXHp;
-            currentHP += entity.CurrentHp;
+        float maxHp = 0f;
+        float currentHp = 0;
+        foreach (IFormationElement element in formationElements){
+            maxHp += element.GetMaxHP();
+            currentHp += element.GetCurrentHP();
         }
 
-        return currentHP / maxHP;
+        return currentHp / maxHp;
     }
-    
+
+    public Formation GetFormation(){
+        return this;
+    }
+
+    #endregion
+
 }

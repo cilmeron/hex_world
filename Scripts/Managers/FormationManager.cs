@@ -18,36 +18,52 @@ public class FormationManager : MonoBehaviour
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1)){
-            List<Unit> selectedUnits = selectionManager.selectedDictionary.selectedTable.Values.OfType<Unit>().ToList();
-            if (selectedUnits.Count == 0){
+            List<ISelectable> selectables = selectionManager.selectedDictionary.selectedTable.Values.ToList();
+            if (selectables.Count == 0){
                 return;
             }
             RectFormation rectFormation =  CreateRectFormation();
-            foreach (Unit unit in selectedUnits){
-                if (unit.IsInFormation() || unit.GetPlayer()!=GameManager.Instance.player){
-                    return;
+            foreach (ISelectable selectable in selectables){
+                if (!selectable.IsFormationElement()){
+                    continue;
                 }
-                bool successfull = rectFormation.AddUnitToFormation(unit);
+                IFormationElement formationElement = selectable.GetFormationElement();
+                Debug.Assert(formationElement != null, nameof(formationElement) + " != null");
+                if (formationElement.IsInFormation()){
+                    continue;
+                }
+                if (formationElement.GetPlayer()!=GameManager.Instance.player){
+                    continue;
+                }
+                bool successfull = rectFormation.AddFormationElement(selectable.GetFormationElement());
                 if (!successfull){
                     rectFormation = CreateRectFormation();
-                    rectFormation.AddUnitToFormation(unit);
+                    rectFormation.AddFormationElement(selectable.GetFormationElement());
                 }
             }
         }
         if (Input.GetKeyDown(KeyCode.Alpha2)){
-            List<Unit> selectedUnits = selectionManager.selectedDictionary.selectedTable.Values.OfType<Unit>().ToList();
-            if (selectedUnits.Count == 0){
+            List<ISelectable> selectables = selectionManager.selectedDictionary.selectedTable.Values.ToList();
+            if (selectables.Count == 0){
                 return;
             }
             CircleFormation circleFormation =  CreateCircleFormation();
-            foreach (Unit unit in selectedUnits){
-                if (unit.IsInFormation()){
-                    return;
+            foreach (ISelectable selectable in selectables){
+                if (!selectable.IsFormationElement()){
+                    continue;
                 }
-                bool successfull = circleFormation.AddUnitToFormation(unit);
+                IFormationElement formationElement = selectable.GetFormationElement();
+                Debug.Assert(formationElement != null, nameof(formationElement) + " != null");
+                if (formationElement.IsInFormation()){
+                    continue;
+                }
+                if (formationElement.GetPlayer()!=GameManager.Instance.player){
+                    continue;
+                }
+                bool successfull = circleFormation.AddFormationElement(selectable.GetFormationElement());
                 if (!successfull){
                     circleFormation = CreateCircleFormation();
-                    circleFormation.AddUnitToFormation(unit);
+                    circleFormation.AddFormationElement(selectable.GetFormationElement());
                 }
             }
         }
