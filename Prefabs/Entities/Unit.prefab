@@ -189,7 +189,7 @@ MonoBehaviour:
   bulletStart: {fileID: 1481204226429979991}
   player: {fileID: 0}
   goldAmount: 20
-  sprite: {fileID: 21300000, guid: 77319b2f2301fd84bb1cbb4a93c1d8fe, type: 3}
+  sprite: {fileID: 21300000, guid: f081af0ad6ab95d408a6ce3572c65d20, type: 3}
   startPosition: {x: 0, y: 0, z: 0}
   startParent: {fileID: 0}
   movePosition: {x: 0, y: 0, z: 0}
@@ -213,6 +213,7 @@ MonoBehaviour:
   startPosition: {x: 0, y: 0, z: 0}
   offsetToMouse: {x: 0, y: 0, z: 0}
   draggingTransform: {fileID: 0}
+  entity: {fileID: 0}
 --- !u!1 &3077288873580888694
 GameObject:
   m_ObjectHideFlags: 0

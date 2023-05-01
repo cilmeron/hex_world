@@ -5,33 +5,33 @@ using UnityEngine;
 public class Vision : MonoBehaviour{
     public int radius;
     private SphereCollider visionCollider;
-    private Entity e;
+    private ICombatElement combatElement;
     private void Awake(){
         visionCollider = GetComponent<SphereCollider>();
         visionCollider.radius = radius;
-        e = transform.parent.gameObject.GetComponent<Entity>();
+        combatElement = transform.parent.gameObject.GetComponent<ICombatElement>();
     }
     
     private void OnTriggerEnter(Collider other){
-        Entity triggerEntity = other.gameObject.GetComponent<Entity>();
-        if (triggerEntity != null && triggerEntity.GetPlayer() != e.GetPlayer()){
-            if (e.Target == null){
-                e.Target = triggerEntity;
+        ICombatElement triggerCombatElement = other.gameObject.GetComponent<ICombatElement>();
+        if (triggerCombatElement != null && triggerCombatElement.GetPlayer() != combatElement.GetPlayer()){
+            combatElement.AddCombatElementToVision(triggerCombatElement);
+            if (combatElement.GetTarget() == null){
+                combatElement.SetTarget();
             }
-            e.EntitiesInVision.Add(triggerEntity);
+            
         }
         
     }
 
     private void OnTriggerExit(Collider other){
-        Entity triggerEntity = other.gameObject.GetComponent<Entity>();
-        if (triggerEntity != null){
-            if (e.Target == triggerEntity){
-                e.Target = null;
+        ICombatElement triggerCombatElement = other.gameObject.GetComponent<ICombatElement>();
+        if (triggerCombatElement != null){
+            combatElement.RemoveCombatElementFromVision(triggerCombatElement);
+            if (combatElement.GetTarget() == null){
+                combatElement.SetTarget();
             }
-            e.EntitiesInVision.Remove(triggerEntity);
         }
-       
     }
 
     public void UpdateRange(int range){

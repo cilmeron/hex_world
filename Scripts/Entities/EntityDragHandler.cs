@@ -6,17 +6,18 @@ public class EntityDragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler,
     [SerializeField] private Vector3 startPosition;
     [SerializeField] private Vector3 offsetToMouse;
     [SerializeField] private Transform draggingTransform;
-    [SerializeField] private Entity entity;
+    [SerializeField] private Entity selectable;
 
     public void Start(){
-        entity = gameObject.GetComponent<Entity>();
+        selectable = gameObject.GetComponent<Entity>();
     }
     
     public void OnBeginDrag(PointerEventData eventData)
     {
-        Debug.Log("Startdragging somehow");
-        if (eventData.button == PointerEventData.InputButton.Middle)
-        {
+        if (eventData.button == PointerEventData.InputButton.Middle){
+            if (selectable == null){
+                return;
+            }
             draggingTransform = transform;
             startPosition = draggingTransform.position;
             offsetToMouse = startPosition - Camera.main.ScreenToWorldPoint(eventData.position);

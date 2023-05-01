@@ -1,10 +1,11 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public class DeathEvent : UnityEvent<Entity> { }
-public class DamageEvent : UnityEvent<Entity, int> { }
-public class FormationChanged : UnityEvent<Formation> { }
-public class FormationDeleted : UnityEvent<Formation> { }
+public class DeathEvent : UnityEvent<ICombatElement> { }
+public class DamageEvent : UnityEvent<ICombatElement, int> { }
+public class FormationChanged : UnityEvent<IFormation> { }
+public class FormationDeleted : UnityEvent<IFormation> { }
+public class PlayerInitialized : UnityEvent<Player> { }
 
 public class EventManager : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class EventManager : MonoBehaviour
     public DamageEvent damageEvent;
     public FormationChanged formationChangedEvent;
     public FormationDeleted formationDeletedEvent;
+    public PlayerInitialized playerSuccessfullyInitialized;
 
     void Awake()
     {
@@ -21,7 +23,7 @@ public class EventManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -33,5 +35,7 @@ public class EventManager : MonoBehaviour
         damageEvent = new DamageEvent();
         formationChangedEvent = new FormationChanged();
         formationDeletedEvent = new FormationDeleted();
+        playerSuccessfullyInitialized = new PlayerInitialized();
+        
     }
 }
