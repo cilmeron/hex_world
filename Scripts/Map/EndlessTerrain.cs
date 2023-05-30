@@ -1,10 +1,12 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.AI.Navigation;
 
 public class EndlessTerrain : MonoBehaviour
 {
-
+    [SerializeField]
+    public Transform WorldGeometry;
     const float viewerMoveThresholdForChunkUpdate = 25f;
     const float sqrViewerMoveThresholdForChunkUpdate = viewerMoveThresholdForChunkUpdate * viewerMoveThresholdForChunkUpdate;
 
@@ -20,6 +22,9 @@ public class EndlessTerrain : MonoBehaviour
     int chunkSize;
     int chunksVisibleInViewDst;
 
+    public TerrainChunk rootTerrainChunk;
+    public NavMeshSurface navMeshSurface;
+
     Dictionary<Vector2, TerrainChunk> terrainChunkDictionary = new Dictionary<Vector2, TerrainChunk>();
     static List<TerrainChunk> terrainChunksVisibleLastUpdate = new List<TerrainChunk>();
 
@@ -27,12 +32,15 @@ public class EndlessTerrain : MonoBehaviour
     {
         mapGenerator = FindObjectOfType<MapGenerator>();
 
+        navMeshSurface = gameObject.AddComponent<NavMeshSurface>();
+        rootTerrainChunk = new TerrainChunk(Vector2.zero, chunkSize, detailLevels, transform, mapMaterial, navMeshSurface);
+
         maxViewDst = detailLevels[detailLevels.Length - 1].visibleDstThreshold;
         chunkSize = MapGenerator.mapChunkSize - 1;
         chunksVisibleInViewDst = Mathf.RoundToInt(maxViewDst / chunkSize);
 
-        UpdateVisibleChunks();
-    }
+        UpdateVisibleChunks();        
+}
 
     void Update()
     {
@@ -69,7 +77,7 @@ public class EndlessTerrain : MonoBehaviour
                 }
                 else
                 {
-                    terrainChunkDictionary.Add(viewedChunkCoord, new TerrainChunk(viewedChunkCoord, chunkSize, detailLevels, transform, mapMaterial));
+                    terrainChunkDictionary.Add(viewedChunkCoord, new TerrainChunk(viewedChunkCoord, chunkSize, detailLevels, transform, mapMaterial, navMeshSurface));
                 }
 
             }
@@ -86,6 +94,8 @@ public class EndlessTerrain : MonoBehaviour
         MeshRenderer meshRenderer;
         MeshFilter meshFilter;
         MeshCollider meshCollider;
+        //ProceduralNavMeshBaker navMeshBaker;
+
 
         LODInfo[] detailLevels;
         LODMesh[] lodMeshes;
@@ -93,10 +103,13 @@ public class EndlessTerrain : MonoBehaviour
         MapData mapData;
         bool mapDataReceived;
         int previousLODIndex = -1;
+        public NavMeshSurface surface;
 
-        public TerrainChunk(Vector2 coord, int size, LODInfo[] detailLevels, Transform parent, Material material)
+        public TerrainChunk(Vector2 coord, int size, LODInfo[] detailLevels, Transform parent, Material material, NavMeshSurface navMeshSurface)
         {
             this.detailLevels = detailLevels;
+            
+            surface = navMeshSurface;
 
             position = coord * size;
             bounds = new Bounds(position, Vector2.one * size);
@@ -106,6 +119,7 @@ public class EndlessTerrain : MonoBehaviour
             meshRenderer = meshObject.AddComponent<MeshRenderer>();
             meshFilter = meshObject.AddComponent<MeshFilter>();
             meshCollider = meshObject.AddComponent<MeshCollider>();
+            //navMesh = meshObject.AddComponent<ProceduralNavMeshBaker>();
 
             meshRenderer.material = material;
 
@@ -172,12 +186,12 @@ public class EndlessTerrain : MonoBehaviour
                             lodMesh.RequestMesh(mapData);
                         }
                     }
-
+                    surface.BuildNavMesh();
                     terrainChunksVisibleLastUpdate.Add(this);
                 }
 
                 SetVisible(visible);
-            }
+    }
         }
 
         public void SetVisible(bool visible)

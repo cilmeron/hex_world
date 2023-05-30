@@ -1,12 +1,13 @@
 using UnityEngine;
+using UnityEngine.AI;
 using System.Collections;
 using System;
 using System.Threading;
 using System.Collections.Generic;
+using Unity.AI.Navigation;
 
 public class MapGenerator : MonoBehaviour
 {
-
     public enum DrawMode { NoiseMap, ColourMap, Mesh, FalloffMap };
     public DrawMode drawMode;
 
@@ -38,6 +39,8 @@ public class MapGenerator : MonoBehaviour
 
     Queue<MapThreadInfo<MapData>> mapDataThreadInfoQueue = new Queue<MapThreadInfo<MapData>>();
     Queue<MapThreadInfo<MeshData>> meshDataThreadInfoQueue = new Queue<MapThreadInfo<MeshData>>();
+
+    
 
     void Awake()
     {
