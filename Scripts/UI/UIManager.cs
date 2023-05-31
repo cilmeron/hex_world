@@ -14,7 +14,7 @@ public class UIManager : MonoBehaviour{
     private Player player;
     [SerializeField] private UITopBar uiTopbar;
     [SerializeField] private UIEntity uiEntity;
-    [SerializeField] private UIFormation uiFormation;
+    //[SerializeField] private UIFormation uiFormation;
 
     [SerializeField] private Entity selectedEntity;
     [SerializeField] private Formation selectedFormation;
@@ -73,8 +73,8 @@ public class UIManager : MonoBehaviour{
 
     public void SetFormationUI(){
         uiEntity.gameObject.SetActive(false);
-        uiFormation.gameObject.SetActive(true);
-        uiFormation.SetFormation(selectedFormation);
+      //  uiFormation.gameObject.SetActive(true);
+     //   uiFormation.SetFormation(selectedFormation);
         
     }
     
@@ -86,7 +86,7 @@ public class UIManager : MonoBehaviour{
         }else if ( selectionCount == 1){
             selectedEntity = selectionManager.selectedDictionary.selectedTable.Values.First();
             uiEntity.gameObject.SetActive(true);
-            uiFormation.gameObject.SetActive(false);
+        //    uiFormation.gameObject.SetActive(false);
             uiEntity.SetEntityUI(selectedEntity);
         }else{
             //Multiple Selection   
