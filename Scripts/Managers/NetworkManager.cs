@@ -62,6 +62,7 @@ public class NetworkManager : MonoBehaviour
         try
         {
             client.Connect(ip, port);
+            InitConnection();
         }
         catch
         {
@@ -88,6 +89,11 @@ public static System.Net.IPAddress GetIp(string hostname)
     return outip;
 
 }
+    void InitConnection()
+    {
+        string hello = "H:"+playername;
+        SendMsg(hello);
+    }
 
     public void Disconnect()
     {
