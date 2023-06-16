@@ -51,6 +51,7 @@ public class EndlessTerrain : MonoBehaviour
         {
             viewerPositionOld = viewerPosition;
             UpdateVisibleChunks();
+            //navMeshSurface.BuildNavMesh(); // why is it not working here?
         }
     }
 
@@ -83,6 +84,7 @@ public class EndlessTerrain : MonoBehaviour
 
             }
         }
+        //navMeshSurface.BuildNavMesh();
     }
 
     public class TerrainChunk
@@ -104,8 +106,9 @@ public class EndlessTerrain : MonoBehaviour
         MapData mapData;
         bool mapDataReceived;
         int previousLODIndex = -1;
-        public NavMeshSurface navMeshSurface;
+        public NavMeshSurface navMeshSurface = new NavMeshSurface();
         public float maxViewDist;
+        bool navMeshBuild = false;
 
         public TerrainChunk(Vector2 coord, int size, LODInfo[] detailLevels, Transform parent, Material material, NavMeshSurface navMeshSurface)
         {
@@ -183,15 +186,18 @@ public class EndlessTerrain : MonoBehaviour
                             previousLODIndex = lodIndex;
                             meshFilter.mesh = lodMesh.mesh;
                             meshCollider.sharedMesh = lodMesh.mesh;
-
-                            navMeshSurface.BuildNavMesh();
+                            if(!navMeshBuild)
+                            {
+                                navMeshSurface.BuildNavMesh();
+                                navMeshBuild = true;
+                            }
                         }
                         else if (!lodMesh.hasRequestedMesh)
                         {
                             lodMesh.RequestMesh(mapData);
+                            navMeshSurface.BuildNavMesh();
                         }
                     }
-                    //surface.BuildNavMesh();
                     terrainChunksVisibleLastUpdate.Add(this);
                 }
 
