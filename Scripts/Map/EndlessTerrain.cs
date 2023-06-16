@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.AI.Navigation;
+using UnityEngine.AI;
 
 public class EndlessTerrain : MonoBehaviour
 {
@@ -103,13 +104,14 @@ public class EndlessTerrain : MonoBehaviour
         MapData mapData;
         bool mapDataReceived;
         int previousLODIndex = -1;
-        public NavMeshSurface surface;
+        public NavMeshSurface navMeshSurface;
+        public float maxViewDist;
 
         public TerrainChunk(Vector2 coord, int size, LODInfo[] detailLevels, Transform parent, Material material, NavMeshSurface navMeshSurface)
         {
             this.detailLevels = detailLevels;
             
-            surface = navMeshSurface;
+            this.navMeshSurface = navMeshSurface;
 
             position = coord * size;
             bounds = new Bounds(position, Vector2.one * size);
@@ -119,6 +121,7 @@ public class EndlessTerrain : MonoBehaviour
             meshRenderer = meshObject.AddComponent<MeshRenderer>();
             meshFilter = meshObject.AddComponent<MeshFilter>();
             meshCollider = meshObject.AddComponent<MeshCollider>();
+
             //navMesh = meshObject.AddComponent<ProceduralNavMeshBaker>();
 
             meshRenderer.material = material;
@@ -180,13 +183,15 @@ public class EndlessTerrain : MonoBehaviour
                             previousLODIndex = lodIndex;
                             meshFilter.mesh = lodMesh.mesh;
                             meshCollider.sharedMesh = lodMesh.mesh;
+
+                            navMeshSurface.BuildNavMesh();
                         }
                         else if (!lodMesh.hasRequestedMesh)
                         {
                             lodMesh.RequestMesh(mapData);
                         }
                     }
-                    surface.BuildNavMesh();
+                    //surface.BuildNavMesh();
                     terrainChunksVisibleLastUpdate.Add(this);
                 }
 
