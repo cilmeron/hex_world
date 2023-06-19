@@ -5,8 +5,8 @@ public class Projectile : MonoBehaviour
     [SerializeField] private float speed = 10f;
     [SerializeField] private int damage = 10;
     [SerializeField] private float timeToLive = 5f; // TTL in seconds
-    [SerializeField] private ICombatElement owner;
-    [SerializeField] private ICombatElement target;
+    [SerializeField] private C_Combat owner;
+    [SerializeField] private Entity target;
     [SerializeField] private Vector3 startPos;
 
     private float remainingTimeToLive; // Remaining TTL in seconds
@@ -15,7 +15,7 @@ public class Projectile : MonoBehaviour
     {
         remainingTimeToLive = timeToLive;
         SetProjectileDirection();
-        EventManager.Instance.deathEvent.AddListener(CombatElementDeath);
+        //EventManager.Instance.deathEvent.AddListener(CombatElementDeath);
     }
 
     private void FixedUpdate()
@@ -38,16 +38,16 @@ public class Projectile : MonoBehaviour
             Destroy(gameObject); // TODO improveable Logic
         }
         GameObject colliderGameObject = other.gameObject;
-        if (owner == null || colliderGameObject == null || colliderGameObject == owner.GetGameObject()){
+        if (owner == null || colliderGameObject == null || colliderGameObject == owner.gameObject){
             return;
         }
         if (colliderGameObject.layer == LayerMask.NameToLayer("Ignore Raycast")){
             return;
         }
 
-        ICombatElement combatElement = colliderGameObject.GetComponent<ICombatElement>();
-        if (combatElement != null){
-            EventManager.Instance.damageEvent.Invoke(combatElement,damage);
+        C_Health cHealth = colliderGameObject.GetComponent<C_Health>();
+        if (cHealth != null){
+            EventManager.Instance.damageEvent.Invoke(cHealth,damage);
         }
         Destroy(gameObject);
     }
@@ -55,18 +55,18 @@ public class Projectile : MonoBehaviour
 
     private void SetProjectileDirection(){
         transform.position = startPos;
-        Vector3 directionToTarget = target.GetGameObject().transform.position - transform.position;
+        Vector3 directionToTarget = target.gameObject.transform.position - transform.position;
 
         Quaternion rotation = Quaternion.LookRotation(directionToTarget);
 
         transform.rotation = rotation;
     }
 
-    private void CombatElementDeath(ICombatElement e){
-        if (e == owner){
+    private void CombatElementDeath(C_Combat combatElement){
+        if (combatElement == owner){
             owner = null;
         }
-        else if(e == target){
+        else if(combatElement == target.CCombat){
             target = null;
         }
     }
@@ -76,12 +76,12 @@ public class Projectile : MonoBehaviour
         set => damage = value;
     }
 
-    public ICombatElement Owner{
+    public C_Combat Owner{
         get => owner;
         set => owner = value;
     }
 
-    public ICombatElement Target{
+    public Entity Target{
         get => target;
         set => target = value;
     }

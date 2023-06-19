@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class global_selection : MonoBehaviour
+public class GlobalSelection : MonoBehaviour
 {
     
-    selected_dictionary selected_table;
+    SelectedDictionary selected_table;
     RaycastHit hit;
 
     bool dragSelect;
@@ -30,7 +30,7 @@ public class global_selection : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        selected_table = GetComponent<selected_dictionary>();
+        selected_table = GetComponent<SelectedDictionary>();
         dragSelect = false;
     }
 
@@ -55,29 +55,29 @@ public class global_selection : MonoBehaviour
         //3. when mouse button comes up
         if (Input.GetMouseButtonUp(0) && !EventSystem.current.IsPointerOverGameObject())
         {
-            if(dragSelect == false) //single select
+            if(dragSelect == false) //single Select
             {
                 Ray ray = Camera.main.ScreenPointToRay(p1);
 
                 if(Physics.Raycast(ray,out hit, 500.0f))
                 {
-                    ISelectable hitSelectable = hit.transform.gameObject.GetComponent<ISelectable>();
+                    C_Selectable hitSelectable = hit.transform.gameObject.GetComponent<C_Selectable>();
                     if (hitSelectable == null)
                     {
-                        selected_table.deselectAll();
+                        selected_table.DeselectAll();
                         return;
                     }
-                    if (Input.GetKey(KeyCode.LeftShift)) //inclusive select
+                    if (Input.GetKey(KeyCode.LeftShift)) //inclusive Select
                     {
-                        selected_table.addSelected(hitSelectable);
+                        selected_table.AddSelected(hitSelectable);
                     }
                     else if(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
                     {
-                        selected_table.removeSelected(hitSelectable);
+                        selected_table.RemoveSelected(hitSelectable);
                     }
                     else //exclusive selected
                     {
-                        selected_table.select(hitSelectable);
+                        selected_table.Select(hitSelectable);
                     }
                 }
                 else //if we didnt hit something
@@ -89,11 +89,11 @@ public class global_selection : MonoBehaviour
                     }
                     else
                     {
-                        selected_table.deselectAll();
+                        selected_table.DeselectAll();
                     }
                 }
             }
-            else //marquee select
+            else //marquee Select
             {
                 verts = new Vector3[4];
                 vecs = new Vector3[4];
@@ -128,12 +128,12 @@ public class global_selection : MonoBehaviour
 
                 if (!Input.GetKey(KeyCode.LeftShift))
                 {
-                    selected_table.deselectAll();
+                    selected_table.DeselectAll();
                 }
 
                Destroy(selectionBox, 0.02f);
 
-            }//end marquee select
+            }//end marquee Select
 
             dragSelect = false;
 
@@ -194,9 +194,9 @@ public class global_selection : MonoBehaviour
     }
 
     private void OnTriggerEnter(Collider other){
-        ISelectable selectable = other.GetComponent<ISelectable>();
+        C_Selectable selectable = other.GetComponent<C_Selectable>();
         if (selectable != null){
-            selected_table.addSelected(selectable);
+            selected_table.AddSelected(selectable);
         }
     }
 }

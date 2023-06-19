@@ -24,17 +24,13 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
-    void Start(){
-        EventManager.Instance.damageEvent.AddListener(SetFloatingDamageText);
-    }
     
-    private void SetFloatingDamageText(ICombatElement combatElement, int damage)
+    private void SetFloatingDamageText(C_Combat combatElement, int damage)
     {
         if (floatingDamageText)
         {
-            GameObject damageTextObject = Instantiate(damageTextPrefab, combatElement.GetGameObject().transform.position, Quaternion.identity);
-            damageTextObject.transform.SetParent(combatElement.GetGameObject().transform,false);
+            GameObject damageTextObject = Instantiate(damageTextPrefab, combatElement.gameObject.transform.position, Quaternion.identity);
+            damageTextObject.transform.SetParent(combatElement.gameObject.transform,false);
             Billboard billboard = damageTextObject.GetComponent<Billboard>();
             billboard.TMP.text = damage.ToString();
         }

@@ -13,9 +13,9 @@ public class Formation : MonoBehaviour, IFormation
     //TODO Einfügen von Schwerkämpfern
     
     #region Fields
-        protected IFormationElement leader;
-        protected Dictionary<Vector3,IFormationElement> relativePositions = new Dictionary<Vector3, IFormationElement>();
-        protected HashSet<IFormationElement> formationElements = new HashSet<IFormationElement>();
+        protected C_Formation leader;
+        protected Dictionary<Vector3,C_Formation> relativePositions = new Dictionary<Vector3, C_Formation>();
+        protected HashSet<C_Formation> formationElements = new HashSet<C_Formation>();
         protected Vector3 targetPos;
         protected int spacingBetweenUnits;
         [SerializeField] protected int maxCapacity;
@@ -36,7 +36,7 @@ public class Formation : MonoBehaviour, IFormation
             return;
         }
 
-        UpdateUnitDestinations();
+        UpdateFormationElementDestinations();
     }
     public void Initialize(int spacing){
         SetSpacing(spacing);
@@ -46,28 +46,28 @@ public class Formation : MonoBehaviour, IFormation
     #endregion
 
     #region IFormation
- public void SetLeader(IFormationElement formationElement)
+ public void SetLeader(C_Formation formationElement)
     {
         leader = formationElement;
-        if (leader.IsSelectable()){
-            leader.GetRenderer().material = leader.GetSelectable().GetSelectableMas().MLeader;
+        if (leader.Entity.CSelectable!=null){
+            leader.Entity.CLook.GetRenderer().material = leader.Entity.CLook.MLeader;
         }
         formationElements.Add(formationElement);
         formationElement.AddEntityToFormation(this,Vector3.zero);
         InvokeFormationChangedEvent();
     }
 
-    public IFormationElement GetLeader()
+    public C_Formation GetLeader()
     {
         return leader;
     }
 
-    public Dictionary<Vector3,IFormationElement> GetRelativePositions(){
+    public Dictionary<Vector3,C_Formation> GetRelativePositions(){
         return relativePositions;
     }
     
-    public List<IFormationElement> GetFormationElements(){
-        return formationElements.ToList();
+    public HashSet<C_Formation> GetFormationElements(){
+        return formationElements;
     }
 
     public void SetFormation()
@@ -85,15 +85,15 @@ public class Formation : MonoBehaviour, IFormation
         targetPos = pos;
     }
 
-    public void SetFormationElements(List<IFormationElement> formationElements)
+    public void SetFormationElements(List<C_Formation> formationElements)
     {
         //this.units = units;
-        foreach (IFormationElement element in formationElements){
-            AddFormationElement(element);
+        foreach (C_Formation formationElement in formationElements){
+            AddFormationElement(formationElement);
         }
     }
 
-    public bool AddFormationElement(IFormationElement u)
+    public bool AddFormationElement(C_Formation e)
     {
         if (formationElements.Count == maxCapacity)
         {
@@ -102,7 +102,7 @@ public class Formation : MonoBehaviour, IFormation
 
         if (formationElements.Count == 0)
         {
-            SetLeader(u);
+            SetLeader(e);
             return true;
         }
 
@@ -123,23 +123,23 @@ public class Formation : MonoBehaviour, IFormation
             return false;
         }
 
-        return AddFormationElementAt(u, relativePosition);
+        return AddFormationElementAt(e, relativePosition);
     }
 
-    public bool AddFormationElementAt(IFormationElement u, Vector3 relPos){
+    public bool AddFormationElementAt(C_Formation formationElement, Vector3 relPos){
         // Add the unit to the dictionary at the relative position
         if (!relativePositions.Keys.Contains(relPos)){
             return false;
         }
 
         if (relativePositions[relPos] != null){
-            IFormationElement unitToRemove = relativePositions[relPos];
-            this.RemoveFormationElement(unitToRemove);
+            C_Formation formationElementToRemove = relativePositions[relPos];
+            RemoveFormationElement(formationElementToRemove);
         }
         
-        relativePositions[relPos] = u;
-        formationElements.Add(u);
-        u.AddEntityToFormation(this,relPos);
+        relativePositions[relPos] = formationElement;
+        formationElements.Add(formationElement);
+        formationElement.AddEntityToFormation(this,relPos);
         InvokeFormationChangedEvent();
         return true;
     }
@@ -148,8 +148,11 @@ public class Formation : MonoBehaviour, IFormation
         EventManager.Instance.formationChangedEvent.Invoke(this);
     }
 
-    public void RemoveFormationElement(IFormationElement formationElement)
+    public void RemoveFormationElement(C_Formation formationElement)
     {
+        if (formationElement == null){
+            return;
+        }
         if (formationElements.Contains(formationElement))
         {
             formationElements.Remove(formationElement);
@@ -160,20 +163,20 @@ public class Formation : MonoBehaviour, IFormation
                 return;
             }
             if (formationElement == leader){
-                IFormationElement newLeader = formationElements.ElementAt(0);
-                ResetPosition(newLeader.GetRelativePosition());
+                C_Formation newLeader = formationElements.ElementAt(0);
+                ResetPosition(newLeader.RelativeFormationPos);
                 SetLeader(newLeader);
             }
             else{
-                ResetPosition(formationElement.GetRelativePosition());
+                ResetPosition(formationElement.RelativeFormationPos);
             }
             formationElement.RemoveEntityFromFormation();
             InvokeFormationChangedEvent();
         }
     }
 
-    private void OnEntityDeath(ICombatElement combatElement){
-        IFormationElement formationElement = combatElement.GetFormationElement();
+    private void OnEntityDeath(C_Health cHealth){
+        C_Formation formationElement = cHealth.Entity.CFormation;
         if (formationElement == null){
             return;
         }
@@ -188,22 +191,22 @@ public class Formation : MonoBehaviour, IFormation
         throw new System.NotImplementedException();
     }
     
-    private void UpdateUnitDestinations()
+    private void UpdateFormationElementDestinations()
     {
-        foreach (KeyValuePair<Vector3, IFormationElement> entry in relativePositions)
+        foreach (KeyValuePair<Vector3, C_Formation> entry in relativePositions)
         {
             if (leader == null){
                 return;
             }
-            IFormationElement element = entry.Value;
+            C_Formation element = entry.Value;
             if (element == leader || element == null){
                 continue;
             }
             Vector3 relativePosition = entry.Key;
-            if (element.IsMoveable()){
-                IMoveable moveable = element.GetMoveable();
+            if (element.Entity.CMoveable != null){
+                C_Moveable moveable = element.Entity.CMoveable;
                 Debug.Assert(moveable != null, nameof(moveable) + " != null");
-                moveable.SetMoveToPosition(leader.GetGameObject().transform.position + relativePosition);
+                moveable.SetMoveToPosition(leader.transform.position + relativePosition,true);
             }
             
         }
@@ -216,9 +219,9 @@ public class Formation : MonoBehaviour, IFormation
     public float GetOverallHp(){
         float maxHp = 0f;
         float currentHp = 0;
-        foreach (IFormationElement element in formationElements){
-            maxHp += element.GetMaxHP();
-            currentHp += element.GetCurrentHP();
+        foreach (C_Formation element in formationElements){
+            maxHp += element.Entity.CHealth.GetMaxHp();
+            currentHp += element.Entity.CHealth.GetCurrentHp();
         }
 
         return currentHp / maxHp;
