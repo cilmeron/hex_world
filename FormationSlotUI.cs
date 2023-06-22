@@ -11,16 +11,14 @@ public class FormationSlotUI : MonoBehaviour, IDropHandler{
     private Formation formation;
     private Vector3 relFormationPos;
 
-    private IFormationElement formationElement;
+    private C_Formation formationElement;
     
-    private selected_dictionary selected_table;
+    private SelectedDictionary selected_table;
     
     // Start is called before the first frame update
     void Start(){
         image = GetComponent<Image>();
         selected_table = SelectionManager.Instance.selectedDictionary;
-        EventManager.Instance.deathEvent.AddListener(CombatElementDied);
-        
     }
 
     
@@ -29,18 +27,18 @@ public class FormationSlotUI : MonoBehaviour, IDropHandler{
         // Get the dragged game object
         GameObject draggedObject = eventData.pointerDrag;
 
-        formationElement = draggedObject.gameObject.GetComponent<IFormationElement>();
+        formationElement = draggedObject.gameObject.GetComponent<C_Formation>();
         if (formationElement == null){
             return;
         }
-        if (formationElement.GetPlayer() != GameManager.Instance.player){
+        if (formationElement.Entity.GetPlayer() != GameManager.Instance.player){
             return;
         }
         if (formationElement.GetType() != typeof(Unit)){
             return;
         }
         if (formationElement.IsInFormation()){
-            formationElement.GetFormation().RemoveFormationElement(formationElement);
+            formationElement.Formation.RemoveFormationElement(formationElement);
         }
         if (!formation.AddFormationElementAt(formationElement,relFormationPos)){
             Debug.Log("Unit was not added to Formation");
@@ -60,31 +58,24 @@ public class FormationSlotUI : MonoBehaviour, IDropHandler{
         set => formation = value;
     }
 
-    private void CombatElementDied(ICombatElement combatElement){
-        if (combatElement.GetType() == typeof(IFormationElement) && formationElement!=null){
-            IFormationElement tempFormationElement = (IFormationElement) combatElement;
-            if (formationElement == tempFormationElement){
-                formationElement = null;
-            }
-        }
-    }
 
 
-    public void SetFormationElement(IFormationElement element){
+    public void SetFormationElement(C_Formation element){
         formationElement = element;
-        image.sprite = element.GetSprite();
+        image.sprite = element.Sprite;
     }
     
-    public IFormationElement FormationElement{
+    public C_Formation FormationElement{
         get => formationElement;
         set => SetFormationElement(value);
     }
 
     public void HighlightElement(){
-        if (formationElement == null || !formationElement.IsSelectable()){
+        if (formationElement == null || formationElement.Entity.CSelectable != null){
             return;
         }
-        selected_table.addSelected(formationElement.GetSelectable());
+        C_Selectable selectable = formationElement.gameObject.GetComponent<C_Selectable>();
+        selected_table.AddSelected(selectable);
     }
 
     public Vector3 RelFormationPos{

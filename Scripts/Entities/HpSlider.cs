@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class HpSlider : MonoBehaviour{
-    private ICombatElement combatElement;
+    private C_Health cHealth;
 
     private Slider slider;
     
@@ -13,33 +13,32 @@ public class HpSlider : MonoBehaviour{
     public bool isActive = false;
     
     // Start is called before the first frame update
-    void Start(){
-        combatElement = transform.parent.GetComponent<ICombatElement>();
+    void Awake(){
+        cHealth = transform.parent.GetComponent<C_Health>();
         slider = transform.GetChild(0).GetComponent<Slider>();
-        slider.maxValue = combatElement.GetMaxHP();
-        slider.value = combatElement.GetCurrentHP();
-        transform.position = combatElement.GetGameObject().transform.position + offset;
+        slider.maxValue = cHealth.GetMaxHp();
+        slider.value = cHealth.GetCurrentHp();
+        transform.position = cHealth.gameObject.transform.position + offset;
     }
+  
 
-    // Update is called once per frame
-    void Update(){
+    public void UpdateHpSlider(){
+        
+        // Update the value of the slider to reflect the selectable's current HP
+        slider.value = cHealth.GetCurrentHp();
+
+        // Calculate the HP percentage (as a value between 0 and 1)
+        float hpPercentage = cHealth.GetCurrentHp() / cHealth.GetMaxHp();
+
+        // Set the color of the slider based on the HP percentage
+        slider.fillRect.GetComponentInChildren<Image>().color = Color.Lerp(Color.red, Color.green, hpPercentage);
+        
         slider.gameObject.SetActive(isActive);
-        if (isActive){
-            // Update the value of the slider to reflect the selectable's current HP
-            slider.value = combatElement.GetCurrentHP();
-
-            // Calculate the HP percentage (as a value between 0 and 1)
-            float hpPercentage = combatElement.GetCurrentHP() / combatElement.GetMaxHP();
-
-            // Set the color of the slider based on the HP percentage
-            slider.fillRect.GetComponentInChildren<Image>().color = Color.Lerp(Color.red, Color.green, hpPercentage);
-            
-            
-        }
     }
-
-    public bool IsActive{
-        get => isActive;
-        set => isActive = value;
+    
+    public void Activate(bool active){
+        isActive = active;
+        slider.gameObject.SetActive(isActive);
     }
+    
 }

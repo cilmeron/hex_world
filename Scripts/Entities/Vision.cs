@@ -5,31 +5,35 @@ using UnityEngine;
 public class Vision : MonoBehaviour{
     public int radius;
     private SphereCollider visionCollider;
-    private ICombatElement combatElement;
+    private C_Combat cCombat;
     private void Awake(){
         visionCollider = GetComponent<SphereCollider>();
         visionCollider.radius = radius;
-        combatElement = transform.parent.gameObject.GetComponent<ICombatElement>();
+        cCombat = transform.parent.gameObject.GetComponent<C_Combat>();
     }
     
     private void OnTriggerEnter(Collider other){
-        ICombatElement triggerCombatElement = other.gameObject.GetComponent<ICombatElement>();
-        if (triggerCombatElement != null && triggerCombatElement.GetPlayer() != combatElement.GetPlayer()){
-            combatElement.AddCombatElementToVision(triggerCombatElement);
-            if (combatElement.GetTarget() == null){
-                combatElement.SetTarget();
+        C_Health triggeredCHealth = other.gameObject.GetComponent<C_Health>();
+        if (triggeredCHealth != null){
+            cCombat.AddCHealthToVision(triggeredCHealth);
+            if (cCombat.GetTarget() == null){
+                cCombat.SetTarget();
             }
             
         }
-        
     }
 
+    //private MAS Löschen; 
+    //Unit + Entity Implementierung Aufräumen;
+    
+    
+
     private void OnTriggerExit(Collider other){
-        ICombatElement triggerCombatElement = other.gameObject.GetComponent<ICombatElement>();
-        if (triggerCombatElement != null){
-            combatElement.RemoveCombatElementFromVision(triggerCombatElement);
-            if (combatElement.GetTarget() == null){
-                combatElement.SetTarget();
+        C_Health triggeredCHealth = other.gameObject.GetComponent<C_Health>();
+        if (triggeredCHealth != null){
+            cCombat.RemoveCHealthFromVision(triggeredCHealth);
+            if (cCombat.GetTarget() == null || cCombat.GetTarget() == triggeredCHealth){
+                cCombat.SetTarget();
             }
         }
     }

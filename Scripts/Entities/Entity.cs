@@ -7,51 +7,45 @@ using UnityEngine.EventSystems;
 using UnityEngine.Search;
 using UnityEngine.UI;
 
-public class Entity : MonoBehaviour, ICombatElement{
+public class Entity : MonoBehaviour{
 
-    #region Fields
-        [SerializeField] protected int maxHP = 100;
-        [SerializeField] protected int currentHP;
-        protected Vision vision;
-        private HashSet<ICombatElement> combatElementsInVision  = new HashSet<ICombatElement>();
-        private ICombatElement target;
-        [SerializeField] private float attackTime;
-        [SerializeField] private int attackDmg;
-        [SerializeField] private GameObject projectile;
-        private bool isAttacking = false;
-        private HpSlider hpSlider;
-        [SerializeField] private Transform bulletStart;
+
+        protected C_Health cHealth;
+        protected C_Combat cCombat;
+        protected C_Selectable cSelectable;
+        protected C_Formation cFormation;
+        protected C_Moveable cMoveable;
+        protected C_Look cLook;
+        
+        
         [SerializeField] protected Player player;
         [SerializeField] private int goldAmount;
         [SerializeField] private Sprite sprite;
-        
-        [SerializeField] private Vector3 startPosition;
-        [SerializeField] private Transform startParent;
-        protected SelectableMas SelectableMas;
 
-        private SelectionManager selectionManager;
-    #endregion
     
+        private bool isHovered = false;
     
-    #region Selectable Implementation
 
         protected virtual void Awake(){
-            vision = transform.GetChild(0).GetComponent<Vision>();
-            hpSlider = transform.GetChild(1).GetComponent<HpSlider>();
+            cHealth = GetComponent<C_Health>();
+            cCombat = GetComponent<C_Combat>();
+            cSelectable = GetComponent<C_Selectable>();
+            cFormation = GetComponent<C_Formation>();
+            cMoveable = GetComponent<C_Moveable>();
         }
     
         protected virtual void Start(){
-            EventManager.Instance.deathEvent.AddListener(CombatElementDied);
-            EventManager.Instance.damageEvent.AddListener(RemoveHp);
             EventManager.Instance.playerSuccessfullyInitialized.AddListener(InitEntityAfterPlayerInit);
             //It may occur, that some players are created before the player's Start method is called.
             //Therefore, the event needs to be invoked as well as the InitEntityAfterPlayerInit function
             //needs to be called.
-            if (player.PlayerMas == null){
+            if (player == null){
+                return;
+            }
+            if (player.PlayerLook == null){
                 return;
             }
             InitEntityAfterPlayerInit(player);
-            selectionManager = SelectionManager.Instance;
         }
 
         private void InitEntityAfterPlayerInit(Player p){
@@ -63,32 +57,13 @@ public class Entity : MonoBehaviour, ICombatElement{
         }
         
         protected virtual void Update(){
-            if (currentHP <= 0){
-                OnDeath();
-            }
-    
-            if (target != null && !isAttacking){
-                StartCoroutine(Attack());
-            }
-        }
-    
-        public virtual void SetMaterialsAndShaders(){
             
         }
 
-        
+        public virtual void SetMaterialsAndShaders(){
 
-        public bool IsSelected(){
-            if (selectionManager == null){
-                return false;
-            }
-            return selectionManager.selectedDictionary.selectedTable.Values.Contains(this);
         }
-        
-    #endregion
-    
-    
-    #region IOwnership Implementation
+
         public void SetPlayer(Player p){
             player = p;
             GameResourceManager.AddResourceAmount(player,GameResourceManager.ResourceType.Gold,goldAmount);
@@ -98,137 +73,104 @@ public class Entity : MonoBehaviour, ICombatElement{
             return player;
         }
 
-    #endregion
-    
-
-    #region ICombatElement Implementation
-        public void RemoveHp(ICombatElement e,int hpToRemove){
-            if (gameObject == e.GetGameObject()){
-                currentHP -= hpToRemove;
-            }
-        }
         
-        public void AddHp(int hpToAdd){
-            currentHP += hpToAdd;
-        }
-        public void SetHpSliderActive(bool active){
-            hpSlider.IsActive = active;
-        }
-
-        public virtual void OnDeath(){
-            EventManager.Instance.deathEvent.Invoke(this);
-            Destroy(gameObject);
-        }
-
-        public IEnumerator Attack(){
-            float timeTillAttack = attackTime;
-            isAttacking = true;
-            Transform t = transform;
-            GameObject projectileObject = Instantiate(projectile, t.position, t.rotation);
-            Projectile bullet = projectileObject.GetComponent<Projectile>();
-            bullet.StartPos = bulletStart.position;
-            bullet.Owner = this;
-            bullet.Target = target;
-            bullet.Damage = attackDmg;
     
-            while (timeTillAttack > 0){
-                yield return null; // wait for the next frame
-                timeTillAttack -= Time.deltaTime;
-            }
-            isAttacking = false;
-        }
-        
-        public void SetTarget(){
-            if (combatElementsInVision.Count == 0){
-                target = null;
-                return;
-            }
-            target = combatElementsInVision.First();
-        }
-
-        public void CombatElementDied(ICombatElement combatElement){
-            if (combatElementsInVision.Contains(combatElement)){
-                RemoveCombatElementFromVision(combatElement);
-                if (target == combatElement){
-                    target = null;
-                }
-            }
-            SetTarget();
-        }
-
-
-        public ICombatElement GetTarget(){
-            return target;
-        }
-
-        public void AddCombatElementToVision(ICombatElement combatElement){
-            combatElementsInVision.Add(combatElement);
-        }
-
-        public void RemoveCombatElementFromVision(ICombatElement combatElement){
-            combatElementsInVision.Remove(combatElement);
-        }
-
-        public float GetCurrentHP(){
-            return currentHP;
-        }
-
-        public float GetMaxHP(){
-            return maxHP;
-        }
-
-        #endregion
-    
-
-    #region ISelectable Implemenatation
-        public float GetHpPercentage(){
-            return  (float)currentHP/maxHP;
-        }
-    
-        public virtual string GetStats(){
-            return currentHP + " / " + maxHP;
-        }
-    
-        public Sprite GetSprite(){
-            return sprite;
-        }
-
-        public GameObject GetGameObject(){
-            return gameObject;
-        }
-
-        public Vector3 GetPosition(){
-            return transform.position;
-        }
-    
-        public SelectableMas GetSelectableMas(){
-            return SelectableMas;
-        }
-    #endregion
-    
-
-    #region Properties Implementation
-
-        public HashSet<ICombatElement> CombatElementsInVision{
-            get => combatElementsInVision;
-            set => combatElementsInVision = value;
-        }
-    
-        public ICombatElement Target{
-            get => target;
-            set => target = value;
-        }
-    
-    
-
-    #endregion
-
-    #region ISelectable Implementation
-
-    public virtual IFormationElement GetFormationElement(){
-        return null;
+    public Sprite GetSprite(){
+        return sprite;
     }
 
-    #endregion
+
+    public C_Health CHealth{
+        get => cHealth;
+    }
+
+    public C_Combat CCombat{
+        get => cCombat;
+    }
+
+    public C_Selectable CSelectable{
+        get => cSelectable;
+    }
+
+    public C_Formation CFormation{
+        get => cFormation;
+    }
+    
+    public C_Moveable CMoveable{
+        get => cMoveable;
+    }
+    
+    public C_Look CLook{
+        get => cLook;
+    }
+    
+    
+    public Renderer GetRenderer(){
+        return gameObject.GetComponent<Renderer>();
+    }
+
+    public void SetMaterialToRenderer(Material material){
+        gameObject.GetComponent<Renderer>().material = material;
+    }
+    
+    
+    private void OnMouseEnter()
+    {
+        if (!isHovered)
+        {
+            isHovered = true;
+            EventManager.Instance.mouseEnteredEntity.Invoke(this);
+        }
+    }
+
+    private void OnMouseExit()
+    {
+        if (isHovered)
+        {
+            isHovered = false;
+            EventManager.Instance.mouseExitedEntity.Invoke(this);
+        }
+    }
+    private void OnMouseDown()
+    {
+        //if (Input.GetMouseButtonDown(0)) // Left mouse button pressed
+        //{
+        //    Debug.Log("Left mouse button pressed on GameObject");
+        //    // Perform actions for left mouse button press
+        //}
+        //else if (Input.GetMouseButtonDown(1)) // Right mouse button pressed
+        //{
+        //    Debug.Log("Right mouse button pressed on GameObject");
+        //    // Perform actions for right mouse button press
+        //}else if (Input.GetMouseButtonDown(2)) // Right mouse button pressed
+        //{
+        //    Debug.Log("Middle mouse button pressed on GameObject");
+        //    // Perform actions for middle mouse button press
+        //}
+    }
+    private void OnMouseOver() // OnMouseDown Event funktioniert nur für LeftClick
+    {
+        if (Input.GetMouseButtonUp(0)) // Left mouse button released
+        {
+            
+        }
+        else if (Input.GetMouseButtonUp(1)) // Right mouse button released
+        {
+            SelectionManager selectionManager = SelectionManager.Instance;
+            foreach (C_Selectable selectable in selectionManager.selectedDictionary.selectedTable.Values){
+                if (selectable.Entity.CCombat != null){
+                    if (CHealth != null){
+                        if (selectable.Entity.GetPlayer() != CHealth.Entity.GetPlayer()){
+                            EventManager.Instance.setTarget.Invoke(selectable.Entity.CCombat,CHealth);
+                        }
+                    } 
+                }   
+            }
+        }
+        else if (Input.GetMouseButtonUp(2)) // Middle mouse button released
+        {
+            
+        }
+    }
     
 }
