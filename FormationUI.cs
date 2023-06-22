@@ -9,31 +9,28 @@ public class FormationUI : MonoBehaviour
     [SerializeField] private GameObject formationSlotPrefab;
     [SerializeField] private RectTransform formationSlotContainer;
 
-    private List<FormationSlotUI> formationSlots = new List<FormationSlotUI>();
+    private List<FormationSlotUI> _formationSlots = new List<FormationSlotUI>();
     [SerializeField] private Slider slider;
-    private selected_dictionary selected_table;
+    private SelectedDictionary _selectedTable;
     
     
     private void Start(){
-        selected_table = SelectionManager.Instance.selectedDictionary;
+        _selectedTable = SelectionManager.Instance.selectedDictionary;
         EventManager.Instance.formationChangedEvent.AddListener(UpdateFormation);
-        EventManager.Instance.formationDeletedEvent.AddListener(ResetFormation);
+        EventManager.Instance.damageEvent.AddListener(UpdateFormationHpSlider);
     }
-
-    private void Update(){
-        if (formation == null){
+    
+    private void UpdateFormationHpSlider(C_Health health,int damage){
+        Entity e = health.Entity;
+        C_Formation formationElement = e.CFormation;
+        if (e == null || formationElement == null || formation==null){
             return;
         }
-        float hpPercentage = formation.GetOverallHp();
-        slider.value = hpPercentage;
-        slider.fillRect.GetComponentInChildren<Image>().color = Color.Lerp(Color.red, Color.green, hpPercentage);
-    }
-
-    public void ResetFormation(IFormation f){
-        ClearFormation();
-        if (f.GetFormation() == formation){
-            formation = null;
-        } 
+        if(formation.GetFormationElements().Contains(formationElement)){
+            float hpPercentage = formation.GetOverallHp();
+            slider.value = hpPercentage;
+            slider.fillRect.GetComponentInChildren<Image>().color = Color.Lerp(Color.red, Color.green, hpPercentage);
+        }
     }
     
     public void UpdateFormation(IFormation f){
@@ -45,11 +42,11 @@ public class FormationUI : MonoBehaviour
         foreach (var kvPair in formation.GetRelativePositions()){
             GenerateAndSetSlot(kvPair);
         }
-        GenerateAndSetSlot(new KeyValuePair<Vector3, IFormationElement>(Vector3.zero, formation.GetLeader()));
+        GenerateAndSetSlot(new KeyValuePair<Vector3, C_Formation>(Vector3.zero, formation.GetLeader()));
         CenterUIFormation();
     }
 
-    private void GenerateAndSetSlot(KeyValuePair<Vector3,IFormationElement> kvPair){
+    private void GenerateAndSetSlot(KeyValuePair<Vector3,C_Formation> kvPair){
         GameObject go = Instantiate(formationSlotPrefab, transform);
         FormationSlotUI slot = go.GetComponent<FormationSlotUI>();
         slot.Formation = formation;
@@ -58,7 +55,7 @@ public class FormationUI : MonoBehaviour
         Vector3 uiPos = new Vector3(relPos.x, relPos.z, 0);
         go.transform.localPosition =  uiPos * spacing;
         go.transform.SetParent(formationSlotContainer, true);
-        formationSlots.Add(slot);
+        _formationSlots.Add(slot);
         if (kvPair.Value == null){
             slot.image.color = Color.red;
             return;
@@ -71,17 +68,17 @@ public class FormationUI : MonoBehaviour
     
 
     public void ClearFormation(){
-        foreach (FormationSlotUI slot in formationSlots){
+        foreach (FormationSlotUI slot in _formationSlots){
             Destroy(slot.gameObject);
         }
-        formationSlots = new List<FormationSlotUI>();
+        _formationSlots = new List<FormationSlotUI>();
     }
 
     public void SelectUnitsInFormation(){
         if (formation != null){
-            foreach (IFormationElement element in formation.GetFormationElements()){
-                if (element.IsSelectable()){
-                    selected_table.addSelected(element.GetSelectable());
+            foreach (C_Formation element in formation.GetFormationElements()){
+                if (element.Entity.CSelectable!=null){
+                    _selectedTable.AddSelected(element.Entity.CSelectable);
                 }
             }  
         }
@@ -94,10 +91,11 @@ public class FormationUI : MonoBehaviour
         float minX = Mathf.Infinity, maxX = Mathf.NegativeInfinity;
         float minY = Mathf.Infinity, maxY = Mathf.NegativeInfinity;
 
-        foreach (var slot in formationSlots)
+        foreach (var slot in _formationSlots)
         {
-            float xPos = slot.transform.position.x;
-            float yPos = slot.transform.position.y;
+            var position = slot.transform.position;
+            float xPos = position.x;
+            float yPos = position.y;
             minX = Mathf.Min(minX, xPos);
             maxX = Mathf.Max(maxX, xPos);
             minY = Mathf.Min(minY, yPos);
@@ -107,12 +105,13 @@ public class FormationUI : MonoBehaviour
         float xOffset = parentPos.x - ((maxX - minX) / 2 + minX);
         float yOffset = parentPos.y - ((maxY - minY) / 2 + minY);
 
-        foreach (var slot in formationSlots)
+        foreach (var slot in _formationSlots)
         {
-            Vector3 pos = slot.transform.position;
+            var t = slot.transform;
+            Vector3 pos = t.position;
             pos.x += xOffset;
             pos.y += yOffset;
-            slot.transform.position = pos;
+            t.position = pos;
         }
     }
     

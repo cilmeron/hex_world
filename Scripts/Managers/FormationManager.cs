@@ -16,54 +16,54 @@ public class FormationManager : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
+    {                               //TODO wegen Performance auf Events umstellen
         if (Input.GetKeyDown(KeyCode.Alpha1)){
-            List<ISelectable> selectables = selectionManager.selectedDictionary.selectedTable.Values.ToList();
+            List<C_Selectable> selectables = selectionManager.selectedDictionary.selectedTable.Values.ToList();
             if (selectables.Count == 0){
                 return;
             }
             RectFormation rectFormation =  CreateRectFormation();
-            foreach (ISelectable selectable in selectables){
-                if (!selectable.IsFormationElement()){
+            foreach (C_Selectable selectable in selectables){
+                C_Formation formationable = selectable.gameObject.GetComponent<C_Formation>();
+                if (formationable==null){
                     continue;
                 }
-                IFormationElement formationElement = selectable.GetFormationElement();
-                Debug.Assert(formationElement != null, nameof(formationElement) + " != null");
-                if (formationElement.IsInFormation()){
+                Debug.Assert(formationable != null, nameof(formationable) + " != null");
+                if (formationable.IsInFormation()){
                     continue;
                 }
-                if (formationElement.GetPlayer()!=GameManager.Instance.player){
+                if (formationable.Entity.GetPlayer()!=GameManager.Instance.player){
                     continue;
                 }
-                bool successfull = rectFormation.AddFormationElement(selectable.GetFormationElement());
+                bool successfull = rectFormation.AddFormationElement(formationable);
                 if (!successfull){
                     rectFormation = CreateRectFormation();
-                    rectFormation.AddFormationElement(selectable.GetFormationElement());
+                    rectFormation.AddFormationElement(formationable);
                 }
             }
         }
         if (Input.GetKeyDown(KeyCode.Alpha2)){
-            List<ISelectable> selectables = selectionManager.selectedDictionary.selectedTable.Values.ToList();
+            List<C_Selectable> selectables = selectionManager.selectedDictionary.selectedTable.Values.ToList();
             if (selectables.Count == 0){
                 return;
             }
             CircleFormation circleFormation =  CreateCircleFormation();
-            foreach (ISelectable selectable in selectables){
-                if (!selectable.IsFormationElement()){
+            foreach (C_Selectable selectable in selectables){
+                C_Formation formationable = selectable.gameObject.GetComponent<C_Formation>();
+                if (formationable==null){
                     continue;
                 }
-                IFormationElement formationElement = selectable.GetFormationElement();
-                Debug.Assert(formationElement != null, nameof(formationElement) + " != null");
-                if (formationElement.IsInFormation()){
+                Debug.Assert(formationable != null, nameof(formationable) + " != null");
+                if (formationable.IsInFormation()){
                     continue;
                 }
-                if (formationElement.GetPlayer()!=GameManager.Instance.player){
+                if (formationable.Entity.GetPlayer()!=GameManager.Instance.player){
                     continue;
                 }
-                bool successfull = circleFormation.AddFormationElement(selectable.GetFormationElement());
+                bool successfull = circleFormation.AddFormationElement(formationable);
                 if (!successfull){
                     circleFormation = CreateCircleFormation();
-                    circleFormation.AddFormationElement(selectable.GetFormationElement());
+                    circleFormation.AddFormationElement(formationable);
                 }
             }
         }

@@ -5,8 +5,8 @@ using UnityEngine;
 public class SelectionManager : MonoBehaviour
 {
     public static SelectionManager Instance { get; private set; }
-    public selected_dictionary selectedDictionary;
-    public global_selection globalSelection;
+    public SelectedDictionary selectedDictionary;
+    public GlobalSelection globalSelection;
     
     void Awake()
     {
@@ -20,13 +20,13 @@ public class SelectionManager : MonoBehaviour
 
         // Set the instance to this script
         Instance = this;
-        selectedDictionary = gameObject.AddComponent<selected_dictionary>();
+        selectedDictionary = gameObject.AddComponent<SelectedDictionary>();
     }
 
     // Start is called before the first frame update
     void Start(){
         
-        globalSelection = gameObject.AddComponent<global_selection>();
+        globalSelection = gameObject.AddComponent<GlobalSelection>();
     }
 
     // Update is called once per frame

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMAS
+public class Player_Look
 {
     private Material m_unit;
     private Material m_selectedUnit;
@@ -12,7 +12,7 @@ public class PlayerMAS
     private Shader s_standardShader;
     private Shader s_outlineShader;
 
-    public PlayerMAS(Material m_unit, Material m_selectedUnit, Material m_leaderUnit, Material m_tower,
+    public Player_Look(Material m_unit, Material m_selectedUnit, Material m_leaderUnit, Material m_tower,
         Material m_selectedTower,Shader s_standardShader, Shader s_outlineShader){
         this.m_unit = m_unit;
         this.m_selectedUnit = m_selectedUnit;

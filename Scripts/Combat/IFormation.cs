@@ -3,13 +3,13 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 public interface IFormation {
-    void SetLeader(IFormationElement fe);
-    IFormationElement GetLeader();
-    void SetFormationElements(List<IFormationElement> fes);
-    bool AddFormationElement(IFormationElement fe);
-    bool AddFormationElementAt(IFormationElement fe,Vector3 relativePosition);
-    void RemoveFormationElement(IFormationElement fe);
-    List<IFormationElement> GetFormationElements();
+    void SetLeader(C_Formation fe);
+    C_Formation GetLeader();
+    void SetFormationElements(List<C_Formation> fes);
+    bool AddFormationElement(C_Formation fe);
+    bool AddFormationElementAt(C_Formation fe,Vector3 relativePosition);
+    void RemoveFormationElement(C_Formation fe);
+    HashSet<C_Formation> GetFormationElements();
     void SetFormation();
     Formation GetFormation();
     void SetSpacing(int spacing);
