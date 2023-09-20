@@ -6,7 +6,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class SelectableUI : MonoBehaviour{
-    private ISelectable _selectable;
 
     [SerializeField] private Slider slider;
     [SerializeField] private Image image;
@@ -16,52 +15,30 @@ public class SelectableUI : MonoBehaviour{
     void Start()
     {
         uiManager = UIManager.Instance;
-        EventManager.Instance.deathEvent.AddListener(ResetSelectableUIViaEvent);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (_selectable != null){
-            SetValues();
-        }
-        else{
-            ResetValues();
-        }
+        SetValues();
     }
 
-    public void SetSelectable(ISelectable selectable){
-        _selectable = selectable;
-    }
-    
-    public void ResetSelectableUI(){
-            _selectable = null;
-    }
-
-    public void ResetSelectableUIViaEvent(ICombatElement combatElement){
-        if (_selectable == null){
-            return;
-        }
-        if (combatElement.GetGameObject() == _selectable.GetGameObject()){
-            ResetSelectableUI();
-        }
-    }
     
 
-    public void SetValues(){
+    private void SetValues(){
         PrepareSlider();
-        image.sprite = _selectable.GetSprite();
-        statsTMP.text = _selectable.GetStats();
+        image.sprite = uiManager.Selectable.Entity.GetSprite();
+        statsTMP.text = uiManager.Selectable.GetStats();
     }
 
     public void ResetValues(){
         image.sprite = null;
     }
 
-    public void PrepareSlider(){
+    private void PrepareSlider(){
 
         // Calculate the HP percentage (as a value between 0 and 1)
-        float hpPercentage = _selectable.GetHpPercentage();
+        float hpPercentage = uiManager.Selectable.GetHpPercentage();
         
         slider.value = hpPercentage;
         // Set the color of the slider based on the HP percentage
@@ -69,18 +46,19 @@ public class SelectableUI : MonoBehaviour{
     }
 
     public void OpenFormationMenu(){
-        if (_selectable == null){
+        if (uiManager.Selectable == null){
             return;
         }
-        if (!_selectable.IsFormationElement()){
+        if (uiManager.Selectable.Entity.CFormation==null){
             return;
         }
-        IFormationElement formationElement = _selectable.GetGameObject().GetComponent<IFormationElement>();
+
+        C_Formation formationElement = uiManager.Selectable.Entity.CFormation;
         if (!formationElement.IsInFormation()){
             return;
         }
 
-        uiManager.SetFormationUI(formationElement.GetFormation());
+        uiManager.SetFormationUI(formationElement.Formation);
     }
     
 }

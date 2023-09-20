@@ -6,44 +6,43 @@ using UnityEngine;
 using Debug = System.Diagnostics.Debug;
 
 public class SelectionComponent : MonoBehaviour{
-    private ISelectable selectable;
-    private IFormationElement formationElement;
-    private ICombatElement combatElement;
-    private Renderer formationElementRenderer;
-    // Start is called before the first frame update
+    private C_Selectable selectable;
+    private Entity entity;
+    
     void Start(){
         
-        //TODO Materials are currently stored in IFormationElement. I think its better to store them in ISelectable as the information "selected" and "unselected" are stored here
-        selectable = GetComponent<ISelectable>();
+        selectable = GetComponent<C_Selectable>();
         if (selectable == null){
             throw new Exception("Selectable is non existing");
         }
-        if (!selectable.IsFormationElement()){
-            throw new Exception("Selectable has no FormationElement");
+        if (selectable.Entity == null){
+            throw new Exception("Selectable has no Entity");
         }
-
-        formationElement = selectable.GetFormationElement();
-        if (formationElement == null){
-            return;
+        entity = selectable.Entity;
+        entity.SetMaterialToRenderer(entity.CLook.MSelected);
+        if (entity.CHealth != null){
+            entity.CHealth.SetHpSliderActive(true);
+            
         }
-        formationElementRenderer = formationElement.GetRenderer();
-        formationElementRenderer.material = selectable.GetSelectableMas().MSelected;
-        if (selectable.IsCombatElement()){
-            combatElement = selectable.GetCombatElement();
-            Debug.Assert(combatElement != null, nameof(combatElement) + " != null");
-            combatElement.SetHpSliderActive(true);
+        if (entity.CCombat!=null){
+            entity.CCombat.projectorController.gameObject.SetActive(true);
         }
     }
 
     private void OnDestroy(){
-        if (formationElement!=null && formationElement.IsInFormation() && formationElement.IsLeader()){
-            GetComponent<Renderer>().material = selectable.GetSelectableMas().MLeader;
+        if (selectable.Entity.CHealth != null){
+            selectable.Entity.CHealth.SetHpSliderActive(false);
+        }
+        if (selectable.Entity.CCombat!=null){
+            selectable.Entity.CCombat.projectorController.gameObject.SetActive(false);
+        }
+
+        C_Formation formation = entity.CFormation;
+        if (formation != null &&  formation.IsInFormation() && formation.IsLeader()){
+            entity.SetMaterialToRenderer(entity.CLook.MLeader);
         }
         else{
-            formationElementRenderer.material = selectable.GetSelectableMas().MUnselected;
+            entity.SetMaterialToRenderer(entity.CLook.MUnselected);
         }
-
-        combatElement?.SetHpSliderActive(false);
-
     }
 }

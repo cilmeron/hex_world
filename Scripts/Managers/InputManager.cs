@@ -29,12 +29,14 @@ public class InputManager : MonoBehaviour{
                 // Check if the ray intersects with a collider in the scene
                 if (Physics.Raycast(ray, out RaycastHit hit))
                 {
-                    foreach(ISelectable e in selectionManager.selectedDictionary.selectedTable.Values){
-                        if (e.GetType() == typeof(Unit)){
-                            Unit u = (Unit) e;
-                            u.MoveToPosition = hit.point;
+                    foreach(C_Selectable cSelectable in selectionManager.selectedDictionary.selectedTable.Values){
+                        if (cSelectable.Entity.GetType() == typeof(Unit)){
+                            C_Moveable cMove = cSelectable.Entity.CMoveable;
+                            if (cMove == null){
+                                continue;
+                            }
+                            cMove.SetMoveToPosition(hit.point,false);
                         }
-                        
                     }
                 }
             }

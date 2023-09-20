@@ -2,61 +2,61 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class selected_dictionary : MonoBehaviour //Evtl auf Static classe reduzieren - wie GameResourceManager
+public class SelectedDictionary : MonoBehaviour //Evtl auf Static classe reduzieren - wie GameResourceManager
 {
-    public Dictionary<int, ISelectable> selectedTable = new Dictionary<int, ISelectable>();
+    public Dictionary<int, C_Selectable> selectedTable = new Dictionary<int, C_Selectable>();
 
-    public void addSelected(ISelectable selectable)
+    public void AddSelected(C_Selectable selectable)
     {
-        int id = selectable.GetGameObject().GetInstanceID();
+        int id = selectable.gameObject.GetInstanceID();
 
         if (!(selectedTable.ContainsKey(id)))
         {
             selectedTable.Add(id, selectable);
-            selectable.GetGameObject().AddComponent<SelectionComponent>();
+            selectable.gameObject.AddComponent<SelectionComponent>();
         }
     }
-    public void select(ISelectable selectable)
+    public void Select(C_Selectable selectable)
     {
-        int id = selectable.GetGameObject().GetInstanceID();
+        int id = selectable.gameObject.GetInstanceID();
         if (selectedTable.ContainsKey(id))
         {
-            removeAllBut(id);
+            RemoveAllBut(id);
         }
         else
         {
-            deselectAll();
-            addSelected(selectable);
+            DeselectAll();
+            AddSelected(selectable);
         }
     }
-    public void removeSelected(ISelectable selectable)
+    public void RemoveSelected(C_Selectable selectable)
     {
-        int id = selectable.GetGameObject().GetInstanceID();
+        int id = selectable.gameObject.GetInstanceID();
 
         if (selectedTable.ContainsKey(id))
         {
             selectedTable.Remove(id);
-            Destroy(selectable.GetGameObject().GetComponent<SelectionComponent>());
+            Destroy(selectable.gameObject.GetComponent<SelectionComponent>());
         }
     }
-    private void removeAllBut(int id)
+    private void RemoveAllBut(int id)
     {
-        foreach(KeyValuePair<int,ISelectable> pair in selectedTable)
+        foreach(KeyValuePair<int,C_Selectable> pair in selectedTable)
         {
             if(pair.Value != null && pair.Key != id)
             {
-                Destroy(selectedTable[pair.Key].GetGameObject().GetComponent<SelectionComponent>());
+                Destroy(selectedTable[pair.Key].gameObject.GetComponent<SelectionComponent>());
                 selectedTable.Remove(pair.Key);
             }
         }
     }
-    public void deselectAll()
+    public void DeselectAll()
     {
-        foreach(KeyValuePair<int,ISelectable> pair in selectedTable)
+        foreach(KeyValuePair<int,C_Selectable> pair in selectedTable)
         {
             if(pair.Value != null)
             {
-                Destroy(selectedTable[pair.Key].GetGameObject().GetComponent<SelectionComponent>());
+                Destroy(selectedTable[pair.Key].gameObject.GetComponent<SelectionComponent>());
             }
         }
         selectedTable.Clear();
