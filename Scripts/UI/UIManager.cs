@@ -11,10 +11,10 @@ public class UIManager : MonoBehaviour{
     // Private constructor
     private UIManager() { }
 
-    private Player player;
-    [SerializeField] private UITopBar uiTopbar;
-    [SerializeField] private UIEntity uiEntity;
-    //[SerializeField] private UIFormation uiFormation;
+     private Player player;
+    [SerializeField] private TopBarUI topBarUITopbar;
+    [SerializeField] private SelectableUI selectableUI;
+    [SerializeField] private FormationUI formationUI;
 
     [SerializeField] private C_Selectable selection;
     [SerializeField] private Formation selectedFormation;
