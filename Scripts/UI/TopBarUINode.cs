@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UITopBarNode : MonoBehaviour{
+public class TopBarUINode : MonoBehaviour{
     private TextMeshProUGUI tmp;
 
     private Image image;

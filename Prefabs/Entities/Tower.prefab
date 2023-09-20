@@ -205,6 +205,7 @@ GameObject:
   - component: {fileID: 6044589887664220433}
   - component: {fileID: 7520929834886045091}
   - component: {fileID: 5028002631427970108}
+  - component: {fileID: 7484356420167348922}
   m_Layer: 0
   m_Name: Tower
   m_TagString: Entity
@@ -344,7 +345,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHP: 1000
   currentHP: 1000
-  vision: {fileID: 0}
   entitiesInVision: []
   target: {fileID: 0}
   attackTime: 3
@@ -355,7 +355,9 @@ MonoBehaviour:
   bulletStart: {fileID: 4867162927568051766}
   player: {fileID: 0}
   goldAmount: 300
-  sprite: {fileID: 21300000, guid: 7150bde22cea6ef409e845a72c2ce4a7, type: 3}
+  sprite: {fileID: 21300000, guid: 031ede89bd96126478fe6bfbacf1aeaf, type: 3}
+  startPosition: {x: 0, y: 0, z: 0}
+  startParent: {fileID: 0}
   unitPrefab: {fileID: 534056306596123124, guid: 4065503216b9ddd4d9af84ba63c6e3cd, type: 3}
   spawnPositions:
   - {fileID: 791005426714844902}
@@ -363,6 +365,22 @@ MonoBehaviour:
   - {fileID: 8975433251781918183}
   - {fileID: 1068882294495425904}
   archerContainer: {fileID: 3362265532259617252}
+--- !u!114 &7484356420167348922
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6258869678747292362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1015fe98282d0f144a24130fae090836, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startPosition: {x: 0, y: 0, z: 0}
+  offsetToMouse: {x: 0, y: 0, z: 0}
+  draggingTransform: {fileID: 0}
+  entity: {fileID: 0}
 --- !u!1 &7156132051979568103
 GameObject:
   m_ObjectHideFlags: 0
