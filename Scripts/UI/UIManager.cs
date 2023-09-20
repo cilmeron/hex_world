@@ -12,11 +12,11 @@ public class UIManager : MonoBehaviour{
     private UIManager() { }
 
     private Player player;
-    [SerializeField] private TopBarUI topBarUITopbar;
-    [SerializeField] private SelectableUI selectableUI;
-    [SerializeField] private FormationUI formationUI;
+    [SerializeField] private UITopBar uiTopbar;
+    [SerializeField] private UIEntity uiEntity;
+    //[SerializeField] private UIFormation uiFormation;
 
-    [SerializeField] private ISelectable selectable;
+    [SerializeField] private Entity selectedEntity;
     [SerializeField] private Formation selectedFormation;
 
     [SerializeField] private CanvasScaler canvasScaler;
@@ -25,19 +25,25 @@ public class UIManager : MonoBehaviour{
 
     // Awake is called when the script instance is being loaded
     private void Awake(){
+        // Check if instance already exists
         if (Instance == null){
+            // If not, set instance to this
             Instance = this;
         } else if (Instance != this){
+            // If instance already exists and it's not this, destroy this
             Destroy(gameObject);
             return;
         }
+
+        // Set this object to not be destroyed when loading a new scene
+        DontDestroyOnLoad(gameObject);
     }
 
     // Start is called before the first frame update
     void Start(){
         ScaleUI();
         selectionManager = SelectionManager.Instance;
-        EventManager.Instance.formationDeletedEvent.AddListener(ResetFormationThroughEvent);
+        EventManager.Instance.formationDeletedEvent.AddListener(ResetFormation);
     }
 
     private void ScaleUI(){
@@ -55,47 +61,48 @@ public class UIManager : MonoBehaviour{
     // Update is called once per frame
     void Update(){ 
         player = GameManager.Instance.player;
-        SetTopBarUI();
-        
         if (selectedFormation == null){
-            SetSelectableUI();
+            SetEntityUI();
         }
-
+        else{
+            SetFormationUI();
+        }
+        
+        SetTopBarUI();
     }
 
-    public void SetFormationUI(Formation formation){
-        selectedFormation = formation;
-        selectableUI.gameObject.SetActive(false);
-        formationUI.gameObject.SetActive(true);
-        formationUI.UpdateFormation(selectedFormation);
+    public void SetFormationUI(){
+        uiEntity.gameObject.SetActive(false);
+      //  uiFormation.gameObject.SetActive(true);
+     //   uiFormation.SetFormation(selectedFormation);
         
     }
     
-    public void SetSelectableUI(){
+    public void SetEntityUI(){
         int selectionCount = selectionManager.selectedDictionary.selectedTable.Values.Count;
         if (selectionCount == 0){
-            selectableUI.ResetSelectableUI();
-            selectableUI.gameObject.SetActive(false);
+            uiEntity.ResetEntityUI();
+            uiEntity.gameObject.SetActive(false);
         }else if ( selectionCount == 1){
-            selectable = selectionManager.selectedDictionary.selectedTable.Values.First();
-            selectableUI.gameObject.SetActive(true);
-            formationUI.gameObject.SetActive(false);
-            selectableUI.SetSelectable(selectable);
+            selectedEntity = selectionManager.selectedDictionary.selectedTable.Values.First();
+            uiEntity.gameObject.SetActive(true);
+        //    uiFormation.gameObject.SetActive(false);
+            uiEntity.SetEntityUI(selectedEntity);
         }else{
             //Multiple Selection   
         }
     }
     
     public void SetTopBarUI(){
-        topBarUITopbar.Nodes[0].SetText(GameResourceManager.GetResourceAmount(player,GameResourceManager.ResourceType.Gold).ToString());
-        topBarUITopbar.Nodes[1].SetText(player.CalculateUnits().ToString());
-        topBarUITopbar.Nodes[2].SetText(player.CalculateBuildings().ToString());
-        topBarUITopbar.Nodes[3].SetText(player.Formations.Count.ToString());
+        uiTopbar.Nodes[0].SetText(GameResourceManager.GetResourceAmount(player,GameResourceManager.ResourceType.Gold).ToString());
+        uiTopbar.Nodes[1].SetText(player.CalculateUnits().ToString());
+        uiTopbar.Nodes[2].SetText(player.CalculateBuildings().ToString());
+        uiTopbar.Nodes[3].SetText(player.Formations.Count.ToString());
     }
     
-    public ISelectable Selectable{
-        get => selectable;
-        set => selectable = value;
+    public Entity SelectedEntity{
+        get => selectedEntity;
+        set => selectedEntity = value;
     }
     
     public Formation SelectedFormation{
@@ -103,19 +110,8 @@ public class UIManager : MonoBehaviour{
         set => selectedFormation = value;
     }
 
-    public void ResetFormation(){
-        if (selectedFormation != null){
-            formationUI.ClearFormation();
-            selectedFormation = null;
-            formationUI.gameObject.SetActive(false);
-        }
-    }
-    
-    private void ResetFormationThroughEvent(IFormation f){//Event
-        if (f.GetFormation() == selectedFormation || selectedFormation == null){
-            selectedFormation = null;
-            formationUI.gameObject.SetActive(false);
-        }
+    private void ResetFormation(Formation f){
+        selectedFormation = null;
     }
     
 }
