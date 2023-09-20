@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UITopBar : MonoBehaviour{
-    [SerializeField] private List<UITopBarNode> nodes = new List<UITopBarNode>();
+public class TopBarUI : MonoBehaviour{
+    [SerializeField] private List<TopBarUINode> nodes = new List<TopBarUINode>();
     // Start is called before the first frame update
     void Start()
     {
@@ -13,12 +13,12 @@ public class UITopBar : MonoBehaviour{
     // Update is called once per frame
     void Update()
     {
-        foreach (UITopBarNode node in nodes){
+        foreach (TopBarUINode node in nodes){
             node.SetImageColor(GameManager.Instance.player.PlayerColor);
         }
     }
 
-    public List<UITopBarNode> Nodes{
+    public List<TopBarUINode> Nodes{
         get => nodes;
         set => nodes = value;
     }

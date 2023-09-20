@@ -1,14 +1,17 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public interface IFormation {
-    void SetLeader(Unit u);
-    Unit GetLeader();
-    void SetUnitsInFormation(List<Unit> units);
-    bool AddUnitToFormation(Unit u);
-    void RemoveUnitFromFormation(Unit u);
-    List<Unit> GetUnitsInFormation();
+    void SetLeader(IFormationElement fe);
+    IFormationElement GetLeader();
+    void SetFormationElements(List<IFormationElement> fes);
+    bool AddFormationElement(IFormationElement fe);
+    bool AddFormationElementAt(IFormationElement fe,Vector3 relativePosition);
+    void RemoveFormationElement(IFormationElement fe);
+    List<IFormationElement> GetFormationElements();
     void SetFormation();
+    Formation GetFormation();
     void SetSpacing(int spacing);
     void SetTargetPosition(Vector3 pos);
 

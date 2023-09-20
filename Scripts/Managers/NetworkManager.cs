@@ -20,7 +20,7 @@ public class NetworkManager : MonoBehaviour
     public bool chatactive = false;
      private void Start() 
      {
-         ingamechat = "";
+        ingamechat = "";
         if (Connect())
         {
             connected = true;
@@ -41,15 +41,17 @@ public class NetworkManager : MonoBehaviour
     {
         try
         {
-            if (client.Connected)
+            if (client != null && client.Connected)
             {
                 return true;
             }
         }
-        catch (System.Exception e)
-        {
-           
+        catch (System.Exception e){
+            Debug.Log("M");
+            Debug.LogError(e.ToString());
+            Debug.LogError(e.StackTrace);
         }
+
         client = new TcpClient();
         string host = "pirotess.duckdns.org";
         System.Net.IPAddress ip = GetIp(host);
@@ -62,11 +64,10 @@ public class NetworkManager : MonoBehaviour
         try
         {
             client.Connect(ip, port);
-            InitConnection();
         }
-        catch
+        catch (System.Exception e)
         {
-            Debug.Log("Connection couldn't be established");
+            Debug.Log("Connection couldn't be established"+e);
             client.Dispose();
             return false;
         }
@@ -74,24 +75,33 @@ public class NetworkManager : MonoBehaviour
         ClientReceiveThread = new Thread(new ThreadStart(ListenForData));
         ClientReceiveThread.IsBackground = true;
         ClientReceiveThread.Start();
+        try
+        {
+            InitConnection();
+        }
+        catch (System.Exception e)
+        {
+            Debug.Log("Couldn't send our name/init sequence"+e);
+        }
         return true;
     }
 
-public static System.Net.IPAddress GetIp(string hostname)
-{
-    System.Net.IPAddress outip;
-    if (System.Net.IPAddress.TryParse(hostname, out outip) == true)
+    public static System.Net.IPAddress GetIp(string hostname)
     {
+        System.Net.IPAddress outip;
+        if (System.Net.IPAddress.TryParse(hostname, out outip) == true)
+        {
+            return outip;
+        }
+        outip = System.Net.Dns.GetHostAddresses(hostname)[0].MapToIPv4();
+        Debug.Log(outip);
         return outip;
-    }
-    outip = System.Net.Dns.GetHostAddresses(hostname)[0].MapToIPv4();
-    Debug.Log(outip);
-    return outip;
 
-}
+    }
+
     void InitConnection()
     {
-        string hello = "H:"+playername;
+        string hello = "H:"+playername+":";
         SendMsg(hello);
     }
 
@@ -203,7 +213,7 @@ public static System.Net.IPAddress GetIp(string hostname)
             else if (answer[0].Contains("T"))
             {
                 answer[2] = answer[2].Replace(";;;pipesymbol;;;", "|").Replace(";;;colon;;;", ":");
-                if (playername != null && answer[1] != null && answer[1].Contains(playername))
+                if (playername != null && answer[1] != null && answer[1].Contains(playername) && answer[1].Length == playername.Length)
                 {
                     //This is a chat message by ourselves - let's handle it here because that means everything worked
                     try
@@ -219,6 +229,30 @@ public static System.Net.IPAddress GetIp(string hostname)
                 {
                     ingamechat += "<color=\"blue\">"+answer[1]+": "+answer[2]+"</color>\n";
                     //This is a chat message by someone else
+                }
+            }
+            else if (answer[0].Contains("H"))
+            {
+                //We receive a hello message - let's see who this is about and what role they play
+                answer[2] = answer[2].Replace(";;;pipesymbol;;;", "|").Replace(";;;colon;;;", ":");
+                if (playername != null && answer[1] != null && answer[1].Contains(playername) && answer[1].Length == playername.Length)
+                {
+                    //This is a status message about ourselves - let's find out if we are player 1, 2 or guest
+                    if (answer[2].Contains("A"))
+                    {
+                        //We are player 1
+                        Debug.Log("We are player 1");
+                    }
+                    else if (answer[2].Contains("B"))
+                    {
+                        //We are player 2
+                        Debug.Log("We are player 2");
+                    }
+                    else
+                    {
+                        //We are a guest player
+                        Debug.Log("We are a guest player");
+                    }
                 }
             }
             
