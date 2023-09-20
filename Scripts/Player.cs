@@ -6,15 +6,13 @@ using UnityEngine.Rendering;
 
 public class Player : MonoBehaviour{
 
-    #region Fields
-        private List<IOwnership> ownedGameobjects = new List<IOwnership>();
+        private List<Entity> ownedEntities = new List<Entity>();
         [SerializeField] private List<Formation> formations = new List<Formation>();
     
         [SerializeField] private Color playerColor;
-        private PlayerMAS _playerMas;
+        private Player_Look _playerLook;
     
 
-    #endregion
     
     
     
@@ -29,12 +27,10 @@ public class Player : MonoBehaviour{
             formations.Remove(formation.GetFormation());
         }
     }
-
-    #region Player Implementation
         public int CalculateUnits(){
             int unitCount = 0;
-            foreach(IOwnership ownedGameobject in ownedGameobjects){
-                if (ownedGameobject.IsOfType(typeof(Unit))){
+            foreach(Entity entity in ownedEntities){
+                if (entity.GetType() == typeof(Unit)){
                     unitCount++;
                 }
             }
@@ -44,8 +40,8 @@ public class Player : MonoBehaviour{
         
         public int CalculateBuildings(){
             int buildingCount = 0;
-            foreach(IOwnership ownedGameobject in ownedGameobjects){
-                if (ownedGameobject.IsOfType(typeof(Building))){
+            foreach(Entity entity in ownedEntities){
+                if (entity.GetType() == typeof(Building)){
                     buildingCount++;
                 }
             }
@@ -58,7 +54,7 @@ public class Player : MonoBehaviour{
     
         }
         
-        private PlayerMAS SetupMaterialsAndShader(){
+        private Player_Look SetupMaterialsAndShader(){
             Shader outlineShader = Shader.Find("Custom/S_Outline");
             Shader standardShader = Shader.Find("Standard");
             Material unit = new Material(standardShader);
@@ -78,7 +74,7 @@ public class Player : MonoBehaviour{
             leaderUnit.color = DarkenPlayerColorByPercentage(70);
             tower.color = DarkenPlayerColorByPercentage(70);
             selectedTower.color = DarkenPlayerColorByPercentage(70);
-            return new PlayerMAS(unit, selectedUnit, leaderUnit, tower, selectedTower, standardShader, outlineShader);
+            return new Player_Look(unit, selectedUnit, leaderUnit, tower, selectedTower, standardShader, outlineShader);
         }
     
         void Awake(){
@@ -86,35 +82,34 @@ public class Player : MonoBehaviour{
         }
     
         void Start(){
-            _playerMas = SetupMaterialsAndShader();
-            EventManager.Instance.deathEvent.AddListener(RemoveOwnership);
+            _playerLook = SetupMaterialsAndShader();
+            //EventManager.Instance.deathEvent.AddListener(RemoveOwnership);
             EventManager.Instance.formationDeletedEvent.AddListener(RemoveFormation);
             EventManager.Instance.playerSuccessfullyInitialized.Invoke(this);
         }
     
-    #endregion
     
     #region Ownership Implementation
-        public void InitializeOwnedGameObject(IOwnership ownedGameObject){
-            ownedGameObject.SetMaterialsAndShaders();
-            AddOwnership(ownedGameObject);
+        public void InitializeOwnedGameObject(Entity entity){
+            entity.SetMaterialsAndShaders();
+            AddOwnership(entity);
         }
-        public void AddOwnership(IOwnership ownership){
-            if (ownership == null){
+        public void AddOwnership(Entity entity){
+            if (entity == null){
                 return;
             }
-            if (ownedGameobjects.Contains(ownership)){
+            if (ownedEntities.Contains(entity)){
                 return;
             }
-            ownedGameobjects.Add(ownership);
+            ownedEntities.Add(entity);
         }
     
-        private void RemoveOwnership(IOwnership ownership){
-            if (ownership == null){
+        private void RemoveOwnership(Entity entity){
+            if (entity == null){
                 return;
             }
-            if (ownedGameobjects.Contains(ownership)){
-                ownedGameobjects.Remove(ownership);
+            if (ownedEntities.Contains(entity)){
+                ownedEntities.Remove(entity);
             }
         }
 
@@ -131,11 +126,11 @@ public class Player : MonoBehaviour{
                 set => playerColor = value;
             }
 
-            public PlayerMAS PlayerMas => _playerMas;
+            public Player_Look PlayerLook => _playerLook;
 
-            public List<IOwnership> OwnedGameObjects{
-                get => ownedGameobjects;
-                set => ownedGameobjects = value;
+            public List<Entity> OwnedGameObjects{
+                get => ownedEntities;
+                set => ownedEntities = value;
             }
 
     #endregion

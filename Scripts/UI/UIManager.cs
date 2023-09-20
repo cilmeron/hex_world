@@ -16,7 +16,7 @@ public class UIManager : MonoBehaviour{
     [SerializeField] private UIEntity uiEntity;
     //[SerializeField] private UIFormation uiFormation;
 
-    [SerializeField] private Entity selectedEntity;
+    [SerializeField] private C_Selectable selection;
     [SerializeField] private Formation selectedFormation;
 
     [SerializeField] private CanvasScaler canvasScaler;
@@ -43,7 +43,8 @@ public class UIManager : MonoBehaviour{
     void Start(){
         ScaleUI();
         selectionManager = SelectionManager.Instance;
-        EventManager.Instance.formationDeletedEvent.AddListener(ResetFormation);
+        EventManager.Instance.deathEvent.AddListener(ResetSelectionThroughEvent);
+        EventManager.Instance.formationDeletedEvent.AddListener(ResetFormationThroughEvent);
     }
 
     private void ScaleUI(){
@@ -60,58 +61,85 @@ public class UIManager : MonoBehaviour{
 
     // Update is called once per frame
     void Update(){ 
-        player = GameManager.Instance.player;
-        if (selectedFormation == null){
-            SetEntityUI();
-        }
-        else{
-            SetFormationUI();
-        }
-        
-        SetTopBarUI();
+        player = GameManager.Instance.player;   //TODO wegen Performance auf Events umstellen
+        SetTopBarUI();                          //TODO wegen Performance auf Events umstellen
+        SetSelectableUI();                      //TODO wegen Performance auf Events umstellen
     }
 
-    public void SetFormationUI(){
-        uiEntity.gameObject.SetActive(false);
-      //  uiFormation.gameObject.SetActive(true);
-     //   uiFormation.SetFormation(selectedFormation);
-        
+    
+    
+    
+    #region Topbar
+        private void SetTopBarUI(){
+            topBarUITopbar.Nodes[0].SetText(GameResourceManager.GetResourceAmount(player,GameResourceManager.ResourceType.Gold).ToString());
+            topBarUITopbar.Nodes[1].SetText(player.CalculateUnits().ToString());
+            topBarUITopbar.Nodes[2].SetText(player.CalculateBuildings().ToString());
+            topBarUITopbar.Nodes[3].SetText(player.Formations.Count.ToString());
+        }
+    #endregion
+    
+    #region Selection
+
+    public C_Selectable Selectable{
+        get => selection;
+        set => selection = value;
     }
     
-    public void SetEntityUI(){
+    private void SetSelectableUI(){
         int selectionCount = selectionManager.selectedDictionary.selectedTable.Values.Count;
         if (selectionCount == 0){
-            uiEntity.ResetEntityUI();
-            uiEntity.gameObject.SetActive(false);
-        }else if ( selectionCount == 1){
-            selectedEntity = selectionManager.selectedDictionary.selectedTable.Values.First();
-            uiEntity.gameObject.SetActive(true);
-        //    uiFormation.gameObject.SetActive(false);
-            uiEntity.SetEntityUI(selectedEntity);
+            ResetSelection();
+        }else if (selectionCount == 1){
+            if (selectedFormation == null){
+                ResetFormation();            
+                selection = selectionManager.selectedDictionary.selectedTable.Values.First();
+                selectableUI.gameObject.SetActive(true);
+            }
         }else{
             //Multiple Selection   
         }
     }
-    
-    public void SetTopBarUI(){
-        uiTopbar.Nodes[0].SetText(GameResourceManager.GetResourceAmount(player,GameResourceManager.ResourceType.Gold).ToString());
-        uiTopbar.Nodes[1].SetText(player.CalculateUnits().ToString());
-        uiTopbar.Nodes[2].SetText(player.CalculateBuildings().ToString());
-        uiTopbar.Nodes[3].SetText(player.Formations.Count.ToString());
+
+
+    private void ResetSelection(){
+        selection = null;
+        selectableUI.ResetValues();
+        selectableUI.gameObject.SetActive(false);
+        
     }
     
-    public Entity SelectedEntity{
-        get => selectedEntity;
-        set => selectedEntity = value;
-    }
-    
-    public Formation SelectedFormation{
-        get => selectedFormation;
-        set => selectedFormation = value;
+    private void ResetSelectionThroughEvent(C_Health health){
+        C_Selectable selectable = health.Entity.CSelectable;
+        if (selectable != null && selection == selectable){
+            ResetSelection();
+        }
     }
 
-    private void ResetFormation(Formation f){
-        selectedFormation = null;
-    }
+    #endregion
     
+    #region Formation
+        public Formation SelectedFormation{
+            get => selectedFormation;
+            set => selectedFormation = value;
+        }    
+        public void SetFormationUI(Formation formation){
+            selectedFormation = formation;
+            selectableUI.gameObject.SetActive(false);
+            formationUI.gameObject.SetActive(true);
+            formationUI.UpdateFormation(selectedFormation);
+            
+        }
+        
+        private void ResetFormation(){
+            formationUI.ClearFormation();
+            selectedFormation = null;
+            formationUI.gameObject.SetActive(false);
+        }
+        
+        private void ResetFormationThroughEvent(IFormation f){//Event
+            if (f.GetFormation() == selectedFormation || selectedFormation == null){
+                ResetFormation();
+            }
+        }
+    #endregion
 }
