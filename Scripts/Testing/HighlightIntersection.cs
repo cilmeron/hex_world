@@ -72,7 +72,8 @@ public class HighlightIntersection : MonoBehaviour
         else
         {
             // Disable the highlight object if the collider is not intersecting with the environment
-            highlightObject.SetActive(false);
+            if (highlightObject != null)
+                highlightObject.SetActive(false);
         }
     }
 }
