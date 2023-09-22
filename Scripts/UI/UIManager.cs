@@ -11,7 +11,7 @@ public class UIManager : MonoBehaviour{
     // Private constructor
     private UIManager() { }
 
-    private Player player;
+     private Player player;
     [SerializeField] private TopBarUI topBarUITopbar;
     [SerializeField] private SelectableUI selectableUI;
     [SerializeField] private FormationUI formationUI;
@@ -25,12 +25,18 @@ public class UIManager : MonoBehaviour{
 
     // Awake is called when the script instance is being loaded
     private void Awake(){
+        // Check if instance already exists
         if (Instance == null){
+            // If not, set instance to this
             Instance = this;
         } else if (Instance != this){
+            // If instance already exists and it's not this, destroy this
             Destroy(gameObject);
             return;
         }
+
+        // Set this object to not be destroyed when loading a new scene
+        DontDestroyOnLoad(gameObject);
     }
 
     // Start is called before the first frame update

@@ -42,12 +42,12 @@ public class EntityDragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler,
     
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Debug.Log("On Hover Enter");
+//        Debug.Log("On Hover Enter");
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        Debug.Log("On Hover Exit");
+//        Debug.Log("On Hover Exit");
     }
     
 }
