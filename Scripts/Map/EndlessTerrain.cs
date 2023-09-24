@@ -1,8 +1,7 @@
-using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.AI.Navigation;
-using UnityEngine.AI;
+using UnityEngine;
 
 public class EndlessTerrain : MonoBehaviour
 {
@@ -14,12 +13,13 @@ public class EndlessTerrain : MonoBehaviour
     private float UpdateRate = 10;
     [SerializeField]
     private float MovementThreshold = 3;
+
     [SerializeField]
-    private Vector3 NavMeshSize = new Vector3(50, 50, 50);
+    private int coreChunksX = 1;
+    [SerializeField]
+    private int coreChunksY = 1;
 
     private Vector3 WorldAnchor;
-    private NavMeshData NavMeshData;
-    private List<NavMeshBuildSource> Sources = new List<NavMeshBuildSource>();
 
     [SerializeField]
     public Transform WorldGeometry;
@@ -51,13 +51,14 @@ public class EndlessTerrain : MonoBehaviour
 
         mapGenerator = FindObjectOfType<MapGenerator>();
 
-        navMeshSurface = gameObject.AddComponent<NavMeshSurface>();
+        navMeshSurface = gameObject.AddComponent<NavMeshSurface>(); // NavMeshSurface for MapGenerator
 
         maxViewDst = detailLevels[detailLevels.Length - 1].visibleDstThreshold;
         chunkSize = MapGenerator.mapChunkSize - 1;
         chunksVisibleInViewDst = Mathf.RoundToInt(maxViewDst / chunkSize);
 
         UpdateVisibleChunks();
+        System.Threading.Thread.Sleep(10000);
         StartCoroutine(CheckCameraMovement());
     }
 
@@ -81,61 +82,57 @@ public class EndlessTerrain : MonoBehaviour
         {
             if (Vector3.Distance(WorldAnchor, Camera.transform.position) > MovementThreshold)
             {
-                BuildNavMesh(true);
+                //Do Something on camera movement
             }
 
             yield return Wait;
         }
     }
 
-    private void BuildNavMesh(bool Async)
+    // UNUSED for now
+    void InitCoreChunks()
     {
-        Bounds navMeshBounds = new Bounds(Camera.transform.position, NavMeshSize);
-        List<NavMeshBuildMarkup> markups = new List<NavMeshBuildMarkup>();
-
-        List<NavMeshModifier> modifiers;
-        if (navMeshSurface.collectObjects == CollectObjects.Children)
+        for (int i = 0; i < terrainChunksVisibleLastUpdate.Count; i++)
         {
-            modifiers = new List<NavMeshModifier>(GetComponentsInChildren<NavMeshModifier>());
+            terrainChunksVisibleLastUpdate[i].SetVisible(false);
         }
-        else
-        {
-            modifiers = NavMeshModifier.activeModifiers;
-        }
+        terrainChunksVisibleLastUpdate.Clear();
 
-        for (int i = 0; i < modifiers.Count; i++)
+        int currentChunkCoordX = 0;
+        int currentChunkCoordY = 0;
+
+        for (int yOffset = -coreChunksY; yOffset <= coreChunksY; yOffset++)
         {
-            if (((navMeshSurface.layerMask & (1 << modifiers[i].gameObject.layer)) == 1)
-                && modifiers[i].AffectsAgentType(navMeshSurface.agentTypeID))
+            for (int xOffset = -coreChunksX; xOffset <= coreChunksX; xOffset++)
             {
-                markups.Add(new NavMeshBuildMarkup()
-                {
-                    root = modifiers[i].transform,
-                    overrideArea = modifiers[i].overrideArea,
-                    area = modifiers[i].area,
-                    ignoreFromBuild = modifiers[i].ignoreFromBuild
-                });
+                Vector2 viewedChunkCoord = new Vector2(currentChunkCoordX + xOffset, currentChunkCoordY + yOffset);
+
+                terrainChunkDictionary.Add(viewedChunkCoord,
+                    new TerrainChunk(viewedChunkCoord,
+                    chunkSize,
+                    detailLevels,
+                    transform,
+                    mapMaterial,
+                    navMeshSurface));
+
             }
         }
+    }
 
-        if (navMeshSurface.collectObjects == CollectObjects.Children)
+    // UNUSED for now
+    void BakeCoreChunks()
+    {
+        for (int yOffset = -coreChunksY; yOffset <= coreChunksY; yOffset++)
         {
-            NavMeshBuilder.CollectSources(transform, navMeshSurface.layerMask, navMeshSurface.useGeometry, navMeshSurface.defaultArea, markups, Sources);
-        }
-        else
-        {
-            NavMeshBuilder.CollectSources(navMeshBounds, navMeshSurface.layerMask, navMeshSurface.useGeometry, navMeshSurface.defaultArea, markups, Sources);
-        }
-
-        Sources.RemoveAll(source => source.component != null && source.component.gameObject.GetComponent<NavMeshAgent>() != null);
-
-        if (Async)
-        {
-            NavMeshBuilder.UpdateNavMeshDataAsync(NavMeshData, navMeshSurface.GetBuildSettings(), Sources, new Bounds(Camera.transform.position, NavMeshSize));
-        }
-        else
-        {
-            NavMeshBuilder.UpdateNavMeshData(NavMeshData, navMeshSurface.GetBuildSettings(), Sources, new Bounds(Camera.transform.position, NavMeshSize));
+            for (int xOffset = -coreChunksX; xOffset <= coreChunksX; xOffset++)
+            {
+                TerrainChunk coreChunk = terrainChunkDictionary[new Vector2(0, 0)];
+                if (!coreChunk.IsNavMeshBuilt())
+                {
+                    coreChunk.BuildNavMesh();
+                    //coreChunk.navMeshSurface.BuildNavMesh();
+                }
+            }
         }
     }
 
@@ -150,7 +147,7 @@ public class EndlessTerrain : MonoBehaviour
 
         int currentChunkCoordX = Mathf.RoundToInt(viewerPosition.x / chunkSize);
         int currentChunkCoordY = Mathf.RoundToInt(viewerPosition.y / chunkSize);
-        Vector2 rootChunk = new Vector2 (0, 0);
+        Vector2 rootChunk = new Vector2(0, 0);
         for (int yOffset = -chunksVisibleInViewDst; yOffset <= chunksVisibleInViewDst; yOffset++)
         {
             for (int xOffset = -chunksVisibleInViewDst; xOffset <= chunksVisibleInViewDst; xOffset++)
@@ -163,7 +160,7 @@ public class EndlessTerrain : MonoBehaviour
                 }
                 else
                 {
-                    if (viewedChunkCoord == new Vector2(0,0))
+                    if (viewedChunkCoord == new Vector2(0, 0))
                     {
                         terrainChunkDictionary.Add(viewedChunkCoord, new TerrainChunk(viewedChunkCoord, chunkSize, detailLevels, transform, mapMaterial, navMeshSurface));
                     }
@@ -178,15 +175,15 @@ public class EndlessTerrain : MonoBehaviour
 
     void UpdateNavMesh()
     {
-        if(terrainChunkDictionary.ContainsKey(new Vector2(0,0)))
+        if (terrainChunkDictionary.ContainsKey(new Vector2(0, 0)))
         {
-
             TerrainChunk rootChunk = terrainChunkDictionary[new Vector2(0, 0)];
             if (!navMeshBuilt)
             {
                 if (rootChunk.hasMeshCollider())
                 {
-                    rootChunk.navMeshSurface.BuildNavMesh();
+                    navMeshSurface.BuildNavMesh();
+
                     navMeshBuilt = true;
                 }
             }
@@ -217,7 +214,7 @@ public class EndlessTerrain : MonoBehaviour
         public TerrainChunk(Vector2 coord, int size, LODInfo[] detailLevels, Transform parent, Material material, NavMeshSurface navMeshSurface)
         {
             this.detailLevels = detailLevels;
-            
+
             this.navMeshSurface = navMeshSurface;
 
             position = coord * size;
@@ -228,7 +225,7 @@ public class EndlessTerrain : MonoBehaviour
             meshRenderer = meshObject.AddComponent<MeshRenderer>();
             meshFilter = meshObject.AddComponent<MeshFilter>();
             if (this.navMeshSurface != null)
-            { 
+            {
                 meshCollider = meshObject.AddComponent<MeshCollider>();
             }
 
@@ -241,7 +238,7 @@ public class EndlessTerrain : MonoBehaviour
             lodMeshes = new LODMesh[detailLevels.Length];
             for (int i = 0; i < detailLevels.Length; i++)
             {
-                    lodMeshes[i] = new LODMesh(detailLevels[i].lod, UpdateTerrainChunk);
+                lodMeshes[i] = new LODMesh(detailLevels[i].lod, UpdateTerrainChunk);
             }
             mapGenerator.RequestMapData(position, OnMapDataReceived);
         }
@@ -253,6 +250,12 @@ public class EndlessTerrain : MonoBehaviour
                 return true;
             }
             return false;
+        }
+
+        public void BuildNavMesh()
+        {
+            this.navMeshSurface.BuildNavMesh();
+            navMeshBuild = true;
         }
 
         void OnMapDataReceived(MapData mapData)
@@ -362,6 +365,11 @@ public class EndlessTerrain : MonoBehaviour
         public bool IsVisible()
         {
             return meshObject.activeSelf;
+        }
+
+        public bool IsNavMeshBuilt()
+        {
+            return navMeshBuild;
         }
 
     }
