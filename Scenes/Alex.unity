@@ -430,6 +430,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   formations: []
   playerColor: {r: 0.0071456432, g: 1, b: 0, a: 1}
+  nation: 1
 --- !u!4 &82002584
 Transform:
   m_ObjectHideFlags: 0
@@ -1611,7 +1612,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2421f2326723a0b4781cfd8dcbda7bb6, type: 2}
+  - {fileID: 2100000, guid: fc9631b7875ad3f429f72c1a294cc565, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2741,7 +2742,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   materials:
-  - {fileID: 2100000, guid: 2421f2326723a0b4781cfd8dcbda7bb6, type: 2}
+  - {fileID: 2100000, guid: fc9631b7875ad3f429f72c1a294cc565, type: 2}
   - {fileID: 2100000, guid: 36c61597148ea8544803a2b511cf5408, type: 2}
   - {fileID: 2100000, guid: 6ac7624c613cd504cb78ea70b5df6b29, type: 2}
   - {fileID: 2100000, guid: 7a389f1e708e3cb45a5435d1f67c4386, type: 2}
@@ -3600,6 +3601,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   formations: []
   playerColor: {r: 1, g: 0, b: 0, a: 1}
+  nation: 0
 --- !u!4 &1071642940
 Transform:
   m_ObjectHideFlags: 0
