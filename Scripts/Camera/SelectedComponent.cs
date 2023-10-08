@@ -19,7 +19,7 @@ public class SelectionComponent : MonoBehaviour{
             throw new Exception("Selectable has no Entity");
         }
         entity = selectable.Entity;
-        entity.SetMaterialToRenderer(entity.CLook.MSelected);
+        //entity.SetMaterialToRenderer(entity.CLook.MSelected);
         if (entity.CHealth != null){
             entity.CHealth.SetHpSliderActive(true);
             
@@ -35,14 +35,6 @@ public class SelectionComponent : MonoBehaviour{
         }
         if (selectable.Entity.CCombat!=null){
             selectable.Entity.CCombat.projectorController.gameObject.SetActive(false);
-        }
-
-        C_Formation formation = entity.CFormation;
-        if (formation != null &&  formation.IsInFormation() && formation.IsLeader()){
-            entity.SetMaterialToRenderer(entity.CLook.MLeader);
-        }
-        else{
-            entity.SetMaterialToRenderer(entity.CLook.MUnselected);
         }
     }
 }

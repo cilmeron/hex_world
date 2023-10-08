@@ -71,7 +71,7 @@ public class FormationSlotUI : MonoBehaviour, IDropHandler{
     }
 
     public void HighlightElement(){
-        if (formationElement == null || formationElement.Entity.CSelectable != null){
+        if (formationElement == null || formationElement.Entity.CSelectable == null){
             return;
         }
         C_Selectable selectable = formationElement.gameObject.GetComponent<C_Selectable>();

@@ -98,7 +98,6 @@ public class Player : MonoBehaviour{
     
     #region Ownership Implementation
         public void InitializeOwnedGameObject(Entity entity){
-            entity.SetMaterialsAndShaders();
             AddOwnership(entity);
         }
         public void AddOwnership(Entity entity){
