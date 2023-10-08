@@ -41,7 +41,11 @@ public class C_Health : MonoBehaviour{
 
         private void OnDeath(C_Health cHealth){
             if (cHealth != this) return;
-            Destroy(gameObject);
+            if (entity.CMoveable != null){
+                entity.CMoveable.NavMeshAgent.enabled = false;
+                entity.collider.direction = 2;
+            }
+            Destroy(gameObject,10);
         }
        
         public float GetCurrentHp(){

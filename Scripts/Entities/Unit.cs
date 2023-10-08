@@ -1,36 +1,39 @@
 using UnityEngine;
 
 public class Unit : Entity{
-    public void OnDeath(){
-            if (CMoveable != null && CMoveable.NavMeshAgent.enabled)
-            {
-                CMoveable.NavMeshAgent.enabled = false;
-            }
-            if (CFormation.IsInFormation()){
-                CFormation.Formation.RemoveFormationElement(CFormation);
-            }
-        }
-        
-        public override void SetMaterialsAndShaders(){
-            base.SetMaterialsAndShaders();
-            cLook = new C_Look(gameObject.GetComponent<Renderer>(),
-                player.PlayerLook.MUnit,player.PlayerLook.MSelectedUnit,player.PlayerLook.MLeaderUnit);
-            if (cSelectable!=null && cSelectable.IsSelected()){
-                GetComponent<Renderer>().material = cLook.MSelected;
-                return;
-            }
-            if (CFormation.IsInFormation() && IsLeaderOfFormation()){
-                GetComponent<Renderer>().material = cLook.MLeader;
-                return;
-            }
-            GetComponent<Renderer>().material = cLook.MUnselected;
-        }
+
+    public Animator Animator;
+    private static readonly int Velocity = Animator.StringToHash("Velocity");
+    private static readonly int Hp = Animator.StringToHash("HP");
 
 
+    protected override void Update(){
+        base.Update();
+        if (Animator != null){
+            Animator.gameObject.transform.localPosition = Vector3.zero;
+            Animator.gameObject.transform.localRotation = Quaternion.identity;
+            UpdateAnimatorStats(); 
+        }
+    }
+
+    private void UpdateAnimatorStats(){
+        Animator.SetFloat(Hp,cHealth.GetCurrentHp());
+        Animator.SetFloat(Velocity, cMoveable.NavMeshAgent.velocity.magnitude);
+    }
     
-
+    public void OnDeath(){
+        if (CMoveable != null && CMoveable.NavMeshAgent.enabled)
+        {
+            CMoveable.NavMeshAgent.enabled = false;
+        }
+        if (CFormation.IsInFormation()){
+            CFormation.Formation.RemoveFormationElement(CFormation);
+        }
+    }
+        
     private bool IsLeaderOfFormation(){
         return CFormation.IsInFormation() && CFormation.Formation.GetLeader().gameObject == gameObject;
     }
+    
 
 }
