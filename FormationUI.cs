@@ -64,6 +64,10 @@ public class FormationUI : MonoBehaviour
         if (kvPair.Value.IsLeader()){
             slot.image.color = Color.green;
         }
+
+        var imageColor = slot.image.color;
+        imageColor.a = 150f/255;
+        slot.image.sprite = kvPair.Value.Entity.GetSprite();
     }
     
 

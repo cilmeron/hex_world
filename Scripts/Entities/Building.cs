@@ -34,19 +34,7 @@ public class Building : Entity{
         //Außerdem implementieren von weiteren Units
         //Außerdem Preisberechung
             
-        public override void SetMaterialsAndShaders(){
-            base.SetMaterialsAndShaders();
-            cLook = new C_Look(gameObject.GetComponent<Renderer>(),player.PlayerLook.MTower,player.PlayerLook.MSelectedTower,player.PlayerLook.MLeaderUnit);
-            if (cSelectable!=null && cSelectable.IsSelected()){
-                GetComponent<Renderer>().material = cLook.MSelected;
-                return;
-            }
-            if (CFormation!=null &&  CFormation.IsInFormation() && CFormation.IsLeader()){
-                GetComponent<Renderer>().material = cLook.MLeader;
-                return;
-            }
-            GetComponent<Renderer>().material = cLook.MUnselected;
-        }
+      
     
         public string GetStats(){
             return "HP: " + cHealth.GetCurrentHp() + " / " + cHealth.GetMaxHp() + "\n" +

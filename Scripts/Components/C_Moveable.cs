@@ -4,18 +4,16 @@ using UnityEngine;
 using UnityEngine.AI;
 
 
-[RequireComponent(typeof(NavMeshAgent))]
 public class C_Moveable : MonoBehaviour{
 
     private Entity entity;
     [SerializeField] private Vector3 moveToPosition;
     [SerializeField] private bool shouldMove = true;
     [SerializeField] private float stoppingDistance = 2f;
+    [SerializeField] private NavMeshAgent navMeshAgent;
     
-    private NavMeshAgent navMeshAgent;
 
     void Awake(){
-        navMeshAgent = GetComponent<NavMeshAgent>();
         entity = GetComponent<Entity>();
     }
     
