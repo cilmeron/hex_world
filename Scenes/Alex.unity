@@ -1919,7 +1919,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5463338146734804439, guid: a89efb4f56ece2f43ae67aeb67135319, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 45
+      value: -86.30001
       objectReference: {fileID: 0}
     - target: {fileID: 5463338146734804439, guid: a89efb4f56ece2f43ae67aeb67135319, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2239,7 +2239,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5463338146734804439, guid: a89efb4f56ece2f43ae67aeb67135319, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 30
+      value: -101.30001
       objectReference: {fileID: 0}
     - target: {fileID: 5463338146734804439, guid: a89efb4f56ece2f43ae67aeb67135319, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2672,9 +2672,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffe8ee5a9be70ec4c8099d7ea0cadc76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  collider: {fileID: 0}
   player: {fileID: 0}
   goldAmount: 0
   sprite: {fileID: 0}
+  Animator: {fileID: 0}
   unitPrefab: {fileID: 0}
   spawnPositions: []
   archerContainer: {fileID: 0}
@@ -5913,6 +5915,14 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 280248084061283062, guid: a89efb4f56ece2f43ae67aeb67135319, type: 3}
+      propertyPath: maxHP
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 280248084061283062, guid: a89efb4f56ece2f43ae67aeb67135319, type: 3}
+      propertyPath: currentHP
+      value: 200
+      objectReference: {fileID: 0}
     - target: {fileID: 651052253316306241, guid: a89efb4f56ece2f43ae67aeb67135319, type: 3}
       propertyPath: m_Name
       value: Viking (6)
@@ -5964,6 +5974,10 @@ PrefabInstance:
     - target: {fileID: 5463338146734804439, guid: a89efb4f56ece2f43ae67aeb67135319, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8682277960915804418, guid: a89efb4f56ece2f43ae67aeb67135319, type: 3}
+      propertyPath: attackTime
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8550,7 +8564,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5463338146734804439, guid: a89efb4f56ece2f43ae67aeb67135319, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 35
+      value: -96.3
       objectReference: {fileID: 0}
     - target: {fileID: 5463338146734804439, guid: a89efb4f56ece2f43ae67aeb67135319, type: 3}
       propertyPath: m_LocalPosition.y
@@ -9647,7 +9661,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5463338146734804439, guid: a89efb4f56ece2f43ae67aeb67135319, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 40
+      value: -91.30001
       objectReference: {fileID: 0}
     - target: {fileID: 5463338146734804439, guid: a89efb4f56ece2f43ae67aeb67135319, type: 3}
       propertyPath: m_LocalPosition.y

@@ -2,9 +2,7 @@ using UnityEngine;
 
 public class Unit : Entity{
 
-    public Animator Animator;
-    private static readonly int Velocity = Animator.StringToHash("Velocity");
-    private static readonly int Hp = Animator.StringToHash("HP");
+    
 
 
     protected override void Update(){
@@ -17,8 +15,8 @@ public class Unit : Entity{
     }
 
     private void UpdateAnimatorStats(){
-        Animator.SetFloat(Hp,cHealth.GetCurrentHp());
-        Animator.SetFloat(Velocity, cMoveable.NavMeshAgent.velocity.magnitude);
+        Animator.SetFloat(AnimHp,cHealth.GetCurrentHp());
+        Animator.SetFloat(AnimVelocity, cMoveable.NavMeshAgent.velocity.magnitude);
     }
     
     public void OnDeath(){

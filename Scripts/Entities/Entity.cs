@@ -26,6 +26,11 @@ public class Entity : MonoBehaviour{
     
         private bool isHovered = false;
     
+        
+        public Animator Animator;
+        protected static readonly int AnimVelocity = Animator.StringToHash("Velocity");
+        protected static readonly int AnimHp = Animator.StringToHash("HP");
+        
 
         protected virtual void Awake(){
             cHealth = GetComponent<C_Health>();
