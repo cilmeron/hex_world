@@ -10,6 +10,7 @@ public class SelectableUI : MonoBehaviour{
     [SerializeField] private Slider slider;
     [SerializeField] private Image image;
     [SerializeField] private TextMeshProUGUI statsTMP;
+    [SerializeField] private Button openFormationButton;
 
     private UIManager uiManager;
     void Start()
@@ -29,6 +30,13 @@ public class SelectableUI : MonoBehaviour{
         PrepareSlider();
         image.sprite = uiManager.Selectable.Entity.GetSprite();
         statsTMP.text = uiManager.Selectable.GetStats();
+        if (uiManager.Selectable.Entity.CFormation == null){
+            openFormationButton.gameObject.SetActive(false);
+        }
+        else{
+            openFormationButton.gameObject.SetActive(uiManager.Selectable.Entity.CFormation.IsInFormation());
+        }
+        
     }
 
     public void ResetValues(){
@@ -45,6 +53,7 @@ public class SelectableUI : MonoBehaviour{
         slider.fillRect.GetComponentInChildren<Image>().color = Color.Lerp(Color.red, Color.green, hpPercentage);
     }
 
+    
     public void OpenFormationMenu(){
         if (uiManager.Selectable == null){
             return;

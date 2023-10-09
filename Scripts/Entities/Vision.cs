@@ -5,11 +5,11 @@ using UnityEngine;
 public class Vision : MonoBehaviour{
     public int radius;
     private SphereCollider visionCollider;
+    [SerializeField]
     private C_Combat cCombat;
     private void Awake(){
         visionCollider = GetComponent<SphereCollider>();
         visionCollider.radius = radius;
-        cCombat = transform.parent.gameObject.GetComponent<C_Combat>();
     }
     
     private void OnTriggerEnter(Collider other){
