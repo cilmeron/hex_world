@@ -38,7 +38,22 @@ public class TerrainGenerator : MonoBehaviour
             {
                 float y = Noise(x, z);
                 vertices[i] = new Vector3(x * (128 / chunkGen.chunkResolution.x), y, z * (128 / chunkGen.chunkResolution.y));
+                float doesSpawn = Mathf.PerlinNoise(x + transform.position.x + chunkGen.seed, z + transform.position.z + chunkGen.seed);
+                doesSpawn -= Mathf.PerlinNoise((x + transform.position.x) * 0.1f + chunkGen.seed, (z + transform.position.z) * 0.1f + chunkGen.seed);
+                if (doesSpawn > chunkGen.treeThreshold && y > chunkGen.waterLevel + 5)
+                {
+                    float whatSpwans = Mathf.PerlinNoise(x + transform.position.x + (chunkGen.seed * 5), z + transform.position.z + (chunkGen.seed * 3));
+                    whatSpwans = whatSpwans * chunkGen.trees.Length;
+                    whatSpwans = Mathf.RoundToInt(whatSpwans);
+                    float offset = Random.Range(0f, 10f);
+                    offset = offset / 10f;
+                    GameObject current = Instantiate(chunkGen.trees[(int)whatSpwans],
+                        new Vector3(x * (128 / chunkGen.chunkResolution.x) + transform.position.x + offset, y + transform.position.y, z * (128 / chunkGen.chunkResolution.y) + transform.position.z + offset),
+                        Quaternion.identity);
+                    current.transform.parent = transform;
+                }
                 i++;
+
             }
         }
 
@@ -72,14 +87,18 @@ public class TerrainGenerator : MonoBehaviour
         mesh.vertices = vertices;
         mesh.triangles = triangles;
         mesh.uv = uv;
-        mesh.RecalculateNormals();
         mesh.RecalculateBounds();
         meshCollider.sharedMesh = mesh;
+        mesh.RecalculateNormals();
         meshFilter.mesh = mesh;
 
     }
     float Noise(float x, float z)
     {
-        return 0f;
+        float y = Mathf.PerlinNoise((((x + chunkGen.seed) * (128 / chunkGen.chunkResolution.x)) + transform.position.x) * 0.02f,
+            (((z + chunkGen.seed) * (128 / chunkGen.chunkResolution.y)) + transform.position.z) * 0.02f) * 10f;
+        y += Mathf.PerlinNoise((((x + chunkGen.seed) * (128 / chunkGen.chunkResolution.x)) + transform.position.x) * 0.0006f,
+            (((z + chunkGen.seed) * (128 / chunkGen.chunkResolution.y)) + transform.position.z) * 0.0006f) * 256;
+        return y;
     }
 }

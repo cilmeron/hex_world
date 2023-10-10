@@ -8,9 +8,20 @@ public class ChunkGeneration : MonoBehaviour
 
     public Material terrainMaterial;
 
+    public GameObject water;
+    public float waterLevel;
+    public GameObject[] trees;
+    public float treeRandomness;
+    public float treeThreshold;
+
+    public int seed;
+
     private void Start()
     {
+        waterLevel = Mathf.PerlinNoise(seed, seed) * 256;
         StartCoroutine(GenerateChunks());
+        GameObject current = Instantiate(water, new Vector3((128 * chunks.x) / 2, waterLevel, (128 * chunks.y) / 2), Quaternion.identity);
+        current.transform.localScale = new Vector3(128, 128, 128);
     }
 
     public IEnumerator GenerateChunks()
