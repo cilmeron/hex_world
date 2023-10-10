@@ -21,7 +21,7 @@ public class ChunkGeneration : MonoBehaviour
         waterLevel = Mathf.PerlinNoise(seed, seed) * 256;
         StartCoroutine(GenerateChunks());
         GameObject current = Instantiate(water, new Vector3((128 * chunks.x) / 2, waterLevel, (128 * chunks.y) / 2), Quaternion.identity);
-        current.transform.localScale = new Vector3(128, 128, 128);
+        current.transform.localScale = new Vector3(512, 512, 512);
     }
 
     public IEnumerator GenerateChunks()
