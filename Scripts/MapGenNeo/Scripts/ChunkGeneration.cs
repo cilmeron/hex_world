@@ -17,19 +17,38 @@ public class ChunkGeneration : MonoBehaviour
     public Transform player;
     public int chunksChunkLoaded;
 
-    public float noiseScale;
-
-    public int octaves;
+    [Range(0, 1000)]
+    public float BasePlateFactor = 150f;
+    [Range(0, 0.05f)]
+    public float MountainSpread = 0.003f;
+    [Range(0, 0.05f)]
+    public float HillSpread = 0.007f;
+    [Range(0, 1000)]
+    public float MountainSpreadScale = 200f;
+    [Range(0, 1000)]
+    public float HillSpreadScale = 70f;
     [Range(0, 1)]
-    public float persistance;
-    public float lacunarity;
+    public float BiomeFineScale = 0.0002f;
+    [Range(0, 1)]
+    public float BiomeMidScale = 0.0007f;
+    [Range(0, 1)]
+    public float BiomeCorseScale = 0.00007f;
 
     public int seed;
 
     private void Start()
     {
         waterLevel = Mathf.PerlinNoise(seed, seed) * 256;
+        waterLevel = 30;
         StartCoroutine(GenerateChunks());
+        GameObject current = Instantiate(water, new Vector3((128 * chunks.x) / 2, waterLevel, (128 * chunks.y) / 2), Quaternion.identity);
+        current.transform.localScale = new Vector3(16 * chunks.x, 128, 16 * chunks.y);
+    }
+
+    public void EditorStart()
+    {
+        waterLevel = Mathf.PerlinNoise(seed, seed) * 256;
+        waterLevel = 30;
         GameObject current = Instantiate(water, new Vector3((128 * chunks.x) / 2, waterLevel, (128 * chunks.y) / 2), Quaternion.identity);
         current.transform.localScale = new Vector3(16 * chunks.x, 128, 16 * chunks.y);
     }
