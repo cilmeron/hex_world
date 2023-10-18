@@ -727,7 +727,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 87e2584de83596a42a74d28746fa7e58, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -766,7 +766,7 @@ Transform:
   m_GameObject: {fileID: 268651153}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 13.559019, y: -21.391844, z: 9.084411}
-  m_LocalScale: {x: 239, y: 1, z: 239}
+  m_LocalScale: {x: 20, y: 1, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -4594,6 +4594,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1502472589}
   - component: {fileID: 1502472588}
+  - component: {fileID: 1502472590}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -4678,6 +4679,29 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 157.57, y: -129.27899, z: 57.596}
+--- !u!114 &1502472590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1502472587}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_RenderingLayers: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_ShadowRenderingLayers: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
 --- !u!1001 &1523689550
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6191,10 +6215,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chunks: {x: 16, y: 16}
-  chunkResolution: {x: 16, y: 16}
-  terrainMaterial: {fileID: 2100000, guid: 8f7a6d6b2af5d3849ae57f5ec1808d1c, type: 2}
+  chunkResolution: {x: 32, y: 32}
+  terrainMaterial: {fileID: 2100000, guid: 87e2584de83596a42a74d28746fa7e58, type: 2}
   water: {fileID: 1347771922}
-  waterLevel: 0
+  waterLevel: 119.10991
   trees:
   - {fileID: 1405983033647363507, guid: 411d79dbbe4633332bf08419508ecdd1, type: 3}
   - {fileID: 7987437740116969698, guid: 23af1a39b0c5720b898eb5eefad5a1b7, type: 3}
@@ -6203,6 +6227,12 @@ MonoBehaviour:
   - {fileID: 7087245949609137404, guid: 6a8478d973ae3ac75a084871ef5cbffb, type: 3}
   treeRandomness: 10
   treeThreshold: 0.3
+  player: {fileID: 0}
+  chunksChunkLoaded: 64
+  noiseScale: 0
+  octaves: 0
+  persistance: 0
+  lacunarity: 0
   seed: 1
 --- !u!4 &1858842693
 Transform:
@@ -6920,6 +6950,10 @@ PrefabInstance:
       propertyPath: m_CastShadows
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6542425334640277430, guid: cc43c0a5223b0b84f92162967227feb4, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: bc124965260ecd24fb236f461f295c43, type: 2}
     - target: {fileID: 8186095454807689320, guid: cc43c0a5223b0b84f92162967227feb4, type: 3}
       propertyPath: m_RootOrder
       value: 11

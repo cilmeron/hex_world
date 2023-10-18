@@ -11,22 +11,23 @@ public class TerrainGenerator : MonoBehaviour
 
     private void Start()
     {
+        GenerateTerrain();
+    }
+
+    public void GenerateTerrain()
+    {
         chunkGen = GameObject.FindGameObjectWithTag("Manager").GetComponent<ChunkGeneration>();
         if (chunkGen == null)
         {
             return;
         }
+
         meshFilter = GetComponent<MeshFilter>();
         meshRenderer = GetComponent<MeshRenderer>();
         meshCollider = GetComponent<MeshCollider>();
 
         meshRenderer.material = chunkGen.terrainMaterial;
 
-        GenerateTerrain();
-    }
-
-    void GenerateTerrain()
-    {
         mesh = new Mesh();
         Vector3[] vertices = new Vector3[(int)((chunkGen.chunkResolution.x + 1) * (chunkGen.chunkResolution.y + 1))];
         uv = new Vector2[vertices.Length];
@@ -36,7 +37,8 @@ public class TerrainGenerator : MonoBehaviour
         {
             for (int z = 0; z <= chunkGen.chunkResolution.y; z++)
             {
-                float y = Noise(x, z);
+                // float y = NoiseGeneration.GenerateNoise(x, z, chunkGen.seed, chunkGen.noiseScale, chunkGen.octaves, chunkGen.persistance, chunkGen.lacunarity);
+                float y = Noise(x, z, BiomeNoise(x, z));
                 vertices[i] = new Vector3(x * (128 / chunkGen.chunkResolution.x), y, z * (128 / chunkGen.chunkResolution.y));
                 float doesSpawn = Mathf.PerlinNoise(x + transform.position.x + chunkGen.seed, z + transform.position.z + chunkGen.seed);
                 doesSpawn -= Mathf.PerlinNoise((x + transform.position.x) * 0.1f + chunkGen.seed, (z + transform.position.z) * 0.1f + chunkGen.seed);
@@ -93,12 +95,24 @@ public class TerrainGenerator : MonoBehaviour
         meshFilter.mesh = mesh;
 
     }
-    float Noise(float x, float z)
+    float Noise(float x, float z, float biomeNoise)
     {
-        float y = Mathf.PerlinNoise((((x + chunkGen.seed) * (128 / chunkGen.chunkResolution.x)) + transform.position.x) * 0.02f,
-            (((z + chunkGen.seed) * (128 / chunkGen.chunkResolution.y)) + transform.position.z) * 0.02f) * 10f;
-        y += Mathf.PerlinNoise((((x + chunkGen.seed) * (128 / chunkGen.chunkResolution.x)) + transform.position.x) * 0.0006f,
-            (((z + chunkGen.seed) * (128 / chunkGen.chunkResolution.y)) + transform.position.z) * 0.0006f) * 256;
+        //Base Plate
+        float y = biomeNoise * 150f;
+        //Mountains
+        float multiplier = 1 + Mathf.Pow(BiomeNoise(x, z), 3) * 10f;
+        y = y * multiplier;
+        y += (Mathf.PerlinNoise(((x * (128 / chunkGen.chunkResolution.x)) + transform.position.x + chunkGen.seed) * 0.003f, ((z * (128 / chunkGen.chunkResolution.y)) + transform.position.z + chunkGen.seed) * 0.003f) * 200) * biomeNoise;
+        //Hills
+        y += (Mathf.PerlinNoise(((x * (128 / chunkGen.chunkResolution.x)) + transform.position.x + chunkGen.seed) * 0.007f, ((z * (128 / chunkGen.chunkResolution.y)) + transform.position.z + chunkGen.seed) * 0.007f) * 70) * biomeNoise;
+        return y;
+    }
+
+    float BiomeNoise(float x, float z)
+    {
+        float y = Mathf.PerlinNoise(((x * (128 / chunkGen.chunkResolution.x)) + transform.position.x + chunkGen.seed) * 0.0002f, ((z * (128 / chunkGen.chunkResolution.y)) + transform.position.z + chunkGen.seed) * 0.0002f);
+        y += Mathf.PerlinNoise(((x * (128 / chunkGen.chunkResolution.x)) + transform.position.x + chunkGen.seed) * 0.0007f, ((z * (128 / chunkGen.chunkResolution.y)) + transform.position.z + chunkGen.seed) * 0.0007f);
+        y -= Mathf.PerlinNoise(((x * (128 / chunkGen.chunkResolution.x)) + transform.position.x + chunkGen.seed) * 0.00007f, ((z * (128 / chunkGen.chunkResolution.y)) + transform.position.z + chunkGen.seed) * 0.00007f) * 2;
         return y;
     }
 }
