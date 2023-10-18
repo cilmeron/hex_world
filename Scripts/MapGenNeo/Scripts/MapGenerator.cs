@@ -18,17 +18,22 @@ public class MapGeneratorEditor : Editor
 
     private void GenerateMap(ChunkGeneration chunkGen)
     {
+
         // Clear existing chunks if needed
         Transform[] childChunks = chunkGen.transform.GetComponentsInChildren<Transform>();
         foreach (Transform child in childChunks)
         {
             if (child != chunkGen.transform)
             {
-                DestroyImmediate(child.gameObject);
+                if (child != null)
+                {
+                    DestroyImmediate(child.gameObject);
+                }
             }
         }
 
         // Generate new map
+        chunkGen.EditorStart();
         chunkGen.GenerateChunksEditor();
 
         // Call GenerateTerrain for each chunk
