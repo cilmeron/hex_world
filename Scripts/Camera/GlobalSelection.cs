@@ -58,7 +58,7 @@ public class GlobalSelection : MonoBehaviour
             if(dragSelect == false) //single Select
             {
                 Ray ray = Camera.main.ScreenPointToRay(p1);
-
+                
                 if(Physics.Raycast(ray,out hit, 500.0f))
                 {
                     C_Selectable hitSelectable = hit.transform.gameObject.GetComponent<C_Selectable>();
@@ -194,6 +194,7 @@ public class GlobalSelection : MonoBehaviour
     }
 
     private void OnTriggerEnter(Collider other){
+        //RigidBody is needed for this to work
         C_Selectable selectable = other.GetComponent<C_Selectable>();
         if (selectable != null){
             selected_table.AddSelected(selectable);
