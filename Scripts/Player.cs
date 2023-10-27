@@ -11,14 +11,21 @@ public class Player : MonoBehaviour{
     
         [SerializeField] private Color playerColor;
         private Player_Look _playerLook;
-    
 
-    
-    
-    
-    
+        [SerializeField]
+        public Nations nation;
 
-    public void AddFormation(IFormation formation){
+
+        public enum Nations{
+            VIKINGS,
+            SAMURAI
+        }
+
+
+
+
+
+        public void AddFormation(IFormation formation){
         formations.Add(formation.GetFormation());
     }
     
@@ -91,7 +98,6 @@ public class Player : MonoBehaviour{
     
     #region Ownership Implementation
         public void InitializeOwnedGameObject(Entity entity){
-            entity.SetMaterialsAndShaders();
             AddOwnership(entity);
         }
         public void AddOwnership(Entity entity){

@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class HpSlider : MonoBehaviour{
+    [SerializeField]
     private C_Health cHealth;
 
     private Slider slider;
@@ -14,7 +15,6 @@ public class HpSlider : MonoBehaviour{
     
     // Start is called before the first frame update
     void Awake(){
-        cHealth = transform.parent.GetComponent<C_Health>();
         slider = transform.GetChild(0).GetComponent<Slider>();
         slider.maxValue = cHealth.GetMaxHp();
         slider.value = cHealth.GetCurrentHp();
