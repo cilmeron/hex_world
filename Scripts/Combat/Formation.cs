@@ -49,9 +49,6 @@ public class Formation : MonoBehaviour, IFormation
  public void SetLeader(C_Formation formationElement)
     {
         leader = formationElement;
-        if (leader.Entity.CSelectable!=null){
-            leader.Entity.CLook.GetRenderer().material = leader.Entity.CLook.MLeader;
-        }
         formationElements.Add(formationElement);
         formationElement.AddEntityToFormation(this,Vector3.zero);
         InvokeFormationChangedEvent();

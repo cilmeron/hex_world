@@ -14,12 +14,15 @@ public class C_Combat : MonoBehaviour{
     [SerializeField] private List<C_Health> cHealthsInVision  = new List<C_Health>();
     [SerializeField] private C_Health target;
     private Entity entity;
+    [SerializeField] private C_Weapon CWeapon;
+    private static readonly int PulledSword = Animator.StringToHash("PulledSword");
 
     void Awake(){
         entity = gameObject.GetComponent<Entity>();
     }
 
     void Start(){
+        if (CWeapon != null) CWeapon.SetEntity(entity);
         vision.UpdateRange(range);
         EventManager.Instance.deathEvent.AddListener(EntityDied);
         EventManager.Instance.setTarget.AddListener(SetSpecificTarget);
@@ -27,12 +30,23 @@ public class C_Combat : MonoBehaviour{
         projectorController.circleColor = entity.GetPlayer().PlayerColor;
         projectorController.UpdateMaterialProperties();
     }
-   
+
+    
 
     private IEnumerator Attack(){
+        MoveToTarget();
+        if (entity.Animator != null){
+            entity.Animator.SetBool(PulledSword, true);
+            if (CWeapon != null) CWeapon.SetWeaponActive(true);
+        }
         if (cHealthsInVision.Contains(target)){
             float timeTillAttack = attackTime;
-            ShootBullet();
+            if (CWeapon != null){
+                CWeapon.Attack();
+            }
+            
+            
+            //ShootBullet();
             while (timeTillAttack > 0){
                 yield return null; // wait for the next frame
                 timeTillAttack -= Time.deltaTime;
@@ -46,7 +60,7 @@ public class C_Combat : MonoBehaviour{
             MoveToTarget();
         }
     }
-
+    
     private void ShootBullet(){
         Transform t = transform;
         GameObject projectileObject = Instantiate(projectile, t.position, t.rotation);
@@ -74,6 +88,10 @@ public class C_Combat : MonoBehaviour{
     
     public void SetTarget(){
         if (cHealthsInVision.Count == 0){
+            if (entity.Animator != null){
+                entity.Animator.SetBool(PulledSword, false);
+                if (CWeapon != null) CWeapon.SetWeaponActive(false);
+            }
             target = null;
             return;
         }
@@ -112,5 +130,10 @@ public class C_Combat : MonoBehaviour{
     public void RemoveCHealthFromVision(C_Health cHealth){
         cHealthsInVision.Remove(cHealth);
     }
+
+    public int GetAttackDmg(){
+        return attackDmg;
+    }
+    
     
 }

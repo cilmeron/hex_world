@@ -63,7 +63,7 @@ public class UIManager : MonoBehaviour{
     void Update(){ 
         player = GameManager.Instance.player;   //TODO wegen Performance auf Events umstellen
         SetTopBarUI();                          //TODO wegen Performance auf Events umstellen
-        SetSelectableUI();                      //TODO wegen Performance auf Events umstellen
+        SetSelectableUI();   
     }
 
     
@@ -89,6 +89,7 @@ public class UIManager : MonoBehaviour{
         int selectionCount = selectionManager.selectedDictionary.selectedTable.Values.Count;
         if (selectionCount == 0){
             ResetSelection();
+            ResetFormation();
         }else if (selectionCount == 1){
             if (selectedFormation == null){
                 ResetFormation();            

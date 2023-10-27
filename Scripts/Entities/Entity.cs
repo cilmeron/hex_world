@@ -15,9 +15,10 @@ public class Entity : MonoBehaviour{
         protected C_Selectable cSelectable;
         protected C_Formation cFormation;
         protected C_Moveable cMoveable;
-        protected C_Look cLook;
         
         
+        
+        public CapsuleCollider collider;
         [SerializeField] protected Player player;
         [SerializeField] private int goldAmount;
         [SerializeField] private Sprite sprite;
@@ -25,6 +26,11 @@ public class Entity : MonoBehaviour{
     
         private bool isHovered = false;
     
+        
+        public Animator Animator;
+        protected static readonly int AnimVelocity = Animator.StringToHash("Velocity");
+        protected static readonly int AnimHp = Animator.StringToHash("HP");
+        
 
         protected virtual void Awake(){
             cHealth = GetComponent<C_Health>();
@@ -32,6 +38,8 @@ public class Entity : MonoBehaviour{
             cSelectable = GetComponent<C_Selectable>();
             cFormation = GetComponent<C_Formation>();
             cMoveable = GetComponent<C_Moveable>();
+            
+            collider = GetComponent<CapsuleCollider>();
         }
     
         protected virtual void Start(){
@@ -60,9 +68,6 @@ public class Entity : MonoBehaviour{
             
         }
 
-        public virtual void SetMaterialsAndShaders(){
-
-        }
 
         public void SetPlayer(Player p){
             player = p;
@@ -100,9 +105,6 @@ public class Entity : MonoBehaviour{
         get => cMoveable;
     }
     
-    public C_Look CLook{
-        get => cLook;
-    }
     
     
     public Renderer GetRenderer(){
