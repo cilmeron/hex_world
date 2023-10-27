@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Threading;
+
 using UnityEngine;
 
 public class NetworkManager : MonoBehaviour
@@ -130,7 +131,11 @@ public class NetworkManager : MonoBehaviour
         if(connection.CanWrite)
         {
             byte[] bs  = System.Text.Encoding.UTF8.GetBytes(msg);
-            connection.Write(bs, 0, bs.Length);
+            byte[] bs2 = new byte[bs.Length+1];
+            byte nt = (byte)'\0';
+            System.Array.Copy(bs, 0, bs2, 0, bs.Length);
+            bs2[bs.Length] = nt;       
+            connection.Write(bs2, 0, bs2.Length);
             return true;
         }
         else
@@ -171,6 +176,7 @@ public class NetworkManager : MonoBehaviour
 
      private void CheckMessages(string response)
     {
+        Debug.Log("Got response "+response);
         lock(netlock)
         {
             if (response.Substring(0, 1) != "P" && response.Substring(0, 1) != "T")
