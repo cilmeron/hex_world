@@ -237,9 +237,8 @@ MonoBehaviour:
   attackDmg: 10
   projectile: {fileID: 3164007927888127725, guid: 5a2606daf4c8b7041acd31a60968cf68, type: 3}
   bulletStart: {fileID: 1481204226429979991}
-  entitiesInVision: []
+  cHealthsInVision: []
   target: {fileID: 0}
-  owner: {fileID: 0}
 --- !u!114 &2688939089466150893
 MonoBehaviour:
   m_ObjectHideFlags: 0
