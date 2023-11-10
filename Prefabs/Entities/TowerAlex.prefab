@@ -151,9 +151,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffe8ee5a9be70ec4c8099d7ea0cadc76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  vision: {fileID: 2351634619460379665}
+  collider: {fileID: 0}
   player: {fileID: 0}
   goldAmount: 300
   sprite: {fileID: 21300000, guid: 031ede89bd96126478fe6bfbacf1aeaf, type: 3}
+  Animator: {fileID: 0}
   unitPrefab: {fileID: 651052253316306241, guid: a89efb4f56ece2f43ae67aeb67135319, type: 3}
   spawnPositions:
   - {fileID: 1710413325903415084}
@@ -209,13 +212,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectorController: {fileID: 2563768469588672841}
   range: 50
-  vision: {fileID: 2351634619460379665}
   attackTime: 5
   attackDmg: 50
   projectile: {fileID: 3164007927888127725, guid: 5a2606daf4c8b7041acd31a60968cf68, type: 3}
   bulletStart: {fileID: 6304387112662510217}
   cHealthsInVision: []
   target: {fileID: 0}
+  CWeapon: {fileID: 0}
 --- !u!114 &132690873593607101
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -624,7 +627,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   radius: 30
-  cCombat: {fileID: 5379829593632375544}
+  _entitiesInVision: []
 --- !u!1001 &6419970859624274579
 PrefabInstance:
   m_ObjectHideFlags: 0

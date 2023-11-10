@@ -2,9 +2,6 @@ using UnityEngine;
 
 public class Unit : Entity{
 
-    
-
-
     protected override void Update(){
         base.Update();
         if (Animator != null){
@@ -31,6 +28,13 @@ public class Unit : Entity{
         
     private bool IsLeaderOfFormation(){
         return CFormation.IsInFormation() && CFormation.Formation.GetLeader().gameObject == gameObject;
+    }
+
+    public override void DetectorNotification(Component component, Detector.DetectionManagement direction){
+        base.DetectorNotification(component, direction);
+        if (cCombat != null){
+            cCombat.SetTarget();
+        }
     }
     
 

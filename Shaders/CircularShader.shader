@@ -5,7 +5,7 @@
 		[PerRendererData] _MainTex ("Sprite Texture", 2D) = "white" {}
 		_Color("Tint", Color) = (1,1,1,1)
 		_Radius("Radius", Float) = 0.5
-		_BorderSize("Border Size", Float) = 0.1
+		_BorderSize("Border Thickness", Float) = 0.1
 		_ShouldDisplayBorderOnly("Display Border Only?", Range(0,1)) = 0
 		_WorldPos("World Position", Vector) = (0,0,0)
 		_Offset("Offset", Vector) = (0,0,0)

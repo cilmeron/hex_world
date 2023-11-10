@@ -7,7 +7,9 @@ using UnityEngine.Timeline;
 public class C_Weapon : MonoBehaviour{
     protected GameObject weapon;
     protected Entity entity;
-    protected static readonly int AnimAttack = Animator.StringToHash("Attack");
+    [SerializeField] protected int attackDmg;
+    [SerializeField] protected int attackRange;
+    public static readonly int AnimAttack = Animator.StringToHash("Attack");
     protected virtual void Awake(){
         weapon = gameObject;
     }
@@ -26,6 +28,14 @@ public class C_Weapon : MonoBehaviour{
 
     public void SetEntity(Entity e){
         entity = e;
+    }
+
+    public int GetAttackRange(){
+        return attackRange;
+    }
+
+    public int GetAttackDamage(){
+        return attackDmg;
     }
 
 }
