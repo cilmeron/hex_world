@@ -35,6 +35,7 @@ public class InputManager : MonoBehaviour{
                             if (cMove == null){
                                 continue;
                             }
+                            if (cSelectable.Entity.GetPlayer() != GameManager.Instance.player) return;
                             cMove.SetMoveToPosition(hit.point,false);
                         }
                     }

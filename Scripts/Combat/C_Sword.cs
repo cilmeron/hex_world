@@ -14,23 +14,16 @@ public class C_Sword : C_Weapon{
 
     public override void Attack(){
         base.Attack();
+        Debug.Log("Attack " + entity.gameObject.name);
         entity.Animator.SetBool(AnimAttack, true);
-        StartCoroutine(ResetAttackFlag());
     }
     
-    private IEnumerator ResetAttackFlag()
-    {
-        // Wait for half a second (0.5 seconds).
-        yield return new WaitForSeconds(5f);
-        entity.Animator.SetBool(AnimAttack, false);
-        
-    }
 
     private void OnTriggerEnter(Collider other){
         if (other.gameObject.GetComponent<Entity>() != null){
             Entity hitEntity = other.gameObject.GetComponent<Entity>();
             if (hitEntity.CHealth != null){
-                EventManager.Instance.damageEvent.Invoke(hitEntity.CHealth,entity.CCombat.GetAttackDmg());
+                EventManager.Instance.damageEvent.Invoke(hitEntity.CHealth,attackDmg);
                 Debug.Log(entity.gameObject.name + " has hit + " + hitEntity.gameObject.name);
             }
         }

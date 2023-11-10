@@ -250,6 +250,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53218d366a6815e4abef25638327162c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  vision: {fileID: 538703604205305907}
   collider: {fileID: 0}
   player: {fileID: 0}
   goldAmount: 30

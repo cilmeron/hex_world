@@ -1,62 +1,80 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
-public class C_Combat : MonoBehaviour{
-    public ProjectorController projectorController;
-    [SerializeField] private int range;
-    [SerializeField] private Vision vision;
+public class C_Combat : MonoBehaviour, DetectorNotification{
     [SerializeField] private float attackTime;
-    [SerializeField] private int attackDmg;
     [SerializeField] private GameObject projectile;
     [SerializeField] private Transform bulletStart;
-    [SerializeField] private List<C_Health> cHealthsInVision  = new List<C_Health>();
+    [SerializeField] private List<C_Health> cHealthsInAttackRange  = new List<C_Health>();
     [SerializeField] private C_Health target;
-    private Entity entity;
+    private Entity owner;
     [SerializeField] private C_Weapon CWeapon;
     private static readonly int PulledSword = Animator.StringToHash("PulledSword");
+    [SerializeField] private float timeTillAttack = 0f;
+    [SerializeField] public Detector _attackDistanceDetector;
+    private float timeTillTargetRotationCheck = 0f;
+    
 
     void Awake(){
-        entity = gameObject.GetComponent<Entity>();
+        owner = gameObject.GetComponent<Entity>();
+        _attackDistanceDetector.SetOwner(owner);
     }
 
     void Start(){
-        if (CWeapon != null) CWeapon.SetEntity(entity);
-        vision.UpdateRange(range);
+        if (CWeapon != null) CWeapon.SetEntity(owner);
         EventManager.Instance.deathEvent.AddListener(EntityDied);
         EventManager.Instance.setTarget.AddListener(SetSpecificTarget);
-        projectorController.circleRadius = range * entity.transform.localScale.x;
-        projectorController.circleColor = entity.GetPlayer().PlayerColor;
-        projectorController.UpdateMaterialProperties();
+        _attackDistanceDetector.SetDetectorNotification(this);
+        _attackDistanceDetector.SetRadius(CWeapon.GetAttackRange());
     }
 
-    
+    private IEnumerator CheckTargetRotation(){
+        if (target != null){
+            timeTillTargetRotationCheck = 3f;
+            while (timeTillTargetRotationCheck > 0){
+                yield return null; // wait for the next frame
+                timeTillTargetRotationCheck -= Time.deltaTime;
+            }
+            if (target != null){
+                StartCoroutine(TurnToTarget());
+            }
+
+            StartCoroutine(CheckTargetRotation());
+
+        }
+    }
+    private IEnumerator TurnToTarget(){
+        int rotationSpeed = 20;
+        if (target != null)
+        {
+            // Calculate the direction to the target
+            Vector3 targetDirection = target.transform.position - transform.position;
+            Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+
+            while (transform.rotation != targetRotation)
+            {
+                float step = rotationSpeed * Time.deltaTime;
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, step);
+                yield return null;
+            }
+        }
+    }
 
     private IEnumerator Attack(){
-        MoveToTarget();
-        if (entity.Animator != null){
-            entity.Animator.SetBool(PulledSword, true);
-            if (CWeapon != null) CWeapon.SetWeaponActive(true);
-        }
-        if (cHealthsInVision.Contains(target)){
-            float timeTillAttack = attackTime;
+        if (cHealthsInAttackRange.Contains(target)){
+            timeTillAttack = attackTime;
             if (CWeapon != null){
                 CWeapon.Attack();
             }
-            
-            
-            //ShootBullet();
             while (timeTillAttack > 0){
                 yield return null; // wait for the next frame
                 timeTillAttack -= Time.deltaTime;
             }
-
             if (target != null){
                 StartCoroutine(Attack());
             }
-        }
-        else{
+        }else{
             MoveToTarget();
         }
     }
@@ -68,72 +86,106 @@ public class C_Combat : MonoBehaviour{
         bullet.StartPos = bulletStart.position;
         bullet.Owner = this;
         bullet.Target = target.Entity;
-        bullet.Damage = attackDmg;
+        bullet.Damage = CWeapon.GetAttackDamage();
     }
 
     private void MoveToTarget(){
-        if (entity.CMoveable != null){
-            entity.CMoveable.SetMoveToPosition(target.transform.position,false);
+        if (owner.CMoveable != null){
+            owner.CMoveable.SetMoveToTransform(target.transform,false);
         }
     }
 
     private void SetSpecificTarget(C_Combat attacker, C_Health target){
         if (attacker == this){
             this.target = target;
-            if (this.target != null){
-                StartCoroutine(Attack());
+            if (owner.Animator != null){
+                owner.Animator.SetBool(PulledSword, true);
+                if (CWeapon != null) CWeapon.SetWeaponActive(true);
             }
+            MoveToTarget();
         }
     }
-    
+
+    private void ResetTarget(){
+        target = null;
+        if (owner.Animator != null){
+            owner.Animator.SetBool(PulledSword, false);
+            owner.Animator.SetBool(C_Weapon.AnimAttack, false);
+            if (CWeapon != null) CWeapon.SetWeaponActive(false);
+        }
+        StopCoroutine(CheckTargetRotation());
+    }
     public void SetTarget(){
-        if (cHealthsInVision.Count == 0){
-            if (entity.Animator != null){
-                entity.Animator.SetBool(PulledSword, false);
-                if (CWeapon != null) CWeapon.SetWeaponActive(false);
-            }
-            target = null;
+        if (target != null) return;
+        if (owner._entitiesInVision.Count == 0){
+            ResetTarget();
             return;
         }
 
-        foreach (C_Health targetCHealth in cHealthsInVision){
-            if (targetCHealth.Entity.GetPlayer() != entity.GetPlayer() && entity.GetPlayer()!=null){
-                target = targetCHealth;
-                break;
+        if (cHealthsInAttackRange.Count > 0){
+            foreach (C_Health cHealth in cHealthsInAttackRange){
+                if (cHealth == null) continue;
+                if (cHealth.Entity.GetPlayer() != owner.GetPlayer() && owner.GetPlayer()!=null){
+                    target = cHealth;
+                    break;
+                }
+            }
+        }else{
+            foreach (Entity e in owner._entitiesInVision){
+                C_Health cHealth = e.GetComponent<C_Health>();
+                if (cHealth == null) continue;
+                if (e.GetPlayer() != owner.GetPlayer() && owner.GetPlayer()!=null){
+                    target = cHealth;
+                    break;
+                }
             }
         }
+            
         if (target != null){
-            StartCoroutine(Attack());
+            StartCoroutine(CheckTargetRotation());
+            if (owner.Animator != null){
+                owner.Animator.SetBool(PulledSword, true);
+                if (CWeapon != null) CWeapon.SetWeaponActive(true);
+            }
+            MoveToTarget();
         }
     }
 
     private void EntityDied(C_Health cHealth){
         
-        if (cHealthsInVision.Contains(cHealth)){
-            RemoveCHealthFromVision(cHealth);
+        if (cHealthsInAttackRange.Contains(cHealth)){
+            cHealthsInAttackRange.Remove(cHealth);
             if (target == cHealth){
-                target = null;
+                ResetTarget();
                 SetTarget();
             }
         }
     }
-
-
+    
     public C_Health GetTarget(){
         return target;
     }
 
-    public void AddCHealthToVision(C_Health cHealth){
-        cHealthsInVision.Add(cHealth);
-    }
-
-    public void RemoveCHealthFromVision(C_Health cHealth){
-        cHealthsInVision.Remove(cHealth);
-    }
-
-    public int GetAttackDmg(){
-        return attackDmg;
+    private bool IsTargetInAttackRange(){
+        return CWeapon.GetAttackRange() >Vector3.Distance(owner.transform.position,target.transform.position);
     }
     
-    
+    public void DetectorNotification(Component component, Detector.DetectionManagement direction){
+        Entity e = component.GetComponent<Entity>();
+        if (e.CHealth == null) return;
+        if (direction == Detector.DetectionManagement.Enter && !cHealthsInAttackRange.Contains(e.CHealth)){
+            cHealthsInAttackRange.Add(e.CHealth);
+        }else if (direction == Detector.DetectionManagement.Exit && cHealthsInAttackRange.Contains(e.CHealth)){
+            cHealthsInAttackRange.Remove(e.CHealth);
+            if (cHealthsInAttackRange.Count == 0 || e.CHealth == target){
+                ResetTarget();
+            }
+        }
+        if(target==null){
+            SetSpecificTarget(this,e.CHealth);     
+        }
+        if (e.CHealth == target && direction==Detector.DetectionManagement.Enter){
+            StartCoroutine(Attack());
+        }
+    }
 }

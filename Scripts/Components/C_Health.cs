@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class C_Health : MonoBehaviour{
+public class C_Health : MonoBehaviour, Detectable{
     [SerializeField] private float currentHP;
     [SerializeField] private float maxHP;
     [SerializeField] private HpSlider hpSlider;

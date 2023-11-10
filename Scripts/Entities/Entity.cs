@@ -7,21 +7,25 @@ using UnityEngine.EventSystems;
 using UnityEngine.Search;
 using UnityEngine.UI;
 
-public class Entity : MonoBehaviour{
+public class Entity : MonoBehaviour, Detectable, DetectorNotification{
 
 
+    
         protected C_Health cHealth;
         protected C_Combat cCombat;
         protected C_Selectable cSelectable;
         protected C_Formation cFormation;
         protected C_Moveable cMoveable;
-        
+
+        public List<Entity> _entitiesInVision = new();
+        public Detector detector;
         
         
         public CapsuleCollider collider;
         [SerializeField] protected Player player;
         [SerializeField] private int goldAmount;
         [SerializeField] private Sprite sprite;
+        [SerializeField] protected float viewDistance = 15;
 
     
         private bool isHovered = false;
@@ -40,6 +44,9 @@ public class Entity : MonoBehaviour{
             cMoveable = GetComponent<C_Moveable>();
             
             collider = GetComponent<CapsuleCollider>();
+            
+            detector.SetOwner(this);
+            detector.SetDetectorNotification(this);
         }
     
         protected virtual void Start(){
@@ -175,4 +182,14 @@ public class Entity : MonoBehaviour{
         }
     }
     
+    public virtual void DetectorNotification(Component component, Detector.DetectionManagement direction){
+        Entity e = component.GetComponent<Entity>();
+        if (e.CHealth == null) return;
+        if (direction == Detector.DetectionManagement.Enter && !_entitiesInVision.Contains(e)){
+            _entitiesInVision.Add(e);
+        }else if (direction == Detector.DetectionManagement.Exit && _entitiesInVision.Contains(e)){
+            _entitiesInVision.Remove(e);
+        }    
+    }
+
 }

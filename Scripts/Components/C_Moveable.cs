@@ -8,6 +8,7 @@ public class C_Moveable : MonoBehaviour{
 
     private Entity entity;
     [SerializeField] private Vector3 moveToPosition;
+    [SerializeField] private Transform moveToTransform;
     [SerializeField] private bool shouldMove = true;
     [SerializeField] private float stoppingDistance = 2f;
     [SerializeField] private NavMeshAgent navMeshAgent;
@@ -39,17 +40,28 @@ public class C_Moveable : MonoBehaviour{
             else{
                 navMeshAgent.stoppingDistance = stoppingDistance;
             }
-            navMeshAgent.SetDestination(moveToPosition);
+            navMeshAgent.SetDestination(GetDestination());
+            entity.detector.GetRangeProjector().UpdateMaterialProperties();
             if (entity.CCombat != null){
-                entity.CCombat.projectorController.UpdateMaterialProperties();
+                entity.CCombat._attackDistanceDetector.GetRangeProjector().UpdateMaterialProperties();
             }
         }
     }
+
+    private Vector3 GetDestination(){
+        if (moveToTransform != null){
+            return moveToTransform.position;
+        }
+
+        return moveToPosition;
+    }
+    
+    public void SetMoveToTransform(Transform moveToTransform, bool forceMove){
+        this.moveToTransform = moveToTransform;
+    }
     
     public void SetMoveToPosition(Vector3 moveToPosition,bool forceMove){
-        if (GameManager.Instance.player != entity.GetPlayer()){
-            return;
-        }
+        moveToTransform = null;
         C_Formation formation = entity.CFormation;
         if (formation != null){
             if (formation.IsInFormation() && !formation.IsLeader() && !forceMove){
@@ -58,6 +70,7 @@ public class C_Moveable : MonoBehaviour{
         }
         this.moveToPosition = moveToPosition;
     }
+    
     public void EnableNavMesh(bool active){
         navMeshAgent.enabled = active;
     }
