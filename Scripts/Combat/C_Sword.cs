@@ -14,8 +14,8 @@ public class C_Sword : C_Weapon{
 
     public override void Attack(){
         base.Attack();
-        Debug.Log("Attack " + entity.gameObject.name);
-        entity.Animator.SetBool(AnimAttack, true);
+        entity.Animator.SetTrigger(AnimAttack);
+        Debug.Log("attacked");
     }
     
 
@@ -24,9 +24,7 @@ public class C_Sword : C_Weapon{
             Entity hitEntity = other.gameObject.GetComponent<Entity>();
             if (hitEntity.CHealth != null){
                 EventManager.Instance.damageEvent.Invoke(hitEntity.CHealth,attackDmg);
-                Debug.Log(entity.gameObject.name + " has hit + " + hitEntity.gameObject.name);
             }
         }
     }
-
 }

@@ -45,7 +45,7 @@ public class C_Combat : MonoBehaviour, DetectorNotification{
         }
     }
     private IEnumerator TurnToTarget(){
-        int rotationSpeed = 20;
+        int rotationSpeed = 120;
         if (target != null)
         {
             // Calculate the direction to the target
@@ -96,7 +96,7 @@ public class C_Combat : MonoBehaviour, DetectorNotification{
     }
 
     private void SetSpecificTarget(C_Combat attacker, C_Health target){
-        if (attacker == this){
+        if (attacker == this && target.Entity.GetPlayer() != attacker.owner.GetPlayer()){
             this.target = target;
             if (owner.Animator != null){
                 owner.Animator.SetBool(PulledSword, true);
@@ -152,7 +152,9 @@ public class C_Combat : MonoBehaviour, DetectorNotification{
     }
 
     private void EntityDied(C_Health cHealth){
-        
+        if (owner._entitiesInVision.Contains(cHealth.Entity)){
+            owner._entitiesInVision.Remove(cHealth.Entity);
+        }
         if (cHealthsInAttackRange.Contains(cHealth)){
             cHealthsInAttackRange.Remove(cHealth);
             if (target == cHealth){
@@ -181,7 +183,7 @@ public class C_Combat : MonoBehaviour, DetectorNotification{
                 ResetTarget();
             }
         }
-        if(target==null){
+        if(target==null && e.CHealth.IsAlive()){
             SetSpecificTarget(this,e.CHealth);     
         }
         if (e.CHealth == target && direction==Detector.DetectionManagement.Enter){

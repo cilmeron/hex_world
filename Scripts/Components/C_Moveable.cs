@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.Licensing;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -12,6 +13,7 @@ public class C_Moveable : MonoBehaviour{
     [SerializeField] private bool shouldMove = true;
     [SerializeField] private float stoppingDistance = 2f;
     [SerializeField] private NavMeshAgent navMeshAgent;
+    
     
 
     void Awake(){
