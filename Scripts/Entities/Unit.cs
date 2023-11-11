@@ -13,7 +13,11 @@ public class Unit : Entity{
 
     private void UpdateAnimatorStats(){
         Animator.SetFloat(AnimHp,cHealth.GetCurrentHp());
-        Animator.SetFloat(AnimVelocity, cMoveable.NavMeshAgent.velocity.magnitude);
+        float velocity = cMoveable.NavMeshAgent.velocity.magnitude;
+        Animator.SetFloat(AnimVelocity, velocity);
+        if (velocity > walkThreshhold){
+            Animator.SetTrigger(AnimWalk);
+        }
     }
     
     public void OnDeath(){

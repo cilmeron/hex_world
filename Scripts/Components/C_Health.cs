@@ -45,6 +45,12 @@ public class C_Health : MonoBehaviour, Detectable{
                 entity.CMoveable.NavMeshAgent.enabled = false;
                 entity.collider.direction = 2;
             }
+
+            if (entity.CCombat != null){
+                entity.CCombat.enabled = false;
+            }
+
+            //entity.collider.enabled = false;
             Destroy(gameObject,10);
         }
        
@@ -56,6 +62,10 @@ public class C_Health : MonoBehaviour, Detectable{
             return maxHP;
         }
 
+        public bool IsAlive(){
+            return currentHP >= 0;
+        }
+        
         public Entity Entity{
             get => entity;
         }

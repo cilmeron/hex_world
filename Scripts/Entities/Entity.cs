@@ -29,11 +29,12 @@ public class Entity : MonoBehaviour, Detectable, DetectorNotification{
 
     
         private bool isHovered = false;
-    
+        protected readonly float walkThreshhold = 0.2f;
         
         public Animator Animator;
         protected static readonly int AnimVelocity = Animator.StringToHash("Velocity");
         protected static readonly int AnimHp = Animator.StringToHash("HP");
+        protected static readonly int AnimWalk = Animator.StringToHash("Walk");
         
 
         protected virtual void Awake(){
@@ -170,7 +171,7 @@ public class Entity : MonoBehaviour, Detectable, DetectorNotification{
                 if (selectable.Entity.CCombat != null){
                     if (CHealth != null){
                         if (selectable.Entity.GetPlayer() != CHealth.Entity.GetPlayer()){
-                            EventManager.Instance.setTarget.Invoke(selectable.Entity.CCombat,CHealth);
+                                EventManager.Instance.setTarget.Invoke(selectable.Entity.CCombat,CHealth);
                         }
                     } 
                 }   

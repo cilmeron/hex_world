@@ -23,7 +23,7 @@ public class C_Weapon : MonoBehaviour{
     }
 
     public void SetWeaponActive(bool active){
-        weapon.SetActive(active);
+            weapon.SetActive(active);
     }
 
     public void SetEntity(Entity e){
