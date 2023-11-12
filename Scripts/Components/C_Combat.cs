@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
-public class C_Combat : MonoBehaviour{
+
+public class C_Combat : MonoBehaviour
+{
     public ProjectorController projectorController;
     [SerializeField] private int range;
     [SerializeField] private Vision vision;
@@ -11,17 +12,20 @@ public class C_Combat : MonoBehaviour{
     [SerializeField] private int attackDmg;
     [SerializeField] private GameObject projectile;
     [SerializeField] private Transform bulletStart;
-    [SerializeField] private List<C_Health> cHealthsInVision  = new List<C_Health>();
+    [SerializeField] private List<C_Health> cHealthsInVision = new List<C_Health>();
     [SerializeField] private C_Health target;
     private Entity entity;
     [SerializeField] private C_Weapon CWeapon;
     private static readonly int PulledSword = Animator.StringToHash("PulledSword");
+    private DecisionTree decisionTree;
 
-    void Awake(){
+    void Awake()
+    {
         entity = gameObject.GetComponent<Entity>();
     }
 
-    void Start(){
+    void Start()
+    {
         if (CWeapon != null) CWeapon.SetEntity(entity);
         vision.UpdateRange(range);
         EventManager.Instance.deathEvent.AddListener(EntityDied);
@@ -29,39 +33,46 @@ public class C_Combat : MonoBehaviour{
         projectorController.circleRadius = range * entity.transform.localScale.x;
         projectorController.circleColor = entity.GetPlayer().PlayerColor;
         projectorController.UpdateMaterialProperties();
+        decisionTree = new DecisionTree();
     }
 
-    
-
-    private IEnumerator Attack(){
+    private IEnumerator Attack()
+    {
         MoveToTarget();
-        if (entity.Animator != null){
+        if (entity.Animator != null)
+        {
             entity.Animator.SetBool(PulledSword, true);
             if (CWeapon != null) CWeapon.SetWeaponActive(true);
         }
-        if (cHealthsInVision.Contains(target)){
+        if (cHealthsInVision.Contains(target))
+        {
             float timeTillAttack = attackTime;
-            if (CWeapon != null){
+            if (CWeapon != null)
+            {
                 CWeapon.Attack();
             }
-            
-            
+
+
             //ShootBullet();
-            while (timeTillAttack > 0){
+            while (timeTillAttack > 0)
+            {
                 yield return null; // wait for the next frame
                 timeTillAttack -= Time.deltaTime;
             }
 
-            if (target != null){
+            if (target != null)
+            {
                 StartCoroutine(Attack());
             }
         }
-        else{
+        else
+        {
             MoveToTarget();
         }
     }
-    
-    private void ShootBullet(){
+
+    private void ShootBullet()
+    {
         Transform t = transform;
         GameObject projectileObject = Instantiate(projectile, t.position, t.rotation);
         Projectile bullet = projectileObject.GetComponent<Projectile>();
@@ -71,69 +82,79 @@ public class C_Combat : MonoBehaviour{
         bullet.Damage = attackDmg;
     }
 
-    private void MoveToTarget(){
-        if (entity.CMoveable != null){
-            entity.CMoveable.SetMoveToPosition(target.transform.position,false);
+    private void MoveToTarget()
+    {
+        if (entity.CMoveable != null)
+        {
+            entity.CMoveable.SetMoveToPosition(target.transform.position, false);
         }
     }
 
-    private void SetSpecificTarget(C_Combat attacker, C_Health target){
-        if (attacker == this){
+    private void SetSpecificTarget(C_Combat attacker, C_Health target)
+    {
+        if (attacker == this)
+        {
             this.target = target;
-            if (this.target != null){
+            if (this.target != null)
+            {
                 StartCoroutine(Attack());
             }
         }
     }
-    
-    public void SetTarget(){
-        if (cHealthsInVision.Count == 0){
-            if (entity.Animator != null){
+
+    public void SetTarget()
+    {
+        if (cHealthsInVision.Count == 0)
+        {
+            if (entity.Animator != null)
+            {
                 entity.Animator.SetBool(PulledSword, false);
                 if (CWeapon != null) CWeapon.SetWeaponActive(false);
             }
             target = null;
-            return;
         }
+        else
+        {
+            target = decisionTree.ChooseTarget(cHealthsInVision, entity);
+         
 
-        foreach (C_Health targetCHealth in cHealthsInVision){
-            if (targetCHealth.Entity.GetPlayer() != entity.GetPlayer() && entity.GetPlayer()!=null){
-                target = targetCHealth;
-                break;
+            if (target != null)
+            {
+                StartCoroutine(Attack());
             }
-        }
-        if (target != null){
-            StartCoroutine(Attack());
         }
     }
 
-    private void EntityDied(C_Health cHealth){
-        
-        if (cHealthsInVision.Contains(cHealth)){
+    private void EntityDied(C_Health cHealth)
+    {
+        if (cHealthsInVision.Contains(cHealth))
+        {
             RemoveCHealthFromVision(cHealth);
-            if (target == cHealth){
+            if (target == cHealth)
+            {
                 target = null;
                 SetTarget();
             }
         }
     }
 
-
-    public C_Health GetTarget(){
+    public C_Health GetTarget()
+    {
         return target;
     }
 
-    public void AddCHealthToVision(C_Health cHealth){
+    public void AddCHealthToVision(C_Health cHealth)
+    {
         cHealthsInVision.Add(cHealth);
     }
 
-    public void RemoveCHealthFromVision(C_Health cHealth){
+    public void RemoveCHealthFromVision(C_Health cHealth)
+    {
         cHealthsInVision.Remove(cHealth);
     }
 
-    public int GetAttackDmg(){
+    public int GetAttackDmg()
+    {
         return attackDmg;
     }
-    
-    
 }

@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class C_Health : MonoBehaviour{
-    [SerializeField] private float currentHP;
-    [SerializeField] private float maxHP;
+    [SerializeField] public float CurrentHP;
+    [SerializeField] public float MaxHP;
     [SerializeField] private HpSlider hpSlider;
     [SerializeField] private Entity entity;
 
@@ -22,16 +22,16 @@ public class C_Health : MonoBehaviour{
 
     private void RemoveHp(C_Health cHealth,int hpToRemove){
         if (this != cHealth) return;
-        currentHP -= hpToRemove;
+        CurrentHP -= hpToRemove;
         hpSlider.UpdateHpSlider();
-        if (currentHP > 0) return;
+        if (CurrentHP > 0) return;
         EventManager.Instance.deathEvent.Invoke(this);
     }
         
         public void AddHp(int hpToAdd){
-            currentHP += hpToAdd;
-            if (currentHP > maxHP){
-                currentHP = maxHP;
+            CurrentHP += hpToAdd;
+            if (CurrentHP > MaxHP){
+                CurrentHP = MaxHP;
             }
             hpSlider.UpdateHpSlider();
         }
@@ -49,11 +49,11 @@ public class C_Health : MonoBehaviour{
         }
        
         public float GetCurrentHp(){
-            return currentHP;
+            return CurrentHP;
         }
 
         public float GetMaxHp(){
-            return maxHP;
+            return MaxHP;
         }
 
         public Entity Entity{

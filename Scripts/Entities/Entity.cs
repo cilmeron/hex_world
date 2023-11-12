@@ -8,25 +8,19 @@ using UnityEngine.Search;
 using UnityEngine.UI;
 
 public class Entity : MonoBehaviour{
-
-
         protected C_Health cHealth;
         protected C_Combat cCombat;
         protected C_Selectable cSelectable;
         protected C_Formation cFormation;
         protected C_Moveable cMoveable;
-        
-        
-        
+             
         public CapsuleCollider collider;
         [SerializeField] protected Player player;
         [SerializeField] private int goldAmount;
         [SerializeField] private Sprite sprite;
 
-    
         private bool isHovered = false;
     
-        
         public Animator Animator;
         protected static readonly int AnimVelocity = Animator.StringToHash("Velocity");
         protected static readonly int AnimHp = Animator.StringToHash("HP");
