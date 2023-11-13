@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using git.Scripts.Components;
 using UnityEngine;
 
 public class InputManager : MonoBehaviour{

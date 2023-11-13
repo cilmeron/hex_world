@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class C_Sword : C_Weapon{
+public class C_Ninjato : C_Weapon{
 
     private MeshCollider _weaponCollider;
     

@@ -7,10 +7,10 @@ public class C_Health : MonoBehaviour, Detectable{
     [SerializeField] private float currentHP;
     [SerializeField] private float maxHP;
     [SerializeField] private HpSlider hpSlider;
-    [SerializeField] private Entity entity;
+     private Entity owner;
 
     void Awake(){
-        entity = GetComponent<Entity>();
+        owner = GetComponent<Entity>();
     }
     
 
@@ -25,7 +25,7 @@ public class C_Health : MonoBehaviour, Detectable{
         hpSlider.UpdateHpSlider();
         if (currentHP > 0) return;
         EventManager.Instance.deathEvent.Invoke(this);
-        entity.DestroyEntity();
+        owner.DestroyEntity();
         Destroy(gameObject,10);
 
     }
@@ -42,15 +42,15 @@ public class C_Health : MonoBehaviour, Detectable{
         }
 
         private void OnDeath(){
-            if (entity.CMoveable != null){
-                entity.CMoveable.NavMeshAgent.enabled = false;
-                entity.collider.direction = 2;
+            if (owner.CMoveable != null){
+                owner.CMoveable.NavMeshAgent.enabled = false;
+                owner.collider.direction = 2;
             }
 
-            if (entity.CCombat != null){
-                entity.CCombat.enabled = false;
+            if (owner.CCombat != null){
+                owner.CCombat.enabled = false;
             }
-            entity.DestroyEntity();
+            owner.DestroyEntity();
             Destroy(gameObject,10);
             
         }
@@ -68,6 +68,6 @@ public class C_Health : MonoBehaviour, Detectable{
         }
         
         public Entity Entity{
-            get => entity;
+            get => owner;
         }
 }
