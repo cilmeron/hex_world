@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Detector : MonoBehaviour{
     public int radius;
-    private SphereCollider collider;
+    private SphereCollider col;
     private Entity owner;
 
     [SerializeField] private ProjectorController projector;
@@ -14,8 +14,8 @@ public class Detector : MonoBehaviour{
     private DetectorNotification _detectorNotification;
     
     private void Awake(){
-        collider = GetComponent<SphereCollider>();
-        collider.radius = radius;
+        col = GetComponent<SphereCollider>();
+        col.radius = radius;
     }
 
     private void Start(){
@@ -27,9 +27,15 @@ public class Detector : MonoBehaviour{
         Component triggeredComponent = other.gameObject.GetComponent(type);
         if (triggeredComponent != null){
             if (triggeredComponent is Detectable){
-                _detectorNotification.DetectorNotification(triggeredComponent,DetectionManagement.Enter);
+                try{
+                    _detectorNotification.DetectorNotification(triggeredComponent,DetectionManagement.Enter);
+                }
+                catch (Exception e){
+                    Console.WriteLine(e);
+                    Debug.Log("Error occurs here");
+                    throw;
+                } 
             }
-            
         }
     }
     
@@ -69,7 +75,7 @@ public class Detector : MonoBehaviour{
 
     public void SetRadius(int r){
         radius = r;
-        collider.radius = r;
+        col.radius = r;
         UpdateProjector();
     }
     

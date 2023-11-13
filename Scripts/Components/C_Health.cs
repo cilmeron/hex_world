@@ -16,7 +16,6 @@ public class C_Health : MonoBehaviour, Detectable{
 
     private void Start(){
         EventManager.Instance.damageEvent.AddListener(RemoveHp);
-        EventManager.Instance.deathEvent.AddListener(OnDeath);
         hpSlider.UpdateHpSlider();
     }
 
@@ -26,6 +25,9 @@ public class C_Health : MonoBehaviour, Detectable{
         hpSlider.UpdateHpSlider();
         if (currentHP > 0) return;
         EventManager.Instance.deathEvent.Invoke(this);
+        entity.DestroyEntity();
+        Destroy(gameObject,10);
+
     }
         
         public void AddHp(int hpToAdd){
@@ -39,8 +41,7 @@ public class C_Health : MonoBehaviour, Detectable{
             hpSlider.Activate(active);
         }
 
-        private void OnDeath(C_Health cHealth){
-            if (cHealth != this) return;
+        private void OnDeath(){
             if (entity.CMoveable != null){
                 entity.CMoveable.NavMeshAgent.enabled = false;
                 entity.collider.direction = 2;
@@ -49,9 +50,9 @@ public class C_Health : MonoBehaviour, Detectable{
             if (entity.CCombat != null){
                 entity.CCombat.enabled = false;
             }
-
-            //entity.collider.enabled = false;
+            entity.DestroyEntity();
             Destroy(gameObject,10);
+            
         }
        
         public float GetCurrentHp(){

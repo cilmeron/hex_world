@@ -23,6 +23,7 @@ public class C_Moveable : MonoBehaviour{
     // Start is called before the first frame update
     void Start()
     {
+        EventManager.Instance.deathEvent.AddListener(ResetMoveToTransform);
         navMeshAgent.stoppingDistance = stoppingDistance;
         moveToPosition = transform.position;
             
@@ -79,5 +80,11 @@ public class C_Moveable : MonoBehaviour{
 
     public NavMeshAgent NavMeshAgent{
         get => navMeshAgent;
+    }
+
+    private void ResetMoveToTransform(C_Health c){
+        if (moveToTransform != null && moveToTransform == c.transform){
+            moveToTransform = null;
+        }
     }
 }

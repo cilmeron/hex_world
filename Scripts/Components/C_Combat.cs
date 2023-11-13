@@ -125,7 +125,7 @@ public class C_Combat : MonoBehaviour, DetectorNotification{
         if (cHealthsInAttackRange.Count > 0){
             foreach (C_Health cHealth in cHealthsInAttackRange){
                 if (cHealth == null) continue;
-                if (cHealth.Entity.GetPlayer() != owner.GetPlayer() && owner.GetPlayer()!=null){
+                if (cHealth.Entity.GetPlayer() != owner.GetPlayer() && owner.GetPlayer()!=null && cHealth.IsAlive()){
                     target = cHealth;
                     break;
                 }
@@ -134,7 +134,7 @@ public class C_Combat : MonoBehaviour, DetectorNotification{
             foreach (Entity e in owner._entitiesInVision){
                 C_Health cHealth = e.GetComponent<C_Health>();
                 if (cHealth == null) continue;
-                if (e.GetPlayer() != owner.GetPlayer() && owner.GetPlayer()!=null){
+                if (e.GetPlayer() != owner.GetPlayer() && owner.GetPlayer()!=null && cHealth.IsAlive()){
                     target = cHealth;
                     break;
                 }

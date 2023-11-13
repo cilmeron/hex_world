@@ -5,11 +5,11 @@ using UnityEngine;
 
 public class C_Sword : C_Weapon{
 
-    private MeshCollider collider;
+    private MeshCollider _weaponCollider;
     
     protected override void Awake(){
         base.Awake();
-        collider = GetComponent<MeshCollider>();
+        _weaponCollider = GetComponent<MeshCollider>();
     }
 
     public override void Attack(){
@@ -22,7 +22,7 @@ public class C_Sword : C_Weapon{
     private void OnTriggerEnter(Collider other){
         if (other.gameObject.GetComponent<Entity>() != null){
             Entity hitEntity = other.gameObject.GetComponent<Entity>();
-            if (hitEntity.CHealth != null){
+            if (hitEntity.CHealth != null && hitEntity.CHealth.GetCurrentHp()>0){
                 EventManager.Instance.damageEvent.Invoke(hitEntity.CHealth,attackDmg);
             }
         }

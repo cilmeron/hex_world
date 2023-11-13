@@ -35,7 +35,8 @@ public class Entity : MonoBehaviour, Detectable, DetectorNotification{
         protected static readonly int AnimVelocity = Animator.StringToHash("Velocity");
         protected static readonly int AnimHp = Animator.StringToHash("HP");
         protected static readonly int AnimWalk = Animator.StringToHash("Walk");
-        
+        private static readonly int Death = Animator.StringToHash("Death");
+
 
         protected virtual void Awake(){
             cHealth = GetComponent<C_Health>();
@@ -193,4 +194,16 @@ public class Entity : MonoBehaviour, Detectable, DetectorNotification{
         }    
     }
 
+    public void DestroyEntity(){
+        Animator.SetTrigger(Death);
+        if (CCombat != null){
+           Destroy(CCombat._attackDistanceDetector.gameObject.GetComponent<Detector>());
+        }
+        var components = GetComponents(typeof(Component));
+        foreach (var comp in components){
+            if(!(comp is Transform)){
+                Destroy(comp);
+            }
+        }
+    }
 }
