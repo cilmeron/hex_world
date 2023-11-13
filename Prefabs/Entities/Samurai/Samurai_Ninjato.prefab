@@ -208,7 +208,7 @@ GameObject:
   - component: {fileID: 6689603045003952350}
   - component: {fileID: 861150696838528017}
   m_Layer: 0
-  m_Name: Samurai_Swordsman
+  m_Name: Samurai_Ninjato
   m_TagString: Entity
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -337,12 +337,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 770fc4240909f8a48a098effd01dac49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackTime: 3
   projectile: {fileID: 3164007927888127725, guid: 5a2606daf4c8b7041acd31a60968cf68, type: 3}
   bulletStart: {fileID: 5360331651360859000}
   cHealthsInAttackRange: []
   target: {fileID: 0}
-  CWeapon: {fileID: 5220256064022920966}
+  CWeapon: {fileID: 2050744191954341131}
   timeTillAttack: 0
   _attackDistanceDetector: {fileID: 6468835414020562493}
 --- !u!114 &7386667836474742684
@@ -4303,7 +4302,7 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 132852, guid: ac53f9d05b915884ab3ce6d0a7113315, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5220256064022920966}
+      addedObject: {fileID: 2050744191954341131}
   m_SourcePrefab: {fileID: 100100000, guid: ac53f9d05b915884ab3ce6d0a7113315, type: 3}
 --- !u!4 &6483659391764722342 stripped
 Transform:
@@ -4315,7 +4314,7 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 132852, guid: ac53f9d05b915884ab3ce6d0a7113315, type: 3}
   m_PrefabInstance: {fileID: 6483659391764817532}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &5220256064022920966
+--- !u!114 &2050744191954341131
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4324,8 +4323,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 6483659391764947080}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0ad79fee102d45047a56f3c6fb827d61, type: 3}
+  m_Script: {fileID: 11500000, guid: 7cdb2bfb104cfa5458c77a59bc78f8f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   attackDmg: 40
   attackRange: 1
+  attackSpeed: 3

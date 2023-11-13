@@ -10,7 +10,14 @@ public class GameManager : MonoBehaviour
     [SerializeField] private bool floatingDamageText;
     [SerializeField] private GameObject damageTextPrefab;
     public Player player;
+    [SerializeField] private GameDifficulty _gameDifficulty = GameDifficulty.Easy;
 
+
+    public enum GameDifficulty{
+        Easy,
+        Hard
+    }
+    
     void Awake()
     {
         // Ensure there is only one instance of the EventManager
@@ -22,6 +29,17 @@ public class GameManager : MonoBehaviour
         else
         {
             Destroy(gameObject);
+        }
+    }
+
+    void Start(){
+        EventManager.Instance.deathEvent.AddListener(DeathListener);
+    }
+
+    private void DeathListener(C_Health c){
+        if (c.Entity.GetPlayer().OwnedEntities.Count <= 0){
+            Debug.Log(c.Entity.GetPlayer().nation + " lost the game");
+            //Add Player won UI
         }
     }
     
@@ -41,4 +59,9 @@ public class GameManager : MonoBehaviour
         get => floatingDamageText;
         set => floatingDamageText = value;
     }
+
+    public GameDifficulty GetGameDifficulty(){
+        return _gameDifficulty;
+    }
+    
 }

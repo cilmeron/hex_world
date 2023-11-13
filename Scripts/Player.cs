@@ -89,7 +89,6 @@ public class Player : MonoBehaviour{
         }
     
         void Start(){
-            _playerLook = SetupMaterialsAndShader();
             //EventManager.Instance.deathEvent.AddListener(RemoveOwnership);
             EventManager.Instance.formationDeletedEvent.AddListener(RemoveFormation);
             EventManager.Instance.playerSuccessfullyInitialized.Invoke(this);
@@ -134,7 +133,7 @@ public class Player : MonoBehaviour{
 
             public Player_Look PlayerLook => _playerLook;
 
-            public List<Entity> OwnedGameObjects{
+            public List<Entity> OwnedEntities{
                 get => ownedEntities;
                 set => ownedEntities = value;
             }

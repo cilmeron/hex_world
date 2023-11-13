@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class C_Combat : MonoBehaviour, DetectorNotification{
-    [SerializeField] private float attackTime;
-    [SerializeField] private GameObject projectile;
-    [SerializeField] private Transform bulletStart;
     [SerializeField] private List<C_Health> cHealthsInAttackRange  = new List<C_Health>();
     [SerializeField] private C_Health target;
     private Entity owner;
@@ -63,9 +60,9 @@ public class C_Combat : MonoBehaviour, DetectorNotification{
 
     private IEnumerator Attack(){
         if (cHealthsInAttackRange.Contains(target)){
-            timeTillAttack = attackTime;
+            timeTillAttack = CWeapon.GetAttackSpeed();
             if (CWeapon != null){
-                CWeapon.Attack();
+                CWeapon.Attack(target,owner);
             }
             while (timeTillAttack > 0){
                 yield return null; // wait for the next frame
@@ -77,16 +74,6 @@ public class C_Combat : MonoBehaviour, DetectorNotification{
         }else{
             MoveToTarget();
         }
-    }
-    
-    private void ShootBullet(){
-        Transform t = transform;
-        GameObject projectileObject = Instantiate(projectile, t.position, t.rotation);
-        Projectile bullet = projectileObject.GetComponent<Projectile>();
-        bullet.StartPos = bulletStart.position;
-        bullet.Owner = this;
-        bullet.Target = target.Entity;
-        bullet.Damage = CWeapon.GetAttackDamage();
     }
 
     private void MoveToTarget(){
@@ -152,6 +139,9 @@ public class C_Combat : MonoBehaviour, DetectorNotification{
     }
 
     private void EntityDied(C_Health cHealth){
+        if (cHealth == owner.CHealth){
+            owner.GetPlayer().OwnedEntities.Remove(owner);
+        }
         if (owner._entitiesInVision.Contains(cHealth.Entity)){
             owner._entitiesInVision.Remove(cHealth.Entity);
         }

@@ -361,7 +361,6 @@ MonoBehaviour:
   currentHP: 400
   maxHP: 400
   hpSlider: {fileID: 5741764590666716778}
-  entity: {fileID: 0}
 --- !u!114 &8682277960915804418
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -374,9 +373,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 770fc4240909f8a48a098effd01dac49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackTime: 3
-  projectile: {fileID: 3164007927888127725, guid: 5a2606daf4c8b7041acd31a60968cf68, type: 3}
-  bulletStart: {fileID: 5360331651360859000}
   cHealthsInAttackRange: []
   target: {fileID: 0}
   CWeapon: {fileID: 1083841384383908701}
@@ -424,8 +420,7 @@ MonoBehaviour:
   moveToPosition: {x: 0, y: 0, z: 0}
   moveToTransform: {fileID: 0}
   shouldMove: 1
-  stoppingDistance: 2
-  navMeshAgent: {fileID: 3240667480195804951}
+  stoppingDistance: 0.7
 --- !u!195 &3240667480195804951
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -4232,6 +4227,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackDmg: 40
   attackRange: 1
+  attackSpeed: 3
 --- !u!4 &2208667049559755231 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 486244, guid: 694b0fc9d0f51d34fb49ea2b3bad4631, type: 3}
