@@ -196,7 +196,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5463338146734804439}
-  - component: {fileID: 8734897206765511783}
+  - component: {fileID: 8435929751578104814}
   - component: {fileID: 3941651741047851302}
   - component: {fileID: 5449431308838393873}
   - component: {fileID: 280248084061283062}
@@ -231,7 +231,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &8734897206765511783
+--- !u!23 &8435929751578104814
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -251,7 +251,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 3a289ba99fa08e942b7539bf6b567ae7, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -292,7 +292,7 @@ MonoBehaviour:
   goldAmount: 20
   sprite: {fileID: 21300000, guid: 0345dd6f47d0a4547af63bef5daa749d, type: 3}
   viewDistance: 15
-  Animator: {fileID: 0}
+  Animator: {fileID: 2152136461614870809}
 --- !u!114 &5449431308838393873
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -397,7 +397,7 @@ NavMeshAgent:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 651052253316306241}
   m_Enabled: 1
-  m_AgentTypeID: 0
+  m_AgentTypeID: 1479372276
   m_Radius: 0.5
   m_Speed: 5
   m_Acceleration: 8
