@@ -11,11 +11,12 @@ public class C_Combat : MonoBehaviour, DetectorNotification{
     [SerializeField] private float timeTillAttack = 0f;
     [SerializeField] public Detector _attackDistanceDetector;
     private float timeTillTargetRotationCheck = 0f;
-    
+    private DecisionTree decisionTree;
 
     void Awake(){
         owner = gameObject.GetComponent<Entity>();
         _attackDistanceDetector.SetOwner(owner);
+        decisionTree = new DecisionTree();
     }
 
     void Start(){
@@ -38,7 +39,7 @@ public class C_Combat : MonoBehaviour, DetectorNotification{
             }
 
             StartCoroutine(CheckTargetRotation());
-
+            StartCoroutine(CheckTargetRotation());
         }
     }
     private IEnumerator TurnToTarget(){
@@ -102,35 +103,29 @@ public class C_Combat : MonoBehaviour, DetectorNotification{
         }
         StopCoroutine(CheckTargetRotation());
     }
-    public void SetTarget(){
+    public void SetTarget()
+    {
         if (target != null) return;
-        if (owner._entitiesInVision.Count == 0){
+        if (owner._entitiesInVision.Count == 0)
+        {
             ResetTarget();
             return;
         }
 
-        if (cHealthsInAttackRange.Count > 0){
-            foreach (C_Health cHealth in cHealthsInAttackRange){
-                if (cHealth == null) continue;
-                if (cHealth.Entity.GetPlayer() != owner.GetPlayer() && owner.GetPlayer()!=null && cHealth.IsAlive()){
-                    target = cHealth;
-                    break;
-                }
-            }
-        }else{
-            foreach (Entity e in owner._entitiesInVision){
-                C_Health cHealth = e.GetComponent<C_Health>();
-                if (cHealth == null) continue;
-                if (e.GetPlayer() != owner.GetPlayer() && owner.GetPlayer()!=null && cHealth.IsAlive()){
-                    target = cHealth;
-                    break;
-                }
-            }
+        if (cHealthsInAttackRange.Count > 0)
+        {
+            target = decisionTree.ChooseTarget(cHealthsInAttackRange, owner);
         }
-            
-        if (target != null){
+        else
+        {
+            target = decisionTree.ChooseTarget(owner._entitiesInVision, owner);
+        }
+
+        if (target != null)
+        {
             StartCoroutine(CheckTargetRotation());
-            if (owner.Animator != null){
+            if (owner.Animator != null)
+            {
                 owner.Animator.SetBool(PulledSword, true);
                 if (CWeapon != null) CWeapon.SetWeaponActive(true);
             }

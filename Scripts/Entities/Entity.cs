@@ -9,9 +9,6 @@ using UnityEngine.Search;
 using UnityEngine.UI;
 
 public class Entity : MonoBehaviour, Detectable, DetectorNotification{
-
-
-    
         protected C_Health cHealth;
         protected C_Combat cCombat;
         protected C_Selectable cSelectable;
@@ -21,8 +18,7 @@ public class Entity : MonoBehaviour, Detectable, DetectorNotification{
         public List<Entity> _entitiesInVision = new();
         public Detector detector;
         
-        
-        public CapsuleCollider collider;
+        public CapsuleCollider Collider;
         [SerializeField] protected Player player;
         [SerializeField] private int goldAmount;
         [SerializeField] private Sprite sprite;
@@ -46,7 +42,7 @@ public class Entity : MonoBehaviour, Detectable, DetectorNotification{
             cFormation = GetComponent<C_Formation>();
             cMoveable = GetComponent<C_Moveable>();
             
-            collider = GetComponent<CapsuleCollider>();
+            Collider = GetComponent<CapsuleCollider>();
             
             detector.SetOwner(this);
             detector.SetDetectorNotification(this);
