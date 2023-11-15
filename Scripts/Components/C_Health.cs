@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class C_Health : MonoBehaviour, Detectable{
-    [SerializeField] private float currentHP;
+    [SerializeField] public float CurrentHP;
     [SerializeField] private float maxHP;
     [SerializeField] private HpSlider hpSlider;
      private Entity owner;
@@ -13,7 +13,6 @@ public class C_Health : MonoBehaviour, Detectable{
         owner = GetComponent<Entity>();
     }
     
-
     private void Start(){
         EventManager.Instance.damageEvent.AddListener(RemoveHp);
         hpSlider.UpdateHpSlider();
@@ -21,9 +20,9 @@ public class C_Health : MonoBehaviour, Detectable{
 
     private void RemoveHp(C_Health cHealth,int hpToRemove){
         if (this != cHealth) return;
-        currentHP -= hpToRemove;
+        CurrentHP -= hpToRemove;
         hpSlider.UpdateHpSlider();
-        if (currentHP > 0) return;
+        if (CurrentHP > 0) return;
         EventManager.Instance.deathEvent.Invoke(this);
         owner.DestroyEntity();
         Destroy(gameObject,10);
@@ -31,9 +30,9 @@ public class C_Health : MonoBehaviour, Detectable{
     }
         
         public void AddHp(int hpToAdd){
-            currentHP += hpToAdd;
-            if (currentHP > maxHP){
-                currentHP = maxHP;
+            CurrentHP += hpToAdd;
+            if (CurrentHP > maxHP){
+                CurrentHP = maxHP;
             }
             hpSlider.UpdateHpSlider();
         }
@@ -44,7 +43,7 @@ public class C_Health : MonoBehaviour, Detectable{
         private void OnDeath(){
             if (owner.CMoveable != null){
                 owner.CMoveable.NavMeshAgent.enabled = false;
-                owner.collider.direction = 2;
+                owner.Collider.direction = 2;
             }
 
             if (owner.CCombat != null){
@@ -56,7 +55,7 @@ public class C_Health : MonoBehaviour, Detectable{
         }
        
         public float GetCurrentHp(){
-            return currentHP;
+            return CurrentHP;
         }
 
         public float GetMaxHp(){
@@ -64,7 +63,7 @@ public class C_Health : MonoBehaviour, Detectable{
         }
 
         public bool IsAlive(){
-            return currentHP >= 0;
+            return CurrentHP >= 0;
         }
         
         public Entity Entity{
