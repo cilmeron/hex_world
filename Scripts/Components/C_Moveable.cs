@@ -1,31 +1,36 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace git.Scripts.Components{
-    public class C_Moveable : MonoBehaviour{
+namespace git.Scripts.Components
+{
+    public class C_Moveable : MonoBehaviour
+    {
 
         private Entity owner;
         [SerializeField] private Vector3 moveToPosition;
         [SerializeField] private Transform moveToTransform;
         [SerializeField] private bool shouldMove = true;
         [SerializeField] private float stoppingDistance = 2f;
+        [SerializeField] public bool userTarget = false;
         private NavMeshAgent navMeshAgent;
-    
-    
 
-        void Awake(){
+
+
+        void Awake()
+        {
             owner = GetComponent<Entity>();
             navMeshAgent = GetComponent<NavMeshAgent>();
         }
-    
+
         // Start is called before the first frame update
         void Start()
         {
             EventManager.Instance.deathEvent.AddListener(ResetMoveToTransform);
             navMeshAgent.stoppingDistance = stoppingDistance;
             moveToPosition = transform.position;
-            
-            if (!shouldMove){
+
+            if (!shouldMove)
+            {
                 navMeshAgent.enabled = false;
             }
         }
@@ -35,53 +40,73 @@ namespace git.Scripts.Components{
         {
             if (navMeshAgent != null && navMeshAgent.enabled)
             {
-                if (owner.CFormation.IsInFormation()){
+                if (owner.CFormation.IsInFormation())
+                {
                     navMeshAgent.stoppingDistance = 0;
                 }
-                else{
+                else
+                {
                     navMeshAgent.stoppingDistance = stoppingDistance;
                 }
                 navMeshAgent.SetDestination(GetDestination());
                 owner.detector.GetRangeProjector().UpdateMaterialProperties();
-                if (owner.CCombat != null){
+                if (navMeshAgent.remainingDistance < stoppingDistance) userTarget = false;
+                if (owner.CCombat != null)
+                {
                     owner.CCombat._attackDistanceDetector.GetRangeProjector().UpdateMaterialProperties();
                 }
             }
         }
 
-        private Vector3 GetDestination(){
-            if (moveToTransform != null){
+        private Vector3 GetDestination()
+        {
+            if (moveToTransform != null)
+            {
                 return moveToTransform.position;
             }
 
             return moveToPosition;
         }
-    
-        public void SetMoveToTransform(Transform moveToTransform, bool forceMove){
-            this.moveToTransform = moveToTransform;
+
+        public void SetMoveToTransform(Transform moveToTransform, bool forceMove)
+        {
+            if (!userTarget) this.moveToTransform = moveToTransform;
         }
-    
-        public void SetMoveToPosition(Vector3 moveToPosition,bool forceMove){
+
+        public void SetMoveToPosition(Vector3 moveToPosition, bool forceMove)
+        {
+            userTarget = true;
             moveToTransform = null;
             C_Formation formation = owner.CFormation;
-            if (formation != null){
-                if (formation.IsInFormation() && !formation.IsLeader() && !forceMove){
+            if (formation != null)
+            {
+                if (formation.IsInFormation() && !formation.IsLeader() && !forceMove)
+                {
                     return;
                 }
             }
             this.moveToPosition = moveToPosition;
+            if (owner.CCombat != null)
+            {
+                owner.CCombat.userTarget = false;
+                owner.CCombat.ResetTarget();
+            }
         }
-    
-        public void EnableNavMesh(bool active){
+
+        public void EnableNavMesh(bool active)
+        {
             navMeshAgent.enabled = active;
         }
 
-        public NavMeshAgent NavMeshAgent{
+        public NavMeshAgent NavMeshAgent
+        {
             get => navMeshAgent;
         }
 
-        private void ResetMoveToTransform(C_Health c){
-            if (moveToTransform != null && moveToTransform == c.transform){
+        private void ResetMoveToTransform(C_Health c)
+        {
+            if (moveToTransform != null && moveToTransform == c.transform)
+            {
                 moveToTransform = null;
             }
         }
