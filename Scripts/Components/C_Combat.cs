@@ -26,7 +26,7 @@ public class C_Combat : MonoBehaviour, DetectorNotification
     {
         if (CWeapon != null) CWeapon.SetEntity(owner);
         EventManager.Instance.deathEvent.AddListener(EntityDied);
-        EventManager.Instance.setTarget.AddListener(SetSpecificTarget);
+        EventManager.Instance.setTarget.AddListener(SetSpecificUserTarget);
         _attackDistanceDetector.SetDetectorNotification(this);
         _attackDistanceDetector.SetRadius(CWeapon.GetAttackRange());
     }
@@ -100,13 +100,28 @@ public class C_Combat : MonoBehaviour, DetectorNotification
         }
     }
 
-    private void SetSpecificTarget(C_Combat attacker, C_Health target)
+    private void SetSpecificUserTarget(C_Combat attacker, C_Health target)
     {
         // TODO: if owner has CMoveable, reset userTarget (CMoveable) and target (CMoveable) (basically, reset all movements)
         if (attacker == this && target.Entity.GetPlayer() != attacker.owner.GetPlayer())
         {
             this.target = target;
             userTarget = true;
+            if (owner.Animator != null)
+            {
+                owner.Animator.SetBool(PulledSword, true);
+                if (CWeapon != null) CWeapon.SetWeaponActive(true);
+            }
+            MoveToTarget();
+        }
+    }
+
+    private void SetSpecificTarget(C_Combat attacker, C_Health target)
+    {
+        // TODO: if owner has CMoveable, reset userTarget (CMoveable) and target (CMoveable) (basically, reset all movements)
+        if (attacker == this && target.Entity.GetPlayer() != attacker.owner.GetPlayer())
+        {
+            this.target = target;
             if (owner.Animator != null)
             {
                 owner.Animator.SetBool(PulledSword, true);
@@ -178,6 +193,11 @@ public class C_Combat : MonoBehaviour, DetectorNotification
         return target;
     }
 
+    public int GetAttackRange()
+    {
+        return CWeapon.GetAttackRange();
+    }
+
     private bool IsTargetInAttackRange()
     {
         return CWeapon.GetAttackRange() > Vector3.Distance(owner.transform.position, target.transform.position);
@@ -191,7 +211,9 @@ public class C_Combat : MonoBehaviour, DetectorNotification
         {
             cHealthsInAttackRange.Add(e.CHealth);
         }
-        else if (direction == Detector.DetectionManagement.Exit && cHealthsInAttackRange.Contains(e.CHealth))
+        else if (direction == Detector.DetectionManagement.Exit &&
+            cHealthsInAttackRange.Contains(e.CHealth) &&
+            e.GetPlayer() != owner.GetPlayer())
         {
             cHealthsInAttackRange.Remove(e.CHealth);
             if (cHealthsInAttackRange.Count == 0 || e.CHealth == target)
