@@ -21,6 +21,8 @@ public class MapGeneratorEditor : Editor
 
         // Clear existing chunks if needed
         Transform[] childChunks = chunkGen.transform.GetComponentsInChildren<Transform>();
+        AssetPlacer AssetPlacer = new AssetPlacer();
+
         foreach (Transform child in childChunks)
         {
             if (child != chunkGen.transform)
@@ -42,5 +44,7 @@ public class MapGeneratorEditor : Editor
         {
             terrainGenerator.GenerateTerrain();
         }
+
+        AssetPlacer.AssetPlacement(terrainGenerators);
     }
 }

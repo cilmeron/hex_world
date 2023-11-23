@@ -10,9 +10,16 @@ public class ChunkGeneration : MonoBehaviour
 
     public GameObject water;
     public float waterLevel;
+
     public GameObject[] trees;
+    public GameObject[] bushes;
+    public GameObject[] rocks;
+
     public float treeRandomness;
+
     public float treeThreshold;
+    public float bushThreshold;
+    public float rockThreshold;
 
     public Transform player;
     public int chunksChunkLoaded;
@@ -35,6 +42,9 @@ public class ChunkGeneration : MonoBehaviour
     public float BiomeCorseScale = 0.00007f;
 
     public int seed;
+
+    private float minHeight = float.MaxValue;
+    private float maxHeight = float.MinValue;
 
     private void Start()
     {
@@ -96,5 +106,15 @@ public class ChunkGeneration : MonoBehaviour
                 i++;
             }
         }
+    }
+
+    public float GetMaxHeight() { return maxHeight; }
+
+    public float GetMinHeight() { return minHeight; }
+
+    public void UpdateMinMaxHeight(Vector3 vertices)
+    {
+        if (vertices.y > maxHeight) maxHeight = vertices.y;
+        if (vertices.y < minHeight) minHeight = vertices.y;
     }
 }
