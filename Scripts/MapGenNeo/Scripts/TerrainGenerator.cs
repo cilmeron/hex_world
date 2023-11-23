@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -31,7 +32,6 @@ public class TerrainGenerator : MonoBehaviour
 
         mesh = new Mesh();
         Vector3[] vertices = new Vector3[(int)((chunkGen.chunkResolution.x + 1) * (chunkGen.chunkResolution.y + 1))];
-        Vector3[] detailVerts = new Vector3[(128 + 1) * (128 + 1)];
         uv = new Vector2[vertices.Length];
         int[] triangles;
 
@@ -42,11 +42,6 @@ public class TerrainGenerator : MonoBehaviour
                 float y = Noise(x, z, BiomeNoise(x, z));
                 vertices[i] = new Vector3(x * (128 / chunkGen.chunkResolution.x), y, z * (128 / chunkGen.chunkResolution.y));
                 chunkGen.UpdateMinMaxHeight(vertices[i]);
-                // Spawn Assets
-                SpawnAsset(x, y, z, chunkGen.treeThreshold, chunkGen.waterLevel, chunkGen.trees);
-                SpawnAsset(x, y, z, chunkGen.bushThreshold, chunkGen.waterLevel, chunkGen.bushes);
-                SpawnAsset(x, y, z, chunkGen.rockThreshold, chunkGen.waterLevel, chunkGen.rocks);
-
                 i++;
             }
         }
@@ -90,34 +85,7 @@ public class TerrainGenerator : MonoBehaviour
         meshFilter.mesh = mesh;
     }
 
-    bool DoesSpwan(int x, int z, float threshold)
-    {
-        float doesSpawn = Mathf.PerlinNoise(x + transform.position.x + chunkGen.seed, z + transform.position.z + chunkGen.seed);
-        doesSpawn -= Mathf.PerlinNoise((x + transform.position.x) * 0.5f + chunkGen.seed, (z + transform.position.z) * 0.5f + chunkGen.seed);
-        if (doesSpawn > threshold) return true;
-        return false;
-    }
-
-    void SpawnAsset(int x, float y, int z, float threshold, float waterLevel, GameObject[] assetList)
-    {
-        bool spawns = DoesSpwan(x, z, threshold);
-        if (spawns && y > waterLevel + 30)
-        {
-            int whatSpawns = Mathf.RoundToInt(Random.Range(0f, assetList.Length - 1));
-            float offset = Random.Range(0f, 10f);
-            offset = offset / 10f;
-
-            GameObject current = Instantiate(assetList[(int)whatSpawns],
-                new Vector3(x * (128 / chunkGen.chunkResolution.x) + transform.position.x + offset, y + transform.position.y, z * (128 / chunkGen.chunkResolution.y) + transform.position.z + offset),
-                Quaternion.Euler(0f, Random.Range(0f, 360f), 0f));
-
-            float randomScaleFactor = Random.Range(0.8f, 1.2f);
-            current.transform.localScale = new Vector3(randomScaleFactor, randomScaleFactor, randomScaleFactor);
-
-            current.transform.parent = transform;
-        }
-    }
-    float Noise(float x, float z, float biomeNoise)
+    public float Noise(float x, float z, float biomeNoise)
     {
         //Base Plate
         float y = biomeNoise * chunkGen.BasePlateFactor;
@@ -130,11 +98,59 @@ public class TerrainGenerator : MonoBehaviour
         return y;
     }
 
-    float BiomeNoise(float x, float z)
+    public float BiomeNoise(float x, float z)
     {
         float y = Mathf.PerlinNoise(((x * (128 / chunkGen.chunkResolution.x)) + transform.position.x + chunkGen.seed) * chunkGen.BiomeFineScale, ((z * (128 / chunkGen.chunkResolution.y)) + transform.position.z + chunkGen.seed) * chunkGen.BiomeFineScale);
         y += Mathf.PerlinNoise(((x * (128 / chunkGen.chunkResolution.x)) + transform.position.x + chunkGen.seed) * chunkGen.BiomeMidScale, ((z * (128 / chunkGen.chunkResolution.y)) + transform.position.z + chunkGen.seed) * chunkGen.BiomeMidScale);
         y -= Mathf.PerlinNoise(((x * (128 / chunkGen.chunkResolution.x)) + transform.position.x + chunkGen.seed) * chunkGen.BiomeCorseScale, ((z * (128 / chunkGen.chunkResolution.y)) + transform.position.z + chunkGen.seed) * chunkGen.BiomeCorseScale) * 2;
         return y;
+    }
+
+    List<Vector3> GetAssetPlacementCoordinates()
+    {
+        List<Vector3> validCoordinates = new List<Vector3>();
+
+        for (int x = 0; x <= chunkGen.chunkResolution.x; x++)
+        {
+            for (int z = 0; z <= chunkGen.chunkResolution.y; z++)
+            {
+                float vertexHeight = Noise(x, z, BiomeNoise(x, z));
+
+                // Check the slope at the current vertex
+                if (IsSuitableSlope(x, z))
+                {
+                    Vector3 coordinate = new Vector3(x * (128 / chunkGen.chunkResolution.x), vertexHeight, z * (128 / chunkGen.chunkResolution.y));
+                    validCoordinates.Add(coordinate);
+                }
+            }
+        }
+
+        return validCoordinates;
+    }
+
+    bool IsSuitableSlope(int x, int z)
+    {
+        float slopeThreshold = 30f;  // Adjust as needed
+        float slope = CalculateSlope(x, z);
+
+        return slope <= slopeThreshold;
+    }
+
+    float CalculateSlope(int x, int z)
+    {
+        // Use central differences to approximate the gradient
+        float heightCenter = Noise(x, z, BiomeNoise(x, z));
+        float heightXPlus = Noise(x + 1, z, BiomeNoise(x + 1, z));
+        float heightXMinus = Noise(x - 1, z, BiomeNoise(x - 1, z));
+        float heightZPlus = Noise(x, z + 1, BiomeNoise(x, z + 1));
+        float heightZMinus = Noise(x, z - 1, BiomeNoise(x, z - 1));
+
+        float gradientX = (heightXPlus - heightXMinus) / 2f;
+        float gradientZ = (heightZPlus - heightZMinus) / 2f;
+
+        // Calculate the slope angle in degrees
+        float slope = Mathf.Rad2Deg * Mathf.Atan(Mathf.Sqrt(gradientX * gradientX + gradientZ * gradientZ));
+
+        return slope;
     }
 }

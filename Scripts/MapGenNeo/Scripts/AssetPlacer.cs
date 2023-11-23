@@ -30,23 +30,37 @@ public class AssetPlacer : MonoBehaviour
     public void AssetPlacement(TerrainGenerator[] terrainGenerators)
     {
         chunkGen = GameObject.FindGameObjectWithTag("Manager").GetComponent<ChunkGeneration>();
+        chunkGen.GetMinHeight();
+        chunkGen.GetMaxHeight();
         foreach (TerrainGenerator terrainGenerator in terrainGenerators)
         {
-            terrainGenerator;
+            for (int i = 0, x = 0; x <= chunkGen.chunkResolution.x; x++)
+            {
+                for (int z = 0; z <= chunkGen.chunkResolution.y; z++)
+                {
+                    // Spawn Assets
+                    float y = terrainGenerator.Noise(x, z, terrainGenerator.BiomeNoise(x, z)); // get height at this position
+                    SpawnAsset(x, y, z, chunkGen.treeThreshold, chunkGen.waterLevel, terrainGenerator, chunkGen.trees);
+                    SpawnAsset(x, y, z, chunkGen.bushThreshold, chunkGen.waterLevel, terrainGenerator, chunkGen.bushes);
+                    SpawnAsset(x, y, z, chunkGen.rockThreshold, chunkGen.waterLevel, terrainGenerator, chunkGen.rocks);
+
+                    i++;
+                }
+            }
         }
     }
 
-    bool DoesSpwan(int x, int z, float threshold)
+    bool DoesSpwan(int x, int z, float threshold, TerrainGenerator terrainChunk)
     {
-        float doesSpawn = Mathf.PerlinNoise(x + transform.position.x + chunkGen.seed, z + transform.position.z + chunkGen.seed);
-        doesSpawn -= Mathf.PerlinNoise((x + transform.position.x) * 0.5f + chunkGen.seed, (z + transform.position.z) * 0.5f + chunkGen.seed);
+        float doesSpawn = Mathf.PerlinNoise(x + terrainChunk.transform.position.x + chunkGen.seed, z + terrainChunk.transform.position.z + chunkGen.seed);
+        doesSpawn -= Mathf.PerlinNoise((x + terrainChunk.transform.position.x) * 0.5f + chunkGen.seed, (z + terrainChunk.transform.position.z) * 0.5f + chunkGen.seed);
         if (doesSpawn > threshold) return true;
         return false;
     }
 
-    void SpawnAsset(int x, float y, int z, float threshold, float waterLevel, GameObject[] assetList)
+    void SpawnAsset(int x, float y, int z, float threshold, float waterLevel, TerrainGenerator terrainChunk, GameObject[] assetList)
     {
-        bool spawns = DoesSpwan(x, z, threshold);
+        bool spawns = DoesSpwan(x, z, threshold, terrainChunk);
         if (spawns && y > waterLevel + 30)
         {
             int whatSpawns = Mathf.RoundToInt(Random.Range(0f, assetList.Length - 1));
@@ -54,13 +68,13 @@ public class AssetPlacer : MonoBehaviour
             offset = offset / 10f;
 
             GameObject current = Instantiate(assetList[(int)whatSpawns],
-                new Vector3(x * (128 / chunkGen.chunkResolution.x) + transform.position.x + offset, y + transform.position.y, z * (128 / chunkGen.chunkResolution.y) + transform.position.z + offset),
+                new Vector3(x * (128 / chunkGen.chunkResolution.x) + terrainChunk.transform.position.x + offset, y + terrainChunk.transform.position.y, z * (128 / chunkGen.chunkResolution.y) + terrainChunk.transform.position.z + offset),
                 Quaternion.Euler(0f, Random.Range(0f, 360f), 0f));
 
             float randomScaleFactor = Random.Range(0.8f, 1.2f);
             current.transform.localScale = new Vector3(randomScaleFactor, randomScaleFactor, randomScaleFactor);
 
-            current.transform.parent = transform;
+            current.transform.parent = terrainChunk.transform;
         }
     }
 }
