@@ -1,3 +1,4 @@
+using Unity.AI.Navigation;
 using UnityEditor;
 using UnityEngine;
 
@@ -45,6 +46,20 @@ public class MapGeneratorEditor : Editor
             terrainGenerator.GenerateTerrain();
         }
 
+        // Access and build the NavMeshSurface
+        NavMeshSurface navMeshSurface = chunkGen.GetComponentInChildren<NavMeshSurface>();
+
+        if (navMeshSurface != null)
+        {
+            // You can perform additional configuration or trigger navmesh building
+            navMeshSurface.BuildNavMesh();
+        }
+        else
+        {
+            Debug.LogError("NavMeshSurface component not found on the specified GameObject or its children.");
+        }
+
+        // place assets
         AssetPlacer.AssetPlacement(terrainGenerators);
     }
 }
