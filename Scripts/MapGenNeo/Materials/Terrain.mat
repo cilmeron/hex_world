@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-7641968940820929374
+--- !u!114 &-6768926010439314243
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -26,7 +26,7 @@ Material:
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords: []
-  m_LightmapFlags: 0
+  m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
@@ -37,11 +37,11 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - Texture2D_8d36ed1697c6472b84b33bd7724d7b68:
-        m_Texture: {fileID: 2800000, guid: 1e84926b274f5ad40a11aa0635a4043d, type: 3}
+        m_Texture: {fileID: 2800000, guid: 8d66f37462a74f0499f92e496ecf7d25, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - Texture2D_b3b07cb081224fdaa928b561151aeaec:
-        m_Texture: {fileID: 2800000, guid: 1e84926b274f5ad40a11aa0635a4043d, type: 3}
+        m_Texture: {fileID: 2800000, guid: 4b413c52e95eb504eb171b0d25d3bfca, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - Texture2D_c9eb3c5d089344f9ba852817798a38ca:
@@ -119,7 +119,7 @@ Material:
     - Vector1_98b3f1f66a7a4124a54853d15300125b: 0
     - Vector1_c0196ee57a1e42ea8095e3e0b4b18a82: 0
     - Vector1_e4c659691ee24fde85ec7da4cdf373c5: 696.2
-    - Vector1_e8b8c8d3a14a49e89de0c90ea1ebd93f: 7.16
+    - Vector1_e8b8c8d3a14a49e89de0c90ea1ebd93f: 0.68
     - Vector1_fc5d62fc14f8489c89451daed1ab9125: 0
     - _AlphaClip: 0
     - _Blend: 0

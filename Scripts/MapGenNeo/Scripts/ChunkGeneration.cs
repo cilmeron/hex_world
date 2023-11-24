@@ -6,6 +6,9 @@ public class ChunkGeneration : MonoBehaviour
     public Vector2 chunks;
     public Vector2 chunkResolution;
 
+    public float islandRadius;
+    public Vector2 worldCentre;
+
     public Material terrainMaterial;
 
     public GameObject water;
@@ -20,6 +23,9 @@ public class ChunkGeneration : MonoBehaviour
     public float treeThreshold;
     public float bushThreshold;
     public float rockThreshold;
+
+    [Range(0, 200)]
+    public float heightOffSet;
 
     public Transform player;
     public int chunksChunkLoaded;
@@ -57,8 +63,6 @@ public class ChunkGeneration : MonoBehaviour
 
     public void EditorStart()
     {
-        waterLevel = Mathf.PerlinNoise(seed, seed) * 256;
-        waterLevel = -30;
         GameObject current = Instantiate(water, new Vector3((128 * chunks.x) / 2, waterLevel, (128 * chunks.y) / 2), Quaternion.identity);
         current.transform.localScale = new Vector3(16 * chunks.x, 128, 16 * chunks.y);
     }
@@ -112,9 +116,9 @@ public class ChunkGeneration : MonoBehaviour
 
     public float GetMinHeight() { return minHeight; }
 
-    public void UpdateMinMaxHeight(Vector3 vertices)
+    public void UpdateMinMaxHeight(float y)
     {
-        if (vertices.y > maxHeight) maxHeight = vertices.y;
-        if (vertices.y < minHeight) minHeight = vertices.y;
+        if (y > maxHeight) maxHeight = y;
+        if (y < minHeight) minHeight = y;
     }
 }
