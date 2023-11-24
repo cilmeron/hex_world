@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.AI.Navigation;
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
 public class AssetPlacer : MonoBehaviour
@@ -27,7 +29,7 @@ public class AssetPlacer : MonoBehaviour
 
     }
 
-    public void AssetPlacement(TerrainGenerator[] terrainGenerators)
+    public void AssetPlacement(TerrainGenerator[] terrainGenerators, NavMeshSurface navMeshSurfac)
     {
         chunkGen = GameObject.FindGameObjectWithTag("Manager").GetComponent<ChunkGeneration>();
         chunkGen.GetMinHeight();
@@ -39,7 +41,8 @@ public class AssetPlacer : MonoBehaviour
                 for (int z = 0; z <= chunkGen.chunkResolution.y; z++)
                 {
                     // Spawn Assets
-                    float y = terrainGenerator.Noise(x, z, terrainGenerator.BiomeNoise(x, z)); // get height at this position
+                    Vector3 vertices = terrainGenerator.mesh.vertices[i];
+                    float y = vertices.y;
                     SpawnAsset(x, y, z, chunkGen.treeThreshold, chunkGen.waterLevel, terrainGenerator, chunkGen.trees);
                     SpawnAsset(x, y, z, chunkGen.bushThreshold, chunkGen.waterLevel, terrainGenerator, chunkGen.bushes);
                     SpawnAsset(x, y, z, chunkGen.rockThreshold, chunkGen.waterLevel, terrainGenerator, chunkGen.rocks);
@@ -61,7 +64,7 @@ public class AssetPlacer : MonoBehaviour
     void SpawnAsset(int x, float y, int z, float threshold, float waterLevel, TerrainGenerator terrainChunk, GameObject[] assetList)
     {
         bool spawns = DoesSpwan(x, z, threshold, terrainChunk);
-        if (spawns && y > waterLevel + 30)
+        if (spawns && y > waterLevel + 12)
         {
             int whatSpawns = Mathf.RoundToInt(Random.Range(0f, assetList.Length - 1));
             float offset = Random.Range(0f, 10f);

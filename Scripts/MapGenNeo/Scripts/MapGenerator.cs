@@ -49,10 +49,11 @@ public class MapGeneratorEditor : Editor
         // Access and build the NavMeshSurface
         NavMeshSurface navMeshSurface = chunkGen.GetComponentInChildren<NavMeshSurface>();
 
+
         if (navMeshSurface != null)
         {
             // You can perform additional configuration or trigger navmesh building
-            navMeshSurface.BuildNavMesh();
+            //navMeshSurface.BuildNavMesh();
         }
         else
         {
@@ -60,6 +61,6 @@ public class MapGeneratorEditor : Editor
         }
 
         // place assets
-        AssetPlacer.AssetPlacement(terrainGenerators);
+        AssetPlacer.AssetPlacement(terrainGenerators, navMeshSurface);
     }
 }
