@@ -4,6 +4,7 @@ using UnityEngine;
 [CustomEditor(typeof(ChunkGeneration))]
 public class MapGeneratorEditor : Editor
 {
+    #if UNITY_EDITOR
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
@@ -15,7 +16,7 @@ public class MapGeneratorEditor : Editor
             GenerateMap(chunkGen);
         }
     }
-
+    #endif
     private void GenerateMap(ChunkGeneration chunkGen)
     {
 

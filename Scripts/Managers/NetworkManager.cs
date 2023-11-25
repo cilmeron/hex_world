@@ -1,12 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Threading;
-
+using System.Text;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class NetworkManager : MonoBehaviour
 {
+    public GameManager gameManager;
     TcpClient client;
     public GameObject chat;
     public string ingamechat;
@@ -21,6 +22,7 @@ public class NetworkManager : MonoBehaviour
     public bool chatactive = false;
      private void Start() 
      {
+        playername = gameManager.getPlayername();
         ingamechat = "";
         if (Connect())
         {
@@ -54,14 +56,15 @@ public class NetworkManager : MonoBehaviour
         }
 
         client = new TcpClient();
-        string host = "pirotess.duckdns.org";
+        client.ReceiveBufferSize = ushort.MaxValue;
+        string host = gameManager.getserverhost();
         System.Net.IPAddress ip = GetIp(host);
         if (ip == null)
         {
             Debug.Log("Couldn't parse ip address");
             return false;
         }
-        int port = 8044;
+        int port = Int32.Parse(gameManager.getServerPort());
         try
         {
             client.Connect(ip, port);
@@ -144,42 +147,41 @@ public class NetworkManager : MonoBehaviour
             return false;
         }
     }
-    private void ListenForData()
+    
+   private void ListenForData()
+{
+    List<byte> bytesList = new List<byte>();
+    byte[] buffer = new byte[1024]; // Adjust the buffer size as needed
+    StringBuilder currentMessage = new StringBuilder();
+
+    while (true)
     {
-        while(true)
+        int bytesRead = connection.Read(buffer, 0, buffer.Length);
+
+        for (int i = 0; i < bytesRead; i++)
         {
-            try
+            bytesList.Add(buffer[i]);
+            currentMessage.Append((char)buffer[i]);
+
+            // Check if the terminator is present in the received data
+            if (buffer[i] == '|')
             {
-            byte[] bytes = new byte[1024];
-            int length;
-            Thread.Sleep(0);
-            if (connection == null)
-            {
-                return;
-            }
-            while ((length = connection.Read(bytes, 0, bytes.Length)) != 0)
-            {
-                var incomingdata = new byte[length];
-                System.Array.Copy(bytes, 0, incomingdata, 0, length);
-                string servermessage = System.Text.Encoding.UTF8.GetString(incomingdata);
-                CheckMessages(servermessage);
-            }
-            }
-            catch (System.Exception e)
-            {
-                
-                Debug.Log("Catching exception" + e);
-                return;
+                byte[] receivedBytes = bytesList.ToArray();
+                string receivedMessage = Encoding.ASCII.GetString(receivedBytes);
+                bytesList.Clear();
+                CheckMessages(receivedMessage);
+                currentMessage.Clear();
             }
         }
     }
+}
 
+   
      private void CheckMessages(string response)
     {
-        Debug.Log("Got response "+response);
         lock(netlock)
         {
-            if (response.Substring(0, 1) != "P" && response.Substring(0, 1) != "T")
+            if (response.Substring(0, 1) != "P" && response.Substring(0, 1) != "T" && response.Substring(0, 1) != "H" && response.Substring(0, 1) != "M")
             {
                 buffer += response;   
             }
@@ -194,7 +196,6 @@ public class NetworkManager : MonoBehaviour
                 return;
             }
             int marker = response.IndexOf("|");
-            Debug.Log(response);
             response = response.Substring(0, marker-1);
 
             string[] answer = response.Split(':');
@@ -246,13 +247,17 @@ public class NetworkManager : MonoBehaviour
                     //This is a status message about ourselves - let's find out if we are player 1, 2 or guest
                     if (answer[2].Contains("A"))
                     {
+                        if (gameManager.player != null && gameManager.p2 != null)
+                            gameManager.player = gameManager.p2;
                         //We are player 1
-                        Debug.Log("We are player 1");
+                        Debug.Log("We are player 2");
                     }
                     else if (answer[2].Contains("B"))
                     {
+                        if (gameManager.player != null && gameManager.p1 != null)
+                            gameManager.player = gameManager.p1;
                         //We are player 2
-                        Debug.Log("We are player 2");
+                        Debug.Log("We are player 1");
                     }
                     else
                     {
@@ -261,10 +266,34 @@ public class NetworkManager : MonoBehaviour
                     }
                 }
             }
+            else if (answer[0].Contains("M"))
+            {
+                if (!answer[1].Contains(playername))
+                {
+                    string[] coords = answer[2].Split(',');
+                    Vector3 moveto = ConvertToVector3(coords[0], coords[1], coords[2]);
+                    Debug.Log(moveto.ToString());
+                    Debug.Log("Moving Unit"+answer[3]+" to x:"+moveto.x+" y:"+moveto.y+" z:"+moveto.z);
+
+                }
+            }
             
             //Debug.Log(response);
         }
 
+    }
+    Vector3 ConvertToVector3(string xStr, string yStr, string zStr)
+    {
+        Debug.Log("raw:"+xStr+yStr+zStr);
+        // Parse strings to floats
+        float x = float.Parse(xStr);
+        float y = float.Parse(yStr);
+        float z = float.Parse(zStr);
+
+        // Create Vector3
+        Vector3 vector = new Vector3(x, y, z);
+
+        return vector;
     }
     void OnApplicationQuit()
     {

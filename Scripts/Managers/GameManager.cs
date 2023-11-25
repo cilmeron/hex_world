@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.Events;
-
+using System.IO;
 
 public class GameManager : MonoBehaviour
 {
@@ -10,9 +10,25 @@ public class GameManager : MonoBehaviour
     [SerializeField] private bool floatingDamageText;
     [SerializeField] private GameObject damageTextPrefab;
     public Player player;
+    public Player p1;
+    public bool settingsread;
+    public Player p2;
 
+    private string settingsFilePath;
+
+    // Default settings values
+    private string serverHost = "pirotess.duckdns.org";
+    private string playerName = "playername";
+    private string serverPort = "8044";
+    private string musicVolume = "100";
+    private string soundVolume = "100";
+
+
+    
     void Awake()
     {
+        player = p1;
+        settingsread = false;
         // Ensure there is only one instance of the EventManager
         if (Instance == null)
         {
@@ -25,6 +41,111 @@ public class GameManager : MonoBehaviour
         }
     }
     
+    private void Start()
+    {
+        settingsFilePath = Path.Combine(Application.persistentDataPath, "settings.ini");
+        ReadOrCreateSettings();
+    }
+
+    public void setSoundVolume(float val)
+    {
+        soundVolume = ""+(int)(val*100f);
+        UpdateAndWriteSettingsToFile();
+    }
+
+    public void setPlayername(string name)
+    {
+        playerName = name;
+        UpdateAndWriteSettingsToFile();
+    }
+
+    public void setMusicVolume(float val)
+    {
+        musicVolume = ""+(int)(val*100f);  
+        UpdateAndWriteSettingsToFile();
+    }
+
+    public float getMusicVolume()
+    {
+        return float.Parse(musicVolume)/100f;
+    }
+
+    public float getSoundVolume()
+    {
+        return float.Parse(soundVolume)/100f;
+    }
+
+    private void ReadOrCreateSettings()
+    {
+        // If the settings file exists, read its content
+        if (File.Exists(settingsFilePath))
+        {
+            ReadSettingsFromFile();
+            settingsread = true;
+        }
+        // If the settings file doesn't exist, create it with default values
+        else
+        {
+            CreateDefaultSettingsFile();
+        }
+    }
+    private void ReadSettingsFromFile()
+    {
+        // Read all lines from the settings file
+        string[] lines = File.ReadAllLines(settingsFilePath);
+
+        // Parse each line and update the corresponding setting
+        foreach (string line in lines)
+        {
+            string[] keyValue = line.Split('=');
+
+            if (keyValue.Length == 2)
+            {
+                string key = keyValue[0].Trim();
+                string value = keyValue[1].Trim();
+
+                switch (key)
+                {
+                    case "server_host":
+                        serverHost = value;
+                        break;
+                    case "playername":
+                        playerName = value;
+                        break;
+                    case "server_port":
+                        serverPort = value;
+                        break;
+                    case "music":
+                        musicVolume = value;
+                        break;
+                    case "sound":
+                        soundVolume = value;
+                        break;
+                }
+            }
+        }
+
+        // Now you can use the settings values in your game
+        Debug.Log("Settings loaded: " + "Host: " + serverHost + ", PlayerName: " + playerName +
+                  ", Port: " + serverPort + ", Music: " + musicVolume + ", Sound: " + soundVolume);
+    }
+
+    private void CreateDefaultSettingsFile()
+    {
+        // Create a new settings file and write the default values to it
+        string[] lines =
+        {
+            "server_host=" + serverHost,
+            "playername=" + playerName,
+            "server_port=" + serverPort,
+            "music=" + musicVolume,
+            "sound=" + soundVolume
+        };
+
+        File.WriteAllLines(settingsFilePath, lines);
+
+        Debug.Log("Default settings file created.");
+    }
     private void SetFloatingDamageText(C_Combat combatElement, int damage)
     {
         if (floatingDamageText)
@@ -36,9 +157,39 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public string getserverhost()
+    {
+        return serverHost;
+    }
+    public string getPlayername()
+    {
+        return playerName;
+    }
+    public string getServerPort()
+    {
+        return serverPort;
+    }
     
     public bool FloatingDamageText{
         get => floatingDamageText;
         set => floatingDamageText = value;
     }
+    public void UpdateAndWriteSettingsToFile()
+    {
+        // Create an array of strings with the updated values
+        string[] lines =
+        {
+            "server_host=" + serverHost,
+            "playername=" + playerName,
+            "server_port=" + serverPort,
+            "music=" + musicVolume,
+            "sound=" + soundVolume
+        };
+
+        // Write the updated values to the settings file
+        File.WriteAllLines(settingsFilePath, lines);
+
+        Debug.Log("Settings updated and saved to file.");
+    }
+
 }
