@@ -6,10 +6,10 @@ public class C_Formation : MonoBehaviour{
     [SerializeField] private Formation formation;
     [SerializeField] private  Vector3 relativeFormationPos = Vector3.zero;
     [SerializeField] private Sprite sprite;
-    private Entity entity;
+    private Entity owner;
 
     void Awake(){
-        entity = gameObject.GetComponent<Entity>();
+        owner = gameObject.GetComponent<Entity>();
     }
     
     void Start()
@@ -48,7 +48,7 @@ public class C_Formation : MonoBehaviour{
     }
 
     public Entity Entity{
-        get => entity;
+        get => owner;
     }
 
     public Vector3 RelativeFormationPos{

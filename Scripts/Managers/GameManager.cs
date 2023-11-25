@@ -23,7 +23,13 @@ public class GameManager : MonoBehaviour
     private string musicVolume = "100";
     private string soundVolume = "100";
 
+    [SerializeField] private GameDifficulty _gameDifficulty = GameDifficulty.Easy;
 
+
+    public enum GameDifficulty{
+        Easy,
+        Hard
+    }
     
     void Awake()
     {
@@ -40,11 +46,18 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    
-    private void Start()
-    {
+
+    void Start(){
         settingsFilePath = Path.Combine(Application.persistentDataPath, "settings.ini");
         ReadOrCreateSettings();
+        EventManager.Instance.deathEvent.AddListener(DeathListener);
+    }
+
+    private void DeathListener(C_Health c){
+        if (c.Entity.GetPlayer().OwnedEntities.Count <= 0){
+            Debug.Log(c.Entity.GetPlayer().nation + " lost the game");
+            //Add Player won UI
+        }
     }
 
     public void setSoundVolume(float val)
@@ -192,4 +205,8 @@ public class GameManager : MonoBehaviour
         Debug.Log("Settings updated and saved to file.");
     }
 
+    public GameDifficulty GetGameDifficulty(){
+        return _gameDifficulty;
+    }
+    
 }
