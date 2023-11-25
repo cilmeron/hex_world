@@ -7,7 +7,7 @@ using UnityEngine;
 public class InputManager : MonoBehaviour{
 
     private SelectionManager selectionManager;
-    
+    public NetworkManager networkManager;
     void Start(){
         selectionManager = SelectionManager.Instance;
     }
@@ -34,6 +34,10 @@ public class InputManager : MonoBehaviour{
                             C_Moveable cMove = cSelectable.Entity.CMoveable;
                             if (cMove == null){
                                 continue;
+                            }
+                            if (networkManager != null)
+                            {
+                                networkManager.SendMsg("M:"+networkManager.playername+":"+hit.point.x+","+hit.point.y+","+hit.point.z+":"+cMove.GetInstanceID().ToString());
                             }
                             cMove.SetMoveToPosition(hit.point,false);
                         }

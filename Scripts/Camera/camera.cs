@@ -7,18 +7,19 @@ public class CameraManager : MonoBehaviour
 {
     public NetworkManager networkManager;
     public float translationSpeed = 60f;
-    public float altitude = 20f;
+    public float altitude = 4f;
 
     private Camera _camera;
     private RaycastHit _hit;
     private Ray _ray;
-
+    private float distancetoground = 4f;
     private Vector3 _forwardDir;
 
     private void Awake()
     {
         _camera = GetComponent<Camera>();
         _forwardDir = Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized;
+        altitude = transform.position.y;
     }
 
     void Update()
@@ -47,13 +48,13 @@ public class CameraManager : MonoBehaviour
         if (wheel != 0.0f)
         {
             wheel *= (translationSpeed/3f);
-            if (altitude >= 10f && altitude <= 80f)
+            if (altitude >= 4f && altitude <= 80f)
             {
                 altitude += -wheel;
             }
-            else if (altitude <= 10f)
+            else if (altitude <= 3f)
             {
-                altitude = 10f;
+                altitude = 4f;
             }
             else if (altitude >= 80f)
             {
@@ -81,7 +82,7 @@ public class CameraManager : MonoBehaviour
             transform.Translate(Vector3.back * Time.deltaTime * translationSpeed);
         else if (dir == 3)  // left
             transform.Translate(Vector3.left * Time.deltaTime * translationSpeed);
-            
+        
         // translate camera at proper altitude: cast a ray to the ground
         // and move up the hit point
         _ray = new Ray(transform.position, Vector3.up * -1000f);
@@ -91,6 +92,8 @@ public class CameraManager : MonoBehaviour
                 5000f,
               1 << 8
             ))
-            transform.position = _hit.point + Vector3.up * altitude;
+            {    
+                transform.position = _hit.point + Vector3.up * altitude;  
+            }
     }
 }
