@@ -9,6 +9,7 @@ public class TerrainGenerator : MonoBehaviour
     ChunkGeneration chunkGen;
 
     public Mesh mesh;
+    public List<float> heightDeltas = new List<float>();
     MeshFilter meshFilter;
     MeshRenderer meshRenderer;
     MeshCollider collider;
@@ -30,6 +31,7 @@ public class TerrainGenerator : MonoBehaviour
         meshFilter = GetComponent<MeshFilter>();
         meshRenderer = GetComponent<MeshRenderer>();
         collider = GetComponent<MeshCollider>();
+        HeightMapAnalyzer heightMapAnalyzer = new HeightMapAnalyzer();
 
         meshRenderer.material = chunkGen.terrainMaterial;
 
@@ -65,6 +67,8 @@ public class TerrainGenerator : MonoBehaviour
             }
         }
 
+        heightDeltas = heightMapAnalyzer.CalculateAverageDifferences(vertices);
+        float average = heightDeltas.Average();
         for (int i = 0; i < uv.Length; i++)
         {
             vertices[i].y = ModifyHeight(vertices[i].y);

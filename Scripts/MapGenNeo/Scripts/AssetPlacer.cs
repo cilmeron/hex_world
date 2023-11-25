@@ -43,9 +43,16 @@ public class AssetPlacer : MonoBehaviour
                     // Spawn Assets
                     Vector3 vertices = terrainGenerator.mesh.vertices[i];
                     float y = vertices.y;
-                    SpawnAsset(x, y, z, chunkGen.treeThreshold, chunkGen.waterLevel, terrainGenerator, chunkGen.trees);
-                    SpawnAsset(x, y, z, chunkGen.bushThreshold, chunkGen.waterLevel, terrainGenerator, chunkGen.bushes);
-                    SpawnAsset(x, y, z, chunkGen.rockThreshold, chunkGen.waterLevel, terrainGenerator, chunkGen.rocks);
+                    float slope = terrainGenerator.heightDeltas[i];
+                    SpawnAsset(x, y, z, slope,
+                        chunkGen.treeThreshold, chunkGen.waterLevel, chunkGen.treeMinSlopeThreshold, chunkGen.treeMaxSlopeThreshold,
+                        terrainGenerator, chunkGen.trees);
+                    SpawnAsset(x, y, z, slope,
+                        chunkGen.bushThreshold, chunkGen.waterLevel, chunkGen.bushMinSlopeThreshold, chunkGen.bushMaxSlopeThreshold,
+                        terrainGenerator, chunkGen.bushes);
+                    SpawnAsset(x, y, z, slope,
+                        chunkGen.rockThreshold, chunkGen.waterLevel, chunkGen.rockMinSlopeThreshold, chunkGen.rockMaxSlopeThreshold,
+                        terrainGenerator, chunkGen.rocks);
 
                     i++;
                 }
@@ -53,17 +60,18 @@ public class AssetPlacer : MonoBehaviour
         }
     }
 
-    bool DoesSpwan(int x, int z, float threshold, TerrainGenerator terrainChunk)
+    bool DoesSpwan(int x, int z, float slope, float minSlope, float maxSlope, float threshold, TerrainGenerator terrainChunk)
     {
+        if (slope < minSlope || slope > maxSlope) return false;
         float doesSpawn = Mathf.PerlinNoise(x + terrainChunk.transform.position.x + chunkGen.seed, z + terrainChunk.transform.position.z + chunkGen.seed);
         doesSpawn -= Mathf.PerlinNoise((x + terrainChunk.transform.position.x) * 0.5f + chunkGen.seed, (z + terrainChunk.transform.position.z) * 0.5f + chunkGen.seed);
         if (doesSpawn > threshold) return true;
         return false;
     }
 
-    void SpawnAsset(int x, float y, int z, float threshold, float waterLevel, TerrainGenerator terrainChunk, GameObject[] assetList)
+    void SpawnAsset(int x, float y, int z, float slope, float threshold, float waterLevel, float minSlope, float maxSlope, TerrainGenerator terrainChunk, GameObject[] assetList)
     {
-        bool spawns = DoesSpwan(x, z, threshold, terrainChunk);
+        bool spawns = DoesSpwan(x, z, slope, minSlope, maxSlope, threshold, terrainChunk);
         if (spawns && y > waterLevel + 12)
         {
             int whatSpawns = Mathf.RoundToInt(Random.Range(0f, assetList.Length - 1));

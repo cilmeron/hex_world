@@ -15,14 +15,25 @@ public class ChunkGeneration : MonoBehaviour
     public float waterLevel;
 
     public GameObject[] trees;
-    public GameObject[] bushes;
-    public GameObject[] rocks;
-
     public float treeRandomness;
-
     public float treeThreshold;
+    [Range(0, 2)]
+    public float treeMaxSlopeThreshold;
+    [Range(0, 2)]
+    public float treeMinSlopeThreshold;
+    public GameObject[] bushes;
     public float bushThreshold;
+    [Range(0, 2)]
+    public float bushMaxSlopeThreshold;
+    [Range(0, 2)]
+    public float bushMinSlopeThreshold;
+    public GameObject[] rocks;
     public float rockThreshold;
+    [Range(0, 2)]
+    public float rockMaxSlopeThreshold;
+    [Range(0, 2)]
+    public float rockMinSlopeThreshold;
+
 
     [Range(0, 200)]
     public float heightOffSet;
