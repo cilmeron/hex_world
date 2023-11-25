@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using git.Scripts.Components;
 using UnityEngine;
 
 public class InputManager : MonoBehaviour{
@@ -39,6 +40,7 @@ public class InputManager : MonoBehaviour{
                             {
                                 networkManager.SendMsg("M:"+networkManager.playername+":"+hit.point.x+","+hit.point.y+","+hit.point.z+":"+cMove.GetInstanceID().ToString());
                             }
+                            if (cSelectable.Entity.GetPlayer() != GameManager.Instance.player) return;
                             cMove.SetMoveToPosition(hit.point,false);
                         }
                     }

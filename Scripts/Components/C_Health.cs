@@ -3,60 +3,84 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class C_Health : MonoBehaviour{
-    [SerializeField] private float currentHP;
+public class C_Health : MonoBehaviour, Detectable
+{
+    [SerializeField] public float CurrentHP;
     [SerializeField] private float maxHP;
     [SerializeField] private HpSlider hpSlider;
-    [SerializeField] private Entity entity;
+    private Entity owner;
 
-    void Awake(){
-        entity = GetComponent<Entity>();
+    void Awake()
+    {
+        owner = GetComponent<Entity>();
     }
-    
 
-    private void Start(){
+    private void Start()
+    {
         EventManager.Instance.damageEvent.AddListener(RemoveHp);
-        EventManager.Instance.deathEvent.AddListener(OnDeath);
         hpSlider.UpdateHpSlider();
     }
 
-    private void RemoveHp(C_Health cHealth,int hpToRemove){
+    private void RemoveHp(C_Health cHealth, int hpToRemove)
+    {
         if (this != cHealth) return;
-        currentHP -= hpToRemove;
+        CurrentHP -= hpToRemove;
         hpSlider.UpdateHpSlider();
-        if (currentHP > 0) return;
+        if (CurrentHP > 0) return;
         EventManager.Instance.deathEvent.Invoke(this);
+        owner.DestroyEntity();
+        Destroy(gameObject, 10);
+
     }
-        
-        public void AddHp(int hpToAdd){
-            currentHP += hpToAdd;
-            if (currentHP > maxHP){
-                currentHP = maxHP;
-            }
-            hpSlider.UpdateHpSlider();
+
+    public void AddHp(int hpToAdd)
+    {
+        CurrentHP += hpToAdd;
+        if (CurrentHP > maxHP)
+        {
+            CurrentHP = maxHP;
         }
-        public void SetHpSliderActive(bool active){
-            hpSlider.Activate(active);
+        hpSlider.UpdateHpSlider();
+    }
+    public void SetHpSliderActive(bool active)
+    {
+        hpSlider.Activate(active);
+    }
+
+    private void OnDeath()
+    {
+        if (owner.CMoveable != null)
+        {
+            owner.CMoveable.NavMeshAgent.enabled = false;
+            owner.Collider.direction = 2;
         }
 
-        private void OnDeath(C_Health cHealth){
-            if (cHealth != this) return;
-            if (entity.CMoveable != null){
-                entity.CMoveable.NavMeshAgent.enabled = false;
-                entity.collider.direction = 2;
-            }
-            Destroy(gameObject,10);
+        if (owner.CCombat != null)
+        {
+            owner.CCombat.enabled = false;
         }
-       
-        public float GetCurrentHp(){
-            return currentHP;
-        }
+        owner.DestroyEntity();
+        Destroy(gameObject, 10);
 
-        public float GetMaxHp(){
-            return maxHP;
-        }
+    }
 
-        public Entity Entity{
-            get => entity;
-        }
+    public float GetCurrentHp()
+    {
+        return CurrentHP;
+    }
+
+    public float GetMaxHp()
+    {
+        return maxHP;
+    }
+
+    public bool IsAlive()
+    {
+        return CurrentHP >= 0;
+    }
+
+    public Entity Entity
+    {
+        get => owner;
+    }
 }

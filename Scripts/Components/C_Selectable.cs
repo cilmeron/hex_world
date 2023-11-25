@@ -8,10 +8,10 @@ public class C_Selectable : MonoBehaviour
 {
     
     private static SelectionManager _selectionManager;
-    private Entity entity;
+    private Entity owner;
     private C_Health health;
     void Awake(){
-        entity = gameObject.GetComponent<Entity>();
+        owner = gameObject.GetComponent<Entity>();
     }
 
     
@@ -19,7 +19,7 @@ public class C_Selectable : MonoBehaviour
     void Start()
     {
         _selectionManager = SelectionManager.Instance;
-        health = entity.CHealth;
+        health = owner.CHealth;
         if (health == null){
             Destroy(this,5);
             throw new Exception("Gameobject is Selectable, but has no HP. Double check this behaviour");
@@ -42,7 +42,7 @@ public class C_Selectable : MonoBehaviour
     }
     
     public Sprite GetSprite(){
-        return entity.GetSprite();
+        return owner.GetSprite();
     }
 
     public GameObject GetGameObject(){
@@ -54,13 +54,13 @@ public class C_Selectable : MonoBehaviour
     }
     
     public bool IsSelected(){
-        if (_selectionManager == null || entity.CSelectable == null){
+        if (_selectionManager == null || owner.CSelectable == null){
             return false;
         }
-        return _selectionManager.selectedDictionary.selectedTable.Values.Contains(entity.CSelectable);
+        return _selectionManager.selectedDictionary.selectedTable.Values.Contains(owner.CSelectable);
     }
     
     public Entity Entity{
-        get => entity;
+        get => owner;
     }
 }

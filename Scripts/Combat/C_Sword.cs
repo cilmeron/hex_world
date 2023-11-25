@@ -5,35 +5,18 @@ using UnityEngine;
 
 public class C_Sword : C_Weapon{
 
-    private MeshCollider collider;
+    private MeshCollider _weaponCollider;
     
     protected override void Awake(){
         base.Awake();
-        collider = GetComponent<MeshCollider>();
+        _weaponCollider = GetComponent<MeshCollider>();
     }
 
-    public override void Attack(){
-        base.Attack();
-        entity.Animator.SetBool(AnimAttack, true);
-        StartCoroutine(ResetAttackFlag());
+    public override void Attack(C_Health target,Entity owner){
+        base.Attack(target,owner);
+        entity.Animator.SetTrigger(AnimAttack);
+        Debug.Log("attacked");
     }
     
-    private IEnumerator ResetAttackFlag()
-    {
-        // Wait for half a second (0.5 seconds).
-        yield return new WaitForSeconds(5f);
-        entity.Animator.SetBool(AnimAttack, false);
-        
-    }
-
-    private void OnTriggerEnter(Collider other){
-        if (other.gameObject.GetComponent<Entity>() != null){
-            Entity hitEntity = other.gameObject.GetComponent<Entity>();
-            if (hitEntity.CHealth != null){
-                EventManager.Instance.damageEvent.Invoke(hitEntity.CHealth,entity.CCombat.GetAttackDmg());
-                Debug.Log(entity.gameObject.name + " has hit + " + hitEntity.gameObject.name);
-            }
-        }
-    }
 
 }

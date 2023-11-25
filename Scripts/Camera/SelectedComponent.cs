@@ -7,7 +7,6 @@ using Debug = System.Diagnostics.Debug;
 
 public class SelectionComponent : MonoBehaviour{
     private C_Selectable selectable;
-    private Entity entity;
     
     void Start(){
         
@@ -18,14 +17,14 @@ public class SelectionComponent : MonoBehaviour{
         if (selectable.Entity == null){
             throw new Exception("Selectable has no Entity");
         }
-        entity = selectable.Entity;
         //entity.SetMaterialToRenderer(entity.CLook.MSelected);
-        if (entity.CHealth != null){
-            entity.CHealth.SetHpSliderActive(true);
+        if (selectable.Entity.CHealth != null){
+            selectable.Entity.CHealth.SetHpSliderActive(true);
             
         }
-        if (entity.CCombat!=null){
-            entity.CCombat.projectorController.gameObject.SetActive(true);
+        selectable.Entity.detector.EnableProjector(true);
+        if (selectable.Entity.CCombat != null){
+            selectable.Entity.CCombat._attackDistanceDetector.EnableProjector(true);
         }
     }
 
@@ -33,8 +32,9 @@ public class SelectionComponent : MonoBehaviour{
         if (selectable.Entity.CHealth != null){
             selectable.Entity.CHealth.SetHpSliderActive(false);
         }
-        if (selectable.Entity.CCombat!=null){
-            selectable.Entity.CCombat.projectorController.gameObject.SetActive(false);
+        selectable.Entity.detector.EnableProjector(false);
+        if (selectable.Entity.CCombat != null){
+            selectable.Entity.CCombat._attackDistanceDetector.EnableProjector(false);
         }
     }
 }
