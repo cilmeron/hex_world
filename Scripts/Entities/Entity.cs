@@ -14,10 +14,10 @@ public class Entity : MonoBehaviour, Detectable, DetectorNotification{
         protected C_Selectable cSelectable;
         protected C_Formation cFormation;
         protected C_Moveable cMoveable;
-
+        private NetworkManager networkManager;
         public List<Entity> _entitiesInVision = new();
         public Detector detector;
-        
+        public int ID;
         public CapsuleCollider Collider;
         [SerializeField] protected Player player;
         [SerializeField] private int goldAmount;
@@ -46,6 +46,7 @@ public class Entity : MonoBehaviour, Detectable, DetectorNotification{
             
             detector.SetOwner(this);
             detector.SetDetectorNotification(this);
+            networkManager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
         }
     
         protected virtual void Start(){
@@ -84,7 +85,13 @@ public class Entity : MonoBehaviour, Detectable, DetectorNotification{
             return player;
         }
 
-        
+        public void MovePlayer(Vector3 pos)
+        {
+            if (networkManager != null)
+            {
+                networkManager.SendMsg("M:"+networkManager.playername+":"+pos.x+","+pos.y+","+pos.z+":"+ID);
+            }
+        }
     
     public Sprite GetSprite(){
         return sprite;
@@ -193,6 +200,7 @@ public class Entity : MonoBehaviour, Detectable, DetectorNotification{
 
     public void DestroyEntity(){
         Animator.SetTrigger(Death);
+        networkManager.SendMsg("K:"+networkManager.playername+":0.1,0,0:"+ID);
         if (CCombat != null){
            Destroy(CCombat._attackDistanceDetector.gameObject.GetComponent<Detector>());
         }

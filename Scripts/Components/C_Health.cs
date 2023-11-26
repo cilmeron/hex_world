@@ -27,6 +27,7 @@ public class C_Health : MonoBehaviour, Detectable
         CurrentHP -= hpToRemove;
         hpSlider.UpdateHpSlider();
         if (CurrentHP > 0) return;
+        Debug.Log("Dead");
         EventManager.Instance.deathEvent.Invoke(this);
         owner.DestroyEntity();
         Destroy(gameObject, 10);

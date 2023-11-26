@@ -49,7 +49,11 @@ namespace git.Scripts.Components
                     navMeshAgent.stoppingDistance = stoppingDistance;
                 }
                 navMeshAgent.SetDestination(GetDestination());
-                owner.detector.GetRangeProjector().UpdateMaterialProperties();
+                if (owner != null)
+                {
+                    if (owner.detector != null)
+                        owner.detector.GetRangeProjector().UpdateMaterialProperties();
+                }
                 if (navMeshAgent.remainingDistance < stoppingDistance) userTarget = false;
                 if (owner.CCombat != null)
                 {
@@ -86,6 +90,7 @@ namespace git.Scripts.Components
                 }
             }
             this.moveToPosition = moveToPosition;
+            owner.MovePlayer(moveToPosition);
             if (owner.CCombat != null)
             {
                 owner.CCombat.userTarget = false;

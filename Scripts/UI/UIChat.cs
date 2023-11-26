@@ -39,7 +39,7 @@ public class UIChat : MonoBehaviour
                 //let's escape the pipe and colon symbols - everything else should be fine
                 string escaped = this.GetComponent<TMPro.TMP_InputField>().text;
                 escaped = escaped.Replace("|", ";;;pipesymbol;;;").Replace(":", ";;;colon;;;");
-                networkManager.SendMsg("T:"+escaped+":\n");
+                networkManager.SendMsg("T:"+networkManager.playername+":"+escaped+":\n");
                 this.GetComponent<TMPro.TMP_InputField>().text = "";
                 index = 0;
                 scrollRect.verticalScrollbar.value = 0;
