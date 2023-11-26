@@ -2,7 +2,9 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 using System.IO;
-
+using UnityEngine.UI;
+using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
@@ -12,7 +14,20 @@ public class GameManager : MonoBehaviour
     public Player player;
     public Player p1;
     public bool settingsread;
+    public AudioSource MusicManager;
+    public AudioSource SoundManager;
+    public GameObject p1prefab;
+    public NetworkManager networkManager;
+    public GameObject p2prefab;
+    public Dictionary<int, GameObject> opponents;
+    public Dictionary<int, GameObject> myunits;
+    private int units = 0;
     public Player p2;
+    public GameObject p1pos;
+    public GameObject p2pos;
+    public Camera maincam;
+    public Slider soundv;
+    public Slider musicv;
 
     private string settingsFilePath;
 
@@ -22,10 +37,98 @@ public class GameManager : MonoBehaviour
     private string serverPort = "8044";
     private string musicVolume = "100";
     private string soundVolume = "100";
+    private int numstartunits = 10;
 
     [SerializeField] private GameDifficulty _gameDifficulty = GameDifficulty.Easy;
 
+    public void PlaceOpponent(int UID, Vector3 pos)
+    {
+        GameObject placeable;
+        if (player == p1)
+        {
+            placeable = p2prefab;
+        }
+        else 
+        {
+            placeable = p1prefab;
+        }
+        GameObject placedunit = Instantiate(placeable, pos, Quaternion.identity);
+        if (player == p1)
+            placedunit.GetComponent<Unit>().SetPlayer(p2);
+        else
+            placedunit.GetComponent<Unit>().SetPlayer(p1);
+        placedunit.GetComponent<Unit>().ID = UID;
+        opponents.Add(UID, placedunit);
+    }
+    
+    public void CheckOrCreateOwnUnit(int UID, Vector3 pos)
+    {
+        Debug.Log("Size of myunits:"+myunits.Count);
+        if (!myunits.ContainsKey(UID))
+        {
+            GameObject placeable;
+            if (player == p1)
+            {
+                placeable = p1prefab;
+            }
+            else 
+            {
+                placeable = p2prefab;
+            }
+            GameObject placedunit = Instantiate(placeable, pos, Quaternion.identity);
+            placedunit.GetComponent<Unit>().SetPlayer(player);
+            placedunit.GetComponent<Unit>().ID = UID;
+            myunits.Add(UID, placedunit);
+        }
+    }
+    public void MoveOpponent(int UID, Vector3 pos)    
+    {
+        GameObject outg;
+        opponents.TryGetValue(UID, out outg);
+        Debug.Log(outg);
+        if (outg != null)
+        {
+            outg.GetComponent<git.Scripts.Components.C_Moveable>().SetMoveToPosition(pos,true);
+        }
+    }
+    public void setplayer1(bool reconnect)
+    {
+        player = p1;
+        Vector3 place = p1pos.transform.position;
+        maincam.transform.position = new Vector3(place.x, maincam.GetComponent<CameraManager>().altitude, place.z);
+        if (!reconnect)
+            SpawnStartUnits(p1pos.transform.position, p1, p1prefab);
+    }
 
+    public void setplayer2(bool reconnect)
+    {
+        player = p2;
+        Vector3 place = p2pos.transform.position;
+        maincam.transform.position = new Vector3(place.x, maincam.GetComponent<CameraManager>().altitude, place.z);
+        if (!reconnect)
+            SpawnStartUnits(p2pos.transform.position, p2, p2prefab);
+    }
+
+    void SpawnStartUnits(Vector3 pos, Player p, GameObject prefab)
+    {
+        for (int i = 0; i < numstartunits; i++)
+        {
+            float angle = UnityEngine.Random.Range(0f, 360f);
+            float radians = angle * Mathf.Deg2Rad;
+            float x = pos.x + 4f * Mathf.Cos(radians);
+            float z = pos.z + 4f * Mathf.Sin(radians);
+            Vector3 placepos = new Vector3(x, prefab.transform.position.y, z);
+            GameObject placedunit = Instantiate(prefab, placepos, Quaternion.identity);
+            placedunit.GetComponent<Unit>().SetPlayer(p);
+            int ID = units++;
+            placedunit.GetComponent<Unit>().ID = ID;
+            myunits.Add(ID, placedunit);
+            if (networkManager != null)
+            {
+               networkManager.SendMsg("C:"+playerName+":"+placepos.x+","+placepos.y+","+placepos.z+":"+ID);
+            }
+        }
+    }
     public enum GameDifficulty{
         Easy,
         Hard
@@ -45,12 +148,15 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        opponents = new Dictionary<int, GameObject>();
+        myunits = new Dictionary<int, GameObject>();
     }
 
     void Start(){
-        settingsFilePath = Path.Combine(Application.persistentDataPath, "settings.ini");
+        settingsFilePath = Path.Combine(Path.GetDirectoryName(Application.dataPath), "settings.ini");
         ReadOrCreateSettings();
-        EventManager.Instance.deathEvent.AddListener(DeathListener);
+        if (EventManager.Instance != null)
+            EventManager.Instance.deathEvent.AddListener(DeathListener);
     }
 
     private void DeathListener(C_Health c){
@@ -63,7 +169,17 @@ public class GameManager : MonoBehaviour
     public void setSoundVolume(float val)
     {
         soundVolume = ""+(int)(val*100f);
-        UpdateAndWriteSettingsToFile();
+        UpdateAndWriteSettingsToFile();        
+        if (SoundManager != null)
+        {
+            if (soundVolume == "0")
+                SoundManager.mute = true;
+            else
+            {
+                SoundManager.mute = false;
+                SoundManager.volume = float.Parse(soundVolume)/100f;
+            }
+        }
     }
 
     public void setPlayername(string name)
@@ -76,6 +192,16 @@ public class GameManager : MonoBehaviour
     {
         musicVolume = ""+(int)(val*100f);  
         UpdateAndWriteSettingsToFile();
+        if (MusicManager != null)
+        {
+            if (musicVolume == "0")
+                MusicManager.mute = true;
+            else
+            {
+                MusicManager.mute = false;
+                MusicManager.volume = float.Parse(musicVolume)/100f;
+            }
+        }
     }
 
     public float getMusicVolume()
@@ -95,12 +221,28 @@ public class GameManager : MonoBehaviour
         {
             ReadSettingsFromFile();
             settingsread = true;
+            if (MusicManager != null)
+            {
+                if (musicVolume == "0")
+                    MusicManager.mute = true;
+                else
+                    MusicManager.volume = float.Parse(musicVolume)/100f;
+            }
+            if (SoundManager != null)
+            {
+                if (soundVolume == "0")
+                    SoundManager.mute = true;
+                else
+                    SoundManager.volume = float.Parse(soundVolume)/100f;
+            }
         }
         // If the settings file doesn't exist, create it with default values
         else
         {
             CreateDefaultSettingsFile();
         }
+        soundv.value = getSoundVolume();
+        musicv.value = getMusicVolume();
     }
     private void ReadSettingsFromFile()
     {
@@ -207,6 +349,12 @@ public class GameManager : MonoBehaviour
 
     public GameDifficulty GetGameDifficulty(){
         return _gameDifficulty;
+    }
+    public void QuitGame()
+    {
+        Debug.Log("QUIT!");
+        networkManager.SendMsg("Q:"+networkManager.playername);
+        SceneManager.LoadScene("StartMenu");
     }
     
 }

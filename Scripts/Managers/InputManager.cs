@@ -8,9 +8,11 @@ using UnityEngine;
 public class InputManager : MonoBehaviour{
 
     private SelectionManager selectionManager;
-    public NetworkManager networkManager;
+    private NetworkManager networkManager;
+    public GameObject options;
     void Start(){
         selectionManager = SelectionManager.Instance;
+        networkManager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
     }
     
     void Update(){
@@ -36,18 +38,19 @@ public class InputManager : MonoBehaviour{
                             if (cMove == null){
                                 continue;
                             }
-                            if (networkManager != null)
-                            {
-                                networkManager.SendMsg("M:"+networkManager.playername+":"+hit.point.x+","+hit.point.y+","+hit.point.z+":"+cMove.GetInstanceID().ToString());
-                            }
                             if (cSelectable.Entity.GetPlayer() != GameManager.Instance.player) return;
                             cMove.SetMoveToPosition(hit.point,false);
                         }
                     }
                 }
             }
-
-            
+        }
+        if (Input.GetKeyUp(KeyCode.Escape) && !networkManager.chatactive)
+        {
+            if (!options.activeInHierarchy)
+                options.SetActive(true);
+            else
+                options.SetActive(false);
         }
     }
 }

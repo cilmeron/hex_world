@@ -266,7 +266,7 @@ Transform:
   - {fileID: 6286970787086223098}
   - {fileID: 8205704666091116750}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &8734897206765511783
 MeshRenderer:
@@ -324,7 +324,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _entitiesInVision: []
   detector: {fileID: 538703604205305907}
-  collider: {fileID: 0}
+  Collider: {fileID: 0}
   player: {fileID: 0}
   goldAmount: 20
   sprite: {fileID: 21300000, guid: 0345dd6f47d0a4547af63bef5daa749d, type: 3}
@@ -358,7 +358,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3998015b809bcb4dbb51b3fb72259ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentHP: 400
+  CurrentHP: 400
   maxHP: 400
   hpSlider: {fileID: 5741764590666716778}
 --- !u!114 &8682277960915804418
@@ -375,6 +375,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cHealthsInAttackRange: []
   target: {fileID: 0}
+  userTarget: 0
   CWeapon: {fileID: 1083841384383908701}
   timeTillAttack: 0
   _attackDistanceDetector: {fileID: 6468835414020562493}
@@ -421,6 +422,7 @@ MonoBehaviour:
   moveToTransform: {fileID: 0}
   shouldMove: 1
   stoppingDistance: 0.7
+  userTarget: 0
 --- !u!195 &3240667480195804951
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -429,7 +431,7 @@ NavMeshAgent:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 651052253316306241}
   m_Enabled: 1
-  m_AgentTypeID: 1479372276
+  m_AgentTypeID: 0
   m_Radius: 0.5
   m_Speed: 5
   m_Acceleration: 8
@@ -871,7 +873,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 0}
   m_FillRect: {fileID: 122973404778334250}
   m_HandleRect: {fileID: 0}

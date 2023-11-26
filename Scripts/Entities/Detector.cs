@@ -81,7 +81,8 @@ public class Detector : MonoBehaviour{
     
     private void UpdateProjector(){
         projector.circleRadius = radius * owner.transform.localScale.x;
-        projector.circleColor = owner.GetPlayer().PlayerColor;
+        if (owner != null && owner.GetPlayer() != null)
+            projector.circleColor = owner.GetPlayer().PlayerColor;
         projector.UpdateMaterialProperties();
         projector.gameObject.SetActive(false);
     }
