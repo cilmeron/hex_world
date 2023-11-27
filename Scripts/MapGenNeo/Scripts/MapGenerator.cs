@@ -23,6 +23,7 @@ public class MapGeneratorEditor : Editor
         // Clear existing chunks if needed
         Transform[] childChunks = chunkGen.transform.GetComponentsInChildren<Transform>();
         AssetPlacer AssetPlacer = new AssetPlacer();
+        TownPlacer TownPlacer = new TownPlacer();
 
         foreach (Transform child in childChunks)
         {
@@ -62,5 +63,6 @@ public class MapGeneratorEditor : Editor
 
         // place assets
         AssetPlacer.AssetPlacement(terrainGenerators, navMeshSurface);
+        TownPlacer.StructurePlacement(terrainGenerators, navMeshSurface);
     }
 }
