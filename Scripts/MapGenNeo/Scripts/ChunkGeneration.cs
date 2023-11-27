@@ -34,6 +34,12 @@ public class ChunkGeneration : MonoBehaviour
     [Range(0, 2)]
     public float rockMinSlopeThreshold;
 
+    public GameObject[] mainBuilding;
+    public GameObject[] defenseBuilding;
+    public GameObject[] cosmeticBuilding;
+
+    public GameObject[] clouds;
+
 
     [Range(0, 200)]
     public float heightOffSet;
@@ -69,7 +75,7 @@ public class ChunkGeneration : MonoBehaviour
         waterLevel = -30;
         StartCoroutine(GenerateChunks());
         GameObject current = Instantiate(water, new Vector3((128 * chunks.x) / 2, waterLevel, (128 * chunks.y) / 2), Quaternion.identity);
-        current.transform.localScale = new Vector3(16 * chunks.x, 128, 16 * chunks.y);
+        current.transform.localScale = new Vector3(32 * chunks.x, 128, 32 * chunks.y);
     }
 
     public void EditorStart()

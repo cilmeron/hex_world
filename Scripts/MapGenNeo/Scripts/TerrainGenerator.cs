@@ -10,6 +10,8 @@ public class TerrainGenerator : MonoBehaviour
 
     public Mesh mesh;
     public List<float> heightDeltas = new List<float>();
+    public float averageHeight;
+    public Vector2 worldPosition = Vector2.zero;
     MeshFilter meshFilter;
     MeshRenderer meshRenderer;
     MeshCollider collider;
@@ -42,7 +44,8 @@ public class TerrainGenerator : MonoBehaviour
 
         Vector2 worldPos = new Vector2(meshFilter.gameObject.transform.localPosition.x, meshFilter.gameObject.transform.localPosition.z);
         Vector2 worldCenter = chunkGen.worldCentre;
-
+        worldPosition = worldPos;
+        averageHeight = 0;
         for (int i = 0, x = 0; x <= chunkGen.chunkResolution.x; x++)
         {
             for (int z = 0; z <= chunkGen.chunkResolution.y; z++)
@@ -59,6 +62,7 @@ public class TerrainGenerator : MonoBehaviour
                 islandMultiplier += Mathf.PerlinNoise(vertexWorldPos.x * 0.007f, vertexWorldPos.y * 0.007f) * 0.3f * sin;
 
                 float y = islandMultiplier * 150f;
+                averageHeight = (i * averageHeight + y) / (i + 1);
 
                 //float y = Noise(x, z, BiomeNoise(x, z));
                 vertices[i] = new Vector3(x * (128 / chunkGen.chunkResolution.x), y, z * (128 / chunkGen.chunkResolution.y));
@@ -66,7 +70,6 @@ public class TerrainGenerator : MonoBehaviour
                 i++;
             }
         }
-
         heightDeltas = heightMapAnalyzer.CalculateAverageDifferences(vertices);
         float average = heightDeltas.Average();
         for (int i = 0; i < uv.Length; i++)
