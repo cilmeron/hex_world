@@ -41,7 +41,7 @@
     "m_Dropdowns": [],
     "m_CategoryData": [
         {
-            "m_Id": "6b007e998161436fa5b8b59aba76582c"
+            "m_Id": "4a90def6d19044e79b5637f9e2a5be6c"
         }
     ],
     "m_Nodes": [
@@ -1088,6 +1088,48 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.CategoryData",
+    "m_ObjectId": "4a90def6d19044e79b5637f9e2a5be6c",
+    "m_Name": "",
+    "m_ChildObjectList": [
+        {
+            "m_Id": "b3b07cb081224fdaa928b561151aeaec"
+        },
+        {
+            "m_Id": "8f0468a0aa534b8393b834dc2ba064f1"
+        },
+        {
+            "m_Id": "1278951ae32e47c39485edf13efbe659"
+        },
+        {
+            "m_Id": "36cf6d36a21d49ac8163113848f65fab"
+        },
+        {
+            "m_Id": "0c1c669b0a99473ba32c2a517db3cbdd"
+        },
+        {
+            "m_Id": "c9eb3c5d089344f9ba852817798a38ca"
+        },
+        {
+            "m_Id": "e4c659691ee24fde85ec7da4cdf373c5"
+        },
+        {
+            "m_Id": "fc5d62fc14f8489c89451daed1ab9125"
+        },
+        {
+            "m_Id": "e8b8c8d3a14a49e89de0c90ea1ebd93f"
+        },
+        {
+            "m_Id": "1ea4b8d6155a461c8cd55221f3a74ed0"
+        },
+        {
+            "m_Id": "8d36ed1697c6472b84b33bd7724d7b68"
+        }
+    ]
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "4ca49c08621b4c6e9a552ced549c0f29",
     "m_Id": 4,
@@ -1272,48 +1314,6 @@
     "m_Value": 0.0,
     "m_DefaultValue": 0.0,
     "m_Labels": []
-}
-
-{
-    "m_SGVersion": 0,
-    "m_Type": "UnityEditor.ShaderGraph.CategoryData",
-    "m_ObjectId": "6b007e998161436fa5b8b59aba76582c",
-    "m_Name": "",
-    "m_ChildObjectList": [
-        {
-            "m_Id": "b3b07cb081224fdaa928b561151aeaec"
-        },
-        {
-            "m_Id": "8f0468a0aa534b8393b834dc2ba064f1"
-        },
-        {
-            "m_Id": "1278951ae32e47c39485edf13efbe659"
-        },
-        {
-            "m_Id": "36cf6d36a21d49ac8163113848f65fab"
-        },
-        {
-            "m_Id": "0c1c669b0a99473ba32c2a517db3cbdd"
-        },
-        {
-            "m_Id": "c9eb3c5d089344f9ba852817798a38ca"
-        },
-        {
-            "m_Id": "e4c659691ee24fde85ec7da4cdf373c5"
-        },
-        {
-            "m_Id": "fc5d62fc14f8489c89451daed1ab9125"
-        },
-        {
-            "m_Id": "e8b8c8d3a14a49e89de0c90ea1ebd93f"
-        },
-        {
-            "m_Id": "1ea4b8d6155a461c8cd55221f3a74ed0"
-        },
-        {
-            "m_Id": "8d36ed1697c6472b84b33bd7724d7b68"
-        }
-    ]
 }
 
 {
@@ -1729,7 +1729,7 @@
     "overrideHLSLDeclaration": false,
     "hlslDeclarationOverride": 0,
     "m_Hidden": false,
-    "m_Value": -4.96999979019165,
+    "m_Value": 15.0,
     "m_FloatType": 0,
     "m_RangeValues": {
         "x": 0.0,
