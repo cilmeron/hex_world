@@ -15,6 +15,7 @@ public class Entity : MonoBehaviour, Detectable, DetectorNotification{
         protected C_Formation cFormation;
         protected C_Moveable cMoveable;
         private NetworkManager networkManager;
+        private GameManager gameManager;
         public List<Entity> _entitiesInVision = new();
         public Detector detector;
         public int ID;
@@ -47,6 +48,7 @@ public class Entity : MonoBehaviour, Detectable, DetectorNotification{
             detector.SetOwner(this);
             detector.SetDetectorNotification(this);
             networkManager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
+            gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         }
     
         protected virtual void Start(){
@@ -89,7 +91,9 @@ public class Entity : MonoBehaviour, Detectable, DetectorNotification{
         {
             if (networkManager != null)
             {
-                networkManager.SendMsg("M:"+networkManager.playername+":"+pos.x+","+pos.y+","+pos.z+":"+ID);
+                //we only need to broadcast this if we are broadcasting our own positions
+                if (GetPlayer() == gameManager.player)
+                    networkManager.SendMsg("M:"+networkManager.playername+":"+pos.x+","+pos.y+","+pos.z+":"+ID);
             }
         }
     
