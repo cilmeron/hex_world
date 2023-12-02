@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.AI.Navigation;
 using UnityEngine;
 
 public class ChunkGeneration : MonoBehaviour
@@ -69,13 +70,40 @@ public class ChunkGeneration : MonoBehaviour
     private float minHeight = float.MaxValue;
     private float maxHeight = float.MinValue;
 
+    private AssetPlacer AssetPlacer = new AssetPlacer();
+    private TownPlacer TownPlacer = new TownPlacer();
+
     private void Start()
     {
-        waterLevel = Mathf.PerlinNoise(seed, seed) * 256;
-        waterLevel = -30;
-        StartCoroutine(GenerateChunks());
+        // Map Generation
+        waterLevel = 35;
+        GenerateChunksEditor();
         GameObject current = Instantiate(water, new Vector3((128 * chunks.x) / 2, waterLevel, (128 * chunks.y) / 2), Quaternion.identity);
         current.transform.localScale = new Vector3(32 * chunks.x, 128, 32 * chunks.y);
+
+        TerrainGenerator[] terrainGenerators = this.GetComponentsInChildren<TerrainGenerator>();
+        NavMeshSurface navMeshSurface = this.GetComponentInChildren<NavMeshSurface>();
+
+        foreach (TerrainGenerator generator in terrainGenerators)
+        {
+            generator.GenerateTerrain();
+        }
+        // Nav Mesh Baking
+
+        if (navMeshSurface != null)
+        {
+            // You can perform additional configuration or trigger navmesh building
+            navMeshSurface.BuildNavMesh();
+        }
+        else
+        {
+            Debug.LogError("NavMeshSurface component not found on the specified GameObject or its children.");
+        }
+
+        // Asset Placement: 
+        AssetPlacer.AssetPlacement(terrainGenerators);
+        // Building Placement: @David you can use the FindPossibleBuildingSite() from TownPlacer as the initialy start point
+        TownPlacer.StructurePlacement(terrainGenerators);
     }
 
     public void EditorStart()

@@ -19,7 +19,6 @@ public class TerrainGenerator : MonoBehaviour
 
     private void Start()
     {
-        GenerateTerrain();
     }
 
     public void GenerateTerrain()
