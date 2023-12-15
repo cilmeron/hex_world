@@ -59,7 +59,7 @@ public class TownPlacer : MonoBehaviour
 
     private void PlaceMainBuilding(TerrainGenerator terrainChunk, Vector3 centerPosition)
     {
-        GameObject selectedMainBuilding = mainBuilding[Random.Range(0, mainBuilding.Length)];
+        GameObject selectedMainBuilding = mainBuilding[(int)chunkGen.GenerateRandomInRange(0f, (float)mainBuilding.Length)];
         GameObject mainBuildingInstance = Instantiate(selectedMainBuilding, centerPosition, Quaternion.identity);
         mainBuildingInstance.transform.parent = terrainChunk.transform;
         mainBuildingInstance.tag = "MainBuilding";
@@ -67,7 +67,7 @@ public class TownPlacer : MonoBehaviour
 
     private void PlaceDefenseBuildings(TerrainGenerator terrainChunk, Vector3 centerPosition)
     {
-        GameObject selectedDefenseBuilding = defenseBuilding[Random.Range(0, defenseBuilding.Length)];
+        GameObject selectedDefenseBuilding = defenseBuilding[(int)chunkGen.GenerateRandomInRange(0f, (float)defenseBuilding.Length)];
         float terrainHeight = 0;
         // Place 5 defense buildings in a circular manner around the main building
         for (int i = 0; i < 7; i++)
@@ -102,9 +102,9 @@ public class TownPlacer : MonoBehaviour
         float ringRadius = 0.3f * chunkGen.chunkResolution.x;
         for (int i = 0; i < 12; i++)
         {
-            GameObject selectedCosmeticBuilding = cosmeticBuilding[Random.Range(0, cosmeticBuilding.Length)];
+            GameObject selectedCosmeticBuilding = cosmeticBuilding[(int)chunkGen.GenerateRandomInRange(0f, (float)cosmeticBuilding.Length)];
             float angle = i * (360f / 12); // 45 degrees apart
-            float distance = Random.Range(0.2f, 0.8f) * ringRadius; // Random distance within the ring
+            float distance = chunkGen.GenerateRandomInRange(0.2f, 0.8f) * ringRadius; // Random distance within the ring
 
             Vector3 offset = new Vector3(
                 distance * Mathf.Cos(Mathf.Deg2Rad * angle),
@@ -117,7 +117,7 @@ public class TownPlacer : MonoBehaviour
             terrainHeight = GetTerrainHeight(cosmeticPosition, terrainChunk);
             cosmeticPosition.y = terrainHeight;
 
-            GameObject cosmeticBuildingInstance = Instantiate(selectedCosmeticBuilding, cosmeticPosition, Quaternion.Euler(0f, Random.Range(0f, 360f), 0f));
+            GameObject cosmeticBuildingInstance = Instantiate(selectedCosmeticBuilding, cosmeticPosition, Quaternion.Euler(0f, chunkGen.GenerateRandomInRange(0f, 360f), 0f));
             cosmeticBuildingInstance.transform.parent = terrainChunk.transform;
             cosmeticBuildingInstance.tag = "CosmeticBuilding";
         }
@@ -166,15 +166,15 @@ public class TownPlacer : MonoBehaviour
         bool spawns = DoesSpwan(x, z, slope, minSlope, maxSlope, threshold, terrainChunk);
         if (spawns && y > waterLevel + 12)
         {
-            int whatSpawns = Mathf.RoundToInt(Random.Range(0f, assetList.Length - 1));
-            float offset = Random.Range(0f, 10f);
+            int whatSpawns = Mathf.RoundToInt(chunkGen.GenerateRandomInRange(0f, assetList.Length - 1));
+            float offset = chunkGen.GenerateRandomInRange(0f, 10f);
             offset = offset / 10f;
 
             GameObject current = Instantiate(assetList[(int)whatSpawns],
                 new Vector3(x * (128 / chunkGen.chunkResolution.x) + terrainChunk.transform.position.x + offset, y + terrainChunk.transform.position.y, z * (128 / chunkGen.chunkResolution.y) + terrainChunk.transform.position.z + offset),
-                Quaternion.Euler(0f, Random.Range(0f, 360f), 0f));
+                Quaternion.Euler(0f, chunkGen.GenerateRandomInRange(0f, 360f), 0f));
 
-            float randomScaleFactor = Random.Range(0.8f, 1.2f);
+            float randomScaleFactor = chunkGen.GenerateRandomInRange(0.8f, 1.2f);
             current.transform.localScale = new Vector3(randomScaleFactor, randomScaleFactor, randomScaleFactor);
 
             current.transform.parent = terrainChunk.transform;

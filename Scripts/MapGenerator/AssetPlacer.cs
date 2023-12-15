@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.AI.Navigation;
 using UnityEditor.ShaderGraph.Internal;
+using UnityEditor.VersionControl;
 using UnityEngine;
 
 public class AssetPlacer : MonoBehaviour
@@ -17,6 +18,7 @@ public class AssetPlacer : MonoBehaviour
     public float rockThreshold;
 
     private ChunkGeneration chunkGen;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -74,15 +76,16 @@ public class AssetPlacer : MonoBehaviour
         bool spawns = DoesSpwan(x, z, slope, minSlope, maxSlope, threshold, terrainChunk);
         if (spawns && y > waterLevel + 12)
         {
-            int whatSpawns = Mathf.RoundToInt(Random.Range(0f, assetList.Length - 1));
-            float offset = Random.Range(0f, 10f);
+
+            int whatSpawns = Mathf.RoundToInt(chunkGen.GenerateRandomInRange(0f, assetList.Length - 1));
+            float offset = chunkGen.GenerateRandomInRange(0f, 10f);
             offset = offset / 10f;
 
             GameObject current = Instantiate(assetList[(int)whatSpawns],
                 new Vector3(x * (128 / chunkGen.chunkResolution.x) + terrainChunk.transform.position.x + offset, y + terrainChunk.transform.position.y, z * (128 / chunkGen.chunkResolution.y) + terrainChunk.transform.position.z + offset),
-                Quaternion.Euler(0f, Random.Range(0f, 360f), 0f));
+                Quaternion.Euler(0f, chunkGen.GenerateRandomInRange(0f, 360f), 0f));
 
-            float randomScaleFactor = Random.Range(0.8f, 1.2f);
+            float randomScaleFactor = chunkGen.GenerateRandomInRange(0.8f, 1.2f);
             current.transform.localScale = new Vector3(randomScaleFactor, randomScaleFactor, randomScaleFactor);
 
             current.transform.parent = terrainChunk.transform;

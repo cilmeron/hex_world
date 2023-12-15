@@ -72,10 +72,12 @@ public class ChunkGeneration : MonoBehaviour
 
     private AssetPlacer AssetPlacer = new AssetPlacer();
     private TownPlacer TownPlacer = new TownPlacer();
+    private System.Random random;
 
     private void Start()
     {
         // Map Generation
+        random = new System.Random(seed);
         waterLevel = 35;
         GenerateChunksEditor();
         GameObject current = Instantiate(water, new Vector3((128 * chunks.x) / 2, waterLevel, (128 * chunks.y) / 2), Quaternion.identity);
@@ -165,5 +167,18 @@ public class ChunkGeneration : MonoBehaviour
     {
         if (y > maxHeight) maxHeight = y;
         if (y < minHeight) minHeight = y;
+    }
+
+    public float GenerateRandomInRange(float minValue, float maxValue)
+    {
+        if (minValue >= maxValue)
+        {
+            Debug.LogWarning("Invalid range: minValue must be less than maxValue.");
+            return 0f;
+        }
+
+        float randomValue = (float)random.NextDouble() * (maxValue - minValue) + minValue;
+
+        return randomValue;
     }
 }
