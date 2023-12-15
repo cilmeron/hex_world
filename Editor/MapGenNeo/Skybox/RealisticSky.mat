@@ -88,7 +88,7 @@ Material:
     - _StarThreshold: 20
     - _Step: 0.6
     - _SunIntensity: 100
-    - _SunSize: 0.1
+    - _SunSize: 0.118
     - _WaveLength: 0
     - _Wavelength: 0
     - _X: 1
