@@ -17,7 +17,7 @@ public class TownPlacer : MonoBehaviour
 
     private ChunkGeneration chunkGen;
 
-    public void StructurePlacement(TerrainGenerator[] terrainGenerators, NavMeshSurface navMeshSurfac)
+    public void StructurePlacement(TerrainGenerator[] terrainGenerators)
     {
         chunkGen = GameObject.FindGameObjectWithTag("Manager").GetComponent<ChunkGeneration>();
         mainBuilding = chunkGen.mainBuilding;

@@ -29,7 +29,7 @@ public class AssetPlacer : MonoBehaviour
 
     }
 
-    public void AssetPlacement(TerrainGenerator[] terrainGenerators, NavMeshSurface navMeshSurfac)
+    public void AssetPlacement(TerrainGenerator[] terrainGenerators)
     {
         chunkGen = GameObject.FindGameObjectWithTag("Manager").GetComponent<ChunkGeneration>();
         chunkGen.GetMinHeight();

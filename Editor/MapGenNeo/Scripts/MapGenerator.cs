@@ -63,7 +63,7 @@ public class MapGeneratorEditor : Editor
         }
 
         // place assets
-        AssetPlacer.AssetPlacement(terrainGenerators, navMeshSurface);
-        TownPlacer.StructurePlacement(terrainGenerators, navMeshSurface);
+        AssetPlacer.AssetPlacement(terrainGenerators);
+        TownPlacer.StructurePlacement(terrainGenerators);
     }
 }
