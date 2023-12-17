@@ -1,8 +1,8 @@
-using System.Net.Sockets;
-using System.Threading;
-using System.Text;
 using System;
 using System.Collections.Generic;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -25,12 +25,12 @@ public class NetworkManager : MonoBehaviour
     bool loadedsettings = false;
     public float tempchatduration = 0f;
     public bool tempchat = false;
-    
-     private void Start() 
-     {
+
+    private void Start()
+    {
         ingamechat = "";
-        
-    }    
+
+    }
     void TempChat()
     {
         PimDeWitte.UnityMainThreadDispatcher.UnityMainThreadDispatcher.Instance().Enqueue(() =>
@@ -84,7 +84,8 @@ public class NetworkManager : MonoBehaviour
                 return true;
             }
         }
-        catch (System.Exception e){
+        catch (System.Exception e)
+        {
             Debug.Log("M");
             Debug.LogError(e.ToString());
             Debug.LogError(e.StackTrace);
@@ -106,7 +107,7 @@ public class NetworkManager : MonoBehaviour
         }
         catch (System.Exception e)
         {
-            Debug.Log("Connection couldn't be established"+e);
+            Debug.Log("Connection couldn't be established" + e);
             client.Dispose();
             return false;
         }
@@ -120,7 +121,7 @@ public class NetworkManager : MonoBehaviour
         }
         catch (System.Exception e)
         {
-            Debug.Log("Couldn't send our name/init sequence"+e);
+            Debug.Log("Couldn't send our name/init sequence" + e);
         }
         return true;
     }
@@ -140,7 +141,7 @@ public class NetworkManager : MonoBehaviour
 
     void InitConnection()
     {
-        string hello = "H:"+playername+":";
+        string hello = "H:" + playername + ":";
         SendMsg(hello);
     }
 
@@ -165,10 +166,10 @@ public class NetworkManager : MonoBehaviour
                 connected = true;
             }
         }
-        Debug.Log("Trying to send:"+msg);
-        if(connection.CanWrite)
+        Debug.Log("Trying to send:" + msg);
+        if (connection.CanWrite)
         {
-            byte[] bs  = System.Text.Encoding.UTF8.GetBytes(msg);
+            byte[] bs = System.Text.Encoding.UTF8.GetBytes(msg);
             connection.Write(bs, 0, bs.Length);
             return true;
         }
@@ -178,38 +179,38 @@ public class NetworkManager : MonoBehaviour
             return false;
         }
     }
-    
-   private void ListenForData()
-{
-    List<byte> bytesList = new List<byte>();
-    byte[] buffer = new byte[1024]; // Adjust the buffer size as needed
-    StringBuilder currentMessage = new StringBuilder();
 
-    while (true)
+    private void ListenForData()
     {
-        int bytesRead = connection.Read(buffer, 0, buffer.Length);
+        List<byte> bytesList = new List<byte>();
+        byte[] buffer = new byte[1024]; // Adjust the buffer size as needed
+        StringBuilder currentMessage = new StringBuilder();
 
-        for (int i = 0; i < bytesRead; i++)
+        while (true)
         {
-            bytesList.Add(buffer[i]);
-            currentMessage.Append((char)buffer[i]);
+            int bytesRead = connection.Read(buffer, 0, buffer.Length);
 
-            // Check if the terminator is present in the received data
-            if (buffer[i] == '|')
+            for (int i = 0; i < bytesRead; i++)
             {
-                byte[] receivedBytes = bytesList.ToArray();
-                string receivedMessage = Encoding.ASCII.GetString(receivedBytes);
-                bytesList.Clear();
-                CheckMessages(receivedMessage);
-                currentMessage.Clear();
+                bytesList.Add(buffer[i]);
+                currentMessage.Append((char)buffer[i]);
+
+                // Check if the terminator is present in the received data
+                if (buffer[i] == '|')
+                {
+                    byte[] receivedBytes = bytesList.ToArray();
+                    string receivedMessage = Encoding.ASCII.GetString(receivedBytes);
+                    bytesList.Clear();
+                    CheckMessages(receivedMessage);
+                    currentMessage.Clear();
+                }
             }
         }
     }
-}
 
     private void SetPlayer1OnMainThread(bool reconnect)
     {
-        
+
         PimDeWitte.UnityMainThreadDispatcher.UnityMainThreadDispatcher.Instance().Enqueue(() =>
         {
             if (gameManager.player != null && gameManager.p2 != null)
@@ -237,7 +238,7 @@ public class NetworkManager : MonoBehaviour
         {
             gameManager.MoveOpponent(UID, pos);
         });
-        
+
     }
 
     private void CreateOpponentMainThread(int UID, Vector3 pos)
@@ -255,20 +256,20 @@ public class NetworkManager : MonoBehaviour
             gameManager.CheckOrCreateOwnUnit(UID, pos);
         });
     }
-     private void CheckMessages(string response)
+    private void CheckMessages(string response)
     {
-        lock(netlock)
+        lock (netlock)
         {
             if (response.Substring(0, 1) != "P" && response.Substring(0, 1) != "T" && response.Substring(0, 1) != "H" && response.Substring(0, 1) != "M" && response.Substring(0, 1) != "C" && response.Substring(0, 1) != "Q")
             {
-                buffer += response;   
+                buffer += response;
             }
             else
             {
                 buffer = response;
-            }  
-            response = buffer;      
-            if (response[response.Length-1] != '|')
+            }
+            response = buffer;
+            if (response[response.Length - 1] != '|')
             {
                 //Debug.Log(response);
                 return;
@@ -280,12 +281,12 @@ public class NetworkManager : MonoBehaviour
 
             if (answer[0].Contains("E"))
             {
-                Debug.Log("Server Error:"+answer[1]);
+                Debug.Log("Server Error:" + answer[1]);
                 //Some error
             }
             else if (answer[0].Contains("P"))
             {
-                if(ping)
+                if (ping)
                 {
                     //We apparently sent a ping and now got a pong
                     ping = false;
@@ -303,9 +304,9 @@ public class NetworkManager : MonoBehaviour
                     //This is a chat message by ourselves - let's handle it here because that means everything worked
                     try
                     {
-                        ingamechat += "<color=\"orange\">"+answer[1]+": "+answer[2]+"</color>\n";
+                        ingamechat += "<color=\"orange\">" + answer[1] + ": " + answer[2] + "</color>\n";
                     }
-                    catch(System.Exception e)
+                    catch (System.Exception e)
                     {
                         Debug.Log(e);
                     }
@@ -313,7 +314,7 @@ public class NetworkManager : MonoBehaviour
                 else
                 {
                     TempChat();
-                    ingamechat += "<color=\"blue\">"+answer[1]+": "+answer[2]+"</color>\n";
+                    ingamechat += "<color=\"blue\">" + answer[1] + ": " + answer[2] + "</color>\n";
                     //This is a chat message by someone else
                 }
             }
@@ -325,7 +326,7 @@ public class NetworkManager : MonoBehaviour
                     {
                         SceneManager.LoadScene("StartMenu");
                     });
-           
+
                 }
             }
             else if (answer[0].Contains("H") && !playeractive)
@@ -336,10 +337,10 @@ public class NetworkManager : MonoBehaviour
                 {
                     playeractive = true;
                     bool reconnect = false;
-                    Debug.Log("Response:"+response);
-                    Debug.Log("Answerlength:"+answer.Length);
+                    Debug.Log("Response:" + response);
+                    Debug.Log("Answerlength:" + answer.Length);
                     if (answer.Length == 4 && answer[3].Contains("R"))
-                    {   
+                    {
                         reconnect = true;
                     }
                     //This is a status message about ourselves - let's find out if we are player 1, 2 or guest
@@ -376,7 +377,7 @@ public class NetworkManager : MonoBehaviour
                     string[] coords = answer[2].Split(',');
                     Vector3 moveto = ConvertToVector3(coords[0], coords[1], coords[2]);
                     Debug.Log(moveto.ToString());
-                    Debug.Log("Moving Unit"+answer[3]+" to x:"+moveto.x+" y:"+moveto.y+" z:"+moveto.z);
+                    Debug.Log("Moving Unit" + answer[3] + " to x:" + moveto.x + " y:" + moveto.y + " z:" + moveto.z);
                     MoveOpponentMainThread(Int32.Parse(answer[3]), moveto);
 
                 }
@@ -388,25 +389,25 @@ public class NetworkManager : MonoBehaviour
                 {
                     string[] coords = answer[2].Split(',');
                     Vector3 place = ConvertToVector3(coords[0], coords[1], coords[2]);
-                    Debug.Log("Placing enemy unit at"+place);
+                    Debug.Log("Placing enemy unit at" + place);
                     CreateOpponentMainThread(Int32.Parse(answer[3]), place);
                 }
                 else
                 {
                     string[] coords = answer[2].Split(',');
                     Vector3 place = ConvertToVector3(coords[0], coords[1], coords[2]);
-                    Debug.Log("Placing our own unit at"+place);
+                    Debug.Log("Placing our own unit at" + place);
                     CheckOrCreateOwnUnitMainThread(Int32.Parse(answer[3]), place);
                 }
             }
-            
+
             //Debug.Log(response);
         }
 
     }
     Vector3 ConvertToVector3(string xStr, string yStr, string zStr)
     {
-        Debug.Log("raw:"+xStr+yStr+zStr);
+        Debug.Log("raw:" + xStr + yStr + zStr);
         // Parse strings to floats
         float x = float.Parse(xStr);
         float y = float.Parse(yStr);
@@ -424,10 +425,10 @@ public class NetworkManager : MonoBehaviour
             if (ClientReceiveThread.IsAlive)
                 ClientReceiveThread.Abort();
         }
-        catch(System.Exception e)
+        catch (System.Exception e)
         {
-           Debug.Log("some error?"+e);
+            Debug.Log("some error?" + e);
         }
     }
-   
+
 }

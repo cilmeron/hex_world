@@ -5,7 +5,7 @@ using UnityEngine;
 [CustomEditor(typeof(ChunkGeneration))]
 public class MapGeneratorEditor : Editor
 {
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
@@ -17,7 +17,7 @@ public class MapGeneratorEditor : Editor
             GenerateMap(chunkGen);
         }
     }
-    #endif
+#endif
     private void GenerateMap(ChunkGeneration chunkGen)
     {
 
@@ -25,6 +25,7 @@ public class MapGeneratorEditor : Editor
         Transform[] childChunks = chunkGen.transform.GetComponentsInChildren<Transform>();
         AssetPlacer AssetPlacer = new AssetPlacer();
         TownPlacer TownPlacer = new TownPlacer();
+        UnitPlacer UnitPlacer = new UnitPlacer();
 
         foreach (Transform child in childChunks)
         {
@@ -48,6 +49,7 @@ public class MapGeneratorEditor : Editor
             terrainGenerator.GenerateTerrain();
         }
 
+
         // Access and build the NavMeshSurface
         NavMeshSurface navMeshSurface = chunkGen.GetComponentInChildren<NavMeshSurface>();
 
@@ -60,6 +62,14 @@ public class MapGeneratorEditor : Editor
         else
         {
             Debug.LogError("NavMeshSurface component not found on the specified GameObject or its children.");
+        }
+
+        if (UnitPlacer.FindSpawnAreas(terrainGenerators))
+        {
+            //p1
+            UnitPlacer.SpawnUnits(0, 10, UnitPlacer.attackerSpawnChunk);
+            //p1
+            UnitPlacer.SpawnUnits(1, 10, UnitPlacer.defenderSpawnChunk);
         }
 
         // place assets

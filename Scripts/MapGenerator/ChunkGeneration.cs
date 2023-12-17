@@ -41,6 +41,9 @@ public class ChunkGeneration : MonoBehaviour
 
     public GameObject[] clouds;
 
+    public GameObject p1Prefab;
+    public GameObject p2Prefab;
+
 
     [Range(0, 200)]
     public float heightOffSet;
@@ -72,6 +75,8 @@ public class ChunkGeneration : MonoBehaviour
 
     private AssetPlacer AssetPlacer = new AssetPlacer();
     private TownPlacer TownPlacer = new TownPlacer();
+    private UnitPlacer UnitPlacer = new UnitPlacer();
+
     private System.Random random;
 
     private void Start()
@@ -90,8 +95,8 @@ public class ChunkGeneration : MonoBehaviour
         {
             generator.GenerateTerrain();
         }
-        // Nav Mesh Baking
 
+        // Nav Mesh Baking
         if (navMeshSurface != null)
         {
             // You can perform additional configuration or trigger navmesh building
@@ -100,6 +105,15 @@ public class ChunkGeneration : MonoBehaviour
         else
         {
             Debug.LogError("NavMeshSurface component not found on the specified GameObject or its children.");
+        }
+
+        // Unit Placement
+        if (UnitPlacer.FindSpawnAreas(terrainGenerators))
+        {
+            //p1
+            UnitPlacer.SpawnUnits(0, 50, UnitPlacer.attackerSpawnChunk);
+            //p1
+            UnitPlacer.SpawnUnits(1, 50, UnitPlacer.defenderSpawnChunk);
         }
 
         // Asset Placement: 

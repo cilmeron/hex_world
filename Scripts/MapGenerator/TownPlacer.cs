@@ -40,6 +40,7 @@ public class TownPlacer : MonoBehaviour
 
     public TerrainGenerator FindPossibleBuildingSite(TerrainGenerator[] terrainGenerators)
     {
+        chunkGen = GameObject.FindGameObjectWithTag("Manager").GetComponent<ChunkGeneration>();
         TerrainGenerator terrainChunk = new TerrainGenerator();
         float minSlope = float.MaxValue;
 
