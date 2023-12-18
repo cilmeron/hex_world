@@ -9,7 +9,7 @@ public class C_Weapon : MonoBehaviour{
     protected Entity entity;
     [SerializeField] protected int attackDmg;
     [SerializeField] protected int attackRange;
-    [SerializeField] protected int attackSpeed;
+    [SerializeField] protected float attackSpeed;
     public static readonly int AnimAttack = Animator.StringToHash("Attack");
     private GameManager.GameDifficulty difficulty;
     protected virtual void Awake(){
@@ -34,16 +34,19 @@ public class C_Weapon : MonoBehaviour{
         entity = e;
     }
 
-    public int GetAttackRange(){
-        return attackRange;
+    public int AttackDmg{
+        get => attackDmg;
+        set => attackDmg = value;
     }
 
-    public int GetAttackDamage(){
-        return attackDmg;
+    public int AttackRange{
+        get => attackRange;
+        set => attackRange = value;
     }
 
-    public int GetAttackSpeed(){
-        return attackSpeed;
+    public float AttackSpeed{
+        get => attackSpeed;
+        set => attackSpeed = value;
     }
 
     public void OnTriggerEnter(Collider other){

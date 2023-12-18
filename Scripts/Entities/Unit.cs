@@ -2,6 +2,13 @@ using UnityEngine;
 
 public class Unit : Entity{
 
+    public bool crew = false;
+
+    public bool Crew{
+        get => crew;
+        set => crew = value;
+    }
+
     protected override void Update(){
         base.Update();
         if (Animator != null){
@@ -34,6 +41,10 @@ public class Unit : Entity{
         return CFormation.IsInFormation() && CFormation.Formation.GetLeader().gameObject == gameObject;
     }
 
+    public void TowerCrew(Building b){
+        gameObject.SetActive(false);
+    }
+    
     public override void DetectorNotification(Component component, Detector.DetectionManagement direction){
         base.DetectorNotification(component, direction);
         if (cCombat != null){

@@ -159,10 +159,15 @@ public class Entity : MonoBehaviour, Detectable, DetectorNotification{
         {
             SelectionManager selectionManager = SelectionManager.Instance;
             foreach (C_Selectable selectable in selectionManager.selectedDictionary.selectedTable.Values){
+                if (selectable.Entity.GetNation() != GameManager.Instance.player.nation) continue;
                 if (selectable.Entity.CCombat != null){
                     if (CHealth != null){
                         if (selectable.Entity.GetNation() != CHealth.Entity.GetNation()){
                                 EventManager.Instance.setTarget.Invoke(selectable.Entity.CCombat,CHealth);
+                        }else if (selectable.Entity is Unit unit && selectable.Entity.GetNation() == CHealth.Entity.GetNation() && cHealth.Entity is Building){
+                            unit.cMoveable.SetMoveToPosition(cHealth.transform.position,true);
+                            unit.Crew = true;
+                            EventManager.Instance.supportBuilding.Invoke(selectable.Entity.CCombat,CHealth);
                         }
                     } 
                 }   

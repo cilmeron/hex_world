@@ -207,6 +207,7 @@ GameObject:
   - component: {fileID: 3240667480195804951}
   - component: {fileID: 6689603045003952350}
   - component: {fileID: 861150696838528017}
+  - component: {fileID: 5533015780389369930}
   m_Layer: 0
   m_Name: Samurai_Ninjato
   m_TagString: Entity
@@ -229,7 +230,7 @@ Transform:
   - {fileID: 6286970787086223098}
   - {fileID: 5334132877138949456}
   m_Father: {fileID: 0}
-  m_RootOrder: 13
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &8435929751578104814
 MeshRenderer:
@@ -458,6 +459,27 @@ CapsuleCollider:
   m_Height: 2.1
   m_Direction: 1
   m_Center: {x: 0, y: 0.8, z: 0}
+--- !u!135 &5533015780389369930
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 651052253316306241}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 1
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!1 &772000333254425467
 GameObject:
   m_ObjectHideFlags: 0
@@ -719,7 +741,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6f80e2f42752f84bbfdb22a6606861e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 3
   visualisation: {fileID: 1666603742745095794}
   _detactables: C_Health
 --- !u!135 &578277514839445661
@@ -2730,7 +2751,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6f80e2f42752f84bbfdb22a6606861e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 50
   visualisation: {fileID: 8302350502598085193}
   _detactables: Entity
 --- !u!135 &3718414767724899739

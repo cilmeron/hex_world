@@ -30,7 +30,7 @@ public class C_Combat : MonoBehaviour, DetectorNotification
         _attackDistanceDetector.SetDetectorNotification(this);
         if (CWeapon != null){
             //TODO REMOVE THIS IF
-            _attackDistanceDetector.SetRadius(CWeapon.GetAttackRange());
+            _attackDistanceDetector.SetRadius(CWeapon.AttackRange);
         }
         
     }
@@ -77,7 +77,7 @@ public class C_Combat : MonoBehaviour, DetectorNotification
     {
         if (cHealthsInAttackRange.Contains(target))
         {
-            timeTillAttack = CWeapon.GetAttackSpeed();
+            timeTillAttack = CWeapon.AttackSpeed;
             if (CWeapon != null)
             {
                 CWeapon.Attack(target, owner);
@@ -200,14 +200,18 @@ public class C_Combat : MonoBehaviour, DetectorNotification
 
     public int GetAttackRange()
     {
-        return CWeapon.GetAttackRange();
+        return CWeapon.AttackRange;
     }
 
     private bool IsTargetInAttackRange()
     {
-        return CWeapon.GetAttackRange() > Vector3.Distance(owner.transform.position, target.transform.position);
+        return CWeapon.AttackRange > Vector3.Distance(owner.transform.position, target.transform.position);
     }
 
+    public C_Weapon GetWeapon(){
+        return CWeapon;
+    }
+    
     public void DetectorNotification(Component component, Detector.DetectionManagement direction)
     {
         Entity e = component.GetComponent<Entity>();
