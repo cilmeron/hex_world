@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private bool floatingDamageText;
     [SerializeField] private GameObject damageTextPrefab;
     public Player player;
-    public Player p1;
+    public Player playerViking;
     public bool settingsread;
     public AudioSource MusicManager;
     public AudioSource SoundManager;
@@ -22,7 +22,7 @@ public class GameManager : MonoBehaviour
     public Dictionary<int, GameObject> opponents;
     public Dictionary<int, GameObject> myunits;
     private int units = 0;
-    public Player p2;
+    public Player playerSamurai;
     public GameObject p1pos;
     public GameObject p2pos;
     public Camera maincam;
@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviour
     public void PlaceOpponent(int UID, Vector3 pos)
     {
         GameObject placeable;
-        if (player == p1)
+        if (player == playerViking)
         {
             placeable = p2prefab;
         }
@@ -53,10 +53,10 @@ public class GameManager : MonoBehaviour
             placeable = p1prefab;
         }
         GameObject placedunit = Instantiate(placeable, pos, Quaternion.identity);
-        if (player == p1)
-            placedunit.GetComponent<Unit>().SetPlayer(p2);
+        if (player == playerViking)
+            placedunit.GetComponent<Unit>().SetPlayer(playerSamurai);
         else
-            placedunit.GetComponent<Unit>().SetPlayer(p1);
+            placedunit.GetComponent<Unit>().SetPlayer(playerViking);
         placedunit.GetComponent<Unit>().ID = UID;
         opponents.Add(UID, placedunit);
     }
@@ -67,7 +67,7 @@ public class GameManager : MonoBehaviour
         if (!myunits.ContainsKey(UID))
         {
             GameObject placeable;
-            if (player == p1)
+            if (player == playerViking)
             {
                 placeable = p1prefab;
             }
@@ -91,22 +91,40 @@ public class GameManager : MonoBehaviour
             outg.GetComponent<git.Scripts.Components.C_Moveable>().SetMoveToPosition(pos,true);
         }
     }
+
+    public Player GetPlayerWithNation(Player.Nations nation){
+        switch(nation){
+            case Player.Nations.VIKINGS:
+                return playerViking; 
+            case Player.Nations.SAMURAI:
+                return playerSamurai;
+                
+        }
+        return null;
+    }
+    
+    public void AddEntityToPlayer(Entity e){
+        Player p = GetPlayerWithNation(e.GetNation());
+        p.AddOwnership(e);
+    }
+    
+    
     public void setplayer1(bool reconnect)
     {
-        player = p1;
+        player = playerViking;
         Vector3 place = p1pos.transform.position;
         maincam.transform.position = new Vector3(place.x, maincam.GetComponent<CameraManager>().altitude, place.z);
         if (!reconnect)
-            SpawnStartUnits(p1pos.transform.position, p1, p1prefab);
+            SpawnStartUnits(p1pos.transform.position, playerViking, p1prefab);
     }
 
     public void setplayer2(bool reconnect)
     {
-        player = p2;
+        player = playerSamurai;
         Vector3 place = p2pos.transform.position;
         maincam.transform.position = new Vector3(place.x, maincam.GetComponent<CameraManager>().altitude, place.z);
         if (!reconnect)
-            SpawnStartUnits(p2pos.transform.position, p2, p2prefab);
+            SpawnStartUnits(p2pos.transform.position, playerSamurai, p2prefab);
     }
 
     void SpawnStartUnits(Vector3 pos, Player p, GameObject prefab)
@@ -136,7 +154,7 @@ public class GameManager : MonoBehaviour
     
     void Awake()
     {
-        player = p1;
+        player = playerViking;
         settingsread = false;
         // Ensure there is only one instance of the EventManager
         if (Instance == null)
@@ -160,8 +178,15 @@ public class GameManager : MonoBehaviour
     }
 
     private void DeathListener(C_Health c){
-        if (c.Entity.GetPlayer().OwnedEntities.Count <= 0){
-            Debug.Log(c.Entity.GetPlayer().nation + " lost the game");
+        Player p = null;
+        if(c.Entity.GetNation() == playerViking.nation)
+        {
+            p = playerViking;
+        }else if (c.Entity.GetNation() == playerSamurai.nation){
+            p = playerSamurai;
+        }
+        if (p.OwnedEntities.Count <= 0){
+            Debug.Log(c.Entity.GetNation() + " lost the game");
             //Add Player won UI
         }
     }

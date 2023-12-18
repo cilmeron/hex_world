@@ -32,7 +32,7 @@ public class FormationManager : MonoBehaviour
                 if (formationable.IsInFormation()){
                     continue;
                 }
-                if (formationable.Entity.GetPlayer()!=GameManager.Instance.player){
+                if (formationable.Entity.GetNation()!=GameManager.Instance.player.nation){
                     continue;
                 }
                 bool successfull = rectFormation.AddFormationElement(formationable);
@@ -57,7 +57,7 @@ public class FormationManager : MonoBehaviour
                 if (formationable.IsInFormation()){
                     continue;
                 }
-                if (formationable.Entity.GetPlayer()!=GameManager.Instance.player){
+                if (formationable.Entity.GetNation()!=GameManager.Instance.player.nation){
                     continue;
                 }
                 bool successfull = circleFormation.AddFormationElement(formationable);

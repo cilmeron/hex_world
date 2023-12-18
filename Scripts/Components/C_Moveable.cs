@@ -49,16 +49,7 @@ namespace git.Scripts.Components
                     navMeshAgent.stoppingDistance = stoppingDistance;
                 }
                 navMeshAgent.SetDestination(GetDestination());
-                if (owner != null)
-                {
-                    if (owner.detector != null)
-                        owner.detector.GetRangeProjector().UpdateMaterialProperties();
-                }
                 if (navMeshAgent.remainingDistance < stoppingDistance) userTarget = false;
-                if (owner.CCombat != null)
-                {
-                    owner.CCombat._attackDistanceDetector.GetRangeProjector().UpdateMaterialProperties();
-                }
             }
         }
 

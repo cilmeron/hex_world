@@ -53,7 +53,6 @@ public class C_Health : MonoBehaviour, Detectable
         if (owner.CMoveable != null)
         {
             owner.CMoveable.NavMeshAgent.enabled = false;
-            owner.Collider.direction = 2;
         }
 
         if (owner.CCombat != null)

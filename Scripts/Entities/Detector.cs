@@ -4,23 +4,16 @@ using UnityEngine;
 
 
 public class Detector : MonoBehaviour{
-    public int radius;
     private SphereCollider col;
     private Entity owner;
+    public GameObject visualisation;
 
-    [SerializeField] private ProjectorController projector;
-    
     [SerializeField] private string _detactables;
     private DetectorNotification _detectorNotification;
     
-    private void Awake(){
-        col = GetComponent<SphereCollider>();
-        col.radius = radius;
-    }
+    
 
-    private void Start(){
-        UpdateProjector();
-    }
+    
     
     private void OnTriggerEnter(Collider other){
         Type type = Type.GetType(_detactables);
@@ -56,13 +49,6 @@ public class Detector : MonoBehaviour{
     }
 
 
-    public void EnableProjector(bool enable){
-        projector.gameObject.SetActive(enable);
-    }
-
-    public ProjectorController GetRangeProjector(){
-        return projector;
-    }
     
     public enum DetectionManagement{
         Enter,
@@ -74,17 +60,16 @@ public class Detector : MonoBehaviour{
     }
 
     public void SetRadius(int r){
-        radius = r;
+        col = GetComponent<SphereCollider>();
         col.radius = r;
-        UpdateProjector();
+        var t = visualisation.transform;
+        Vector3 ls = t.localScale;
+        t.localScale = new Vector3(r, ls.y, r);
+    }
+
+    public void EnableVisualisation(bool b){
+        visualisation.SetActive(b);
     }
     
-    private void UpdateProjector(){
-        projector.circleRadius = radius * owner.transform.localScale.x;
-        if (owner != null && owner.GetPlayer() != null)
-            projector.circleColor = owner.GetPlayer().PlayerColor;
-        projector.UpdateMaterialProperties();
-        projector.gameObject.SetActive(false);
-    }
     
 }

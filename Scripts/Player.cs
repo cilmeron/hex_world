@@ -85,7 +85,7 @@ public class Player : MonoBehaviour{
         }
     
         void Awake(){
-            GameResourceManager.AddPlayer(this);
+            GameResourceManager.AddPlayer(nation);
         }
     
         void Start(){

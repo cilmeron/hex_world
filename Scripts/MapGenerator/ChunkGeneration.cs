@@ -110,10 +110,10 @@ public class ChunkGeneration : MonoBehaviour
         // Unit Placement
         if (UnitPlacer.FindSpawnAreas(terrainGenerators))
         {
-            //p1
-            UnitPlacer.SpawnUnits(0, 50, UnitPlacer.attackerSpawnChunk);
-            //p1
-            UnitPlacer.SpawnUnits(1, 50, UnitPlacer.defenderSpawnChunk);
+            //playerViking
+            UnitPlacer.SpawnUnits(0, 10, UnitPlacer.attackerSpawnChunk);
+            //playerViking
+            UnitPlacer.SpawnUnits(1, 10, UnitPlacer.defenderSpawnChunk);
         }
 
         // Asset Placement: 

@@ -28,11 +28,16 @@ public class C_Combat : MonoBehaviour, DetectorNotification
         EventManager.Instance.deathEvent.AddListener(EntityDied);
         EventManager.Instance.setTarget.AddListener(SetSpecificUserTarget);
         _attackDistanceDetector.SetDetectorNotification(this);
-        _attackDistanceDetector.SetRadius(CWeapon.GetAttackRange());
+        if (CWeapon != null){
+            //TODO REMOVE THIS IF
+            _attackDistanceDetector.SetRadius(CWeapon.GetAttackRange());
+        }
+        
     }
 
     private IEnumerator CheckTargetRotation()
     {
+        if (owner is not Unit) yield return null;
         if (target != null)
         {
             timeTillTargetRotationCheck = 3f;
@@ -49,8 +54,9 @@ public class C_Combat : MonoBehaviour, DetectorNotification
             StartCoroutine(CheckTargetRotation());
         }
     }
-    private IEnumerator TurnToTarget()
-    {
+    private IEnumerator TurnToTarget(){
+      
+        
         int rotationSpeed = 120;
         if (target != null)
         {
@@ -103,7 +109,7 @@ public class C_Combat : MonoBehaviour, DetectorNotification
     private void SetSpecificUserTarget(C_Combat attacker, C_Health target)
     {
         // TODO: if owner has CMoveable, reset userTarget (CMoveable) and target (CMoveable) (basically, reset all movements)
-        if (attacker == this && target.Entity.GetPlayer() != attacker.owner.GetPlayer())
+        if (attacker == this && target.Entity.GetNation() != attacker.owner.GetNation())
         {
             this.target = target;
             userTarget = true;
@@ -119,7 +125,7 @@ public class C_Combat : MonoBehaviour, DetectorNotification
     private void SetSpecificTarget(C_Combat attacker, C_Health target)
     {
         // TODO: if owner has CMoveable, reset userTarget (CMoveable) and target (CMoveable) (basically, reset all movements)
-        if (attacker == this && target.Entity.GetPlayer() != attacker.owner.GetPlayer())
+        if (attacker == this && target.Entity.GetNation() != attacker.owner.GetNation())
         {
             this.target = target;
             if (owner.Animator != null)
@@ -169,9 +175,8 @@ public class C_Combat : MonoBehaviour, DetectorNotification
 
     private void EntityDied(C_Health cHealth)
     {
-        if (cHealth == owner.CHealth)
-        {
-            owner.GetPlayer().OwnedEntities.Remove(owner);
+        if (cHealth == owner.CHealth){
+            GameManager.Instance.GetPlayerWithNation(owner.GetNation()).OwnedEntities.Remove(owner);
         }
         if (owner._entitiesInVision.Contains(cHealth.Entity))
         {
@@ -213,7 +218,7 @@ public class C_Combat : MonoBehaviour, DetectorNotification
         }
         else if (direction == Detector.DetectionManagement.Exit &&
             cHealthsInAttackRange.Contains(e.CHealth) &&
-            e.GetPlayer() != owner.GetPlayer())
+            e.GetNation() != owner.GetNation())
         {
             cHealthsInAttackRange.Remove(e.CHealth);
             if (cHealthsInAttackRange.Count == 0 || e.CHealth == target)

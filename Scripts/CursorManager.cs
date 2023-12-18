@@ -23,7 +23,7 @@ public class CursorManager : MonoBehaviour{
 
     private void AttackCursor(Entity hoveredEntity)
     {
-        if (_gameManager.player == hoveredEntity.GetPlayer()){
+        if (_gameManager.player.nation == hoveredEntity.GetNation()){
             return;
         }
         if (_selectionManager.selectedDictionary.selectedTable.Keys.Count == 0){

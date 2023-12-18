@@ -213,7 +213,7 @@ public class NetworkManager : MonoBehaviour
 
         PimDeWitte.UnityMainThreadDispatcher.UnityMainThreadDispatcher.Instance().Enqueue(() =>
         {
-            if (gameManager.player != null && gameManager.p2 != null)
+            if (gameManager.player != null && gameManager.playerSamurai != null)
             {
                 gameManager.setplayer1(reconnect);
             }
@@ -225,7 +225,7 @@ public class NetworkManager : MonoBehaviour
     {
         PimDeWitte.UnityMainThreadDispatcher.UnityMainThreadDispatcher.Instance().Enqueue(() =>
         {
-            if (gameManager.player != null && gameManager.p2 != null)
+            if (gameManager.player != null && gameManager.playerSamurai != null)
             {
                 gameManager.setplayer2(reconnect);
             }
@@ -346,7 +346,7 @@ public class NetworkManager : MonoBehaviour
                     //This is a status message about ourselves - let's find out if we are player 1, 2 or guest
                     if (answer[2].Contains("A"))
                     {
-                        if (gameManager.player != null && gameManager.p2 != null)
+                        if (gameManager.player != null && gameManager.playerSamurai != null)
                         {
                             SetPlayer2OnMainThread(reconnect);
                         }
@@ -355,7 +355,7 @@ public class NetworkManager : MonoBehaviour
                     }
                     else if (answer[2].Contains("B"))
                     {
-                        if (gameManager.player != null && gameManager.p1 != null)
+                        if (gameManager.player != null && gameManager.playerViking != null)
                         {
                             SetPlayer1OnMainThread(reconnect);
                         }

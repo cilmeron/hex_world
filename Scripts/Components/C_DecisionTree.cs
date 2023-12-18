@@ -13,7 +13,7 @@ public class DecisionTree
     public C_Health ChooseTarget(List<C_Health> targets, Entity selfEntity)
     {
         List<C_Health> enemyTargets = targets
-            .Where(target => target.Entity.GetPlayer() != selfEntity.GetPlayer() && selfEntity.GetPlayer() != null)
+            .Where(target => target.Entity.GetNation() != selfEntity.GetNation() && selfEntity.GetNation() != null)
             .ToList();
 
         enemyTargets.Sort((a, b) => a.CurrentHP.CompareTo(b.CurrentHP));
@@ -43,7 +43,7 @@ public class DecisionTree
         // select enemies
         float rangedWeight = 1.0f;
         List<Entity> enemyTargets = entities
-         .Where(entity => entity.GetPlayer() != selfEntity.GetPlayer() && selfEntity.GetPlayer() != null && entity.CHealth != null)
+         .Where(entity => entity.GetNation() != selfEntity.GetNation() && selfEntity.GetNation() != null && entity.CHealth != null)
          .ToList();
 
         if (enemyTargets.Count == 0) return null;

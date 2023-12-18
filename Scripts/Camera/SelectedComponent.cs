@@ -22,9 +22,9 @@ public class SelectionComponent : MonoBehaviour{
             selectable.Entity.CHealth.SetHpSliderActive(true);
             
         }
-        selectable.Entity.detector.EnableProjector(true);
+        selectable.Entity.detector.EnableVisualisation(true);
         if (selectable.Entity.CCombat != null){
-            selectable.Entity.CCombat._attackDistanceDetector.EnableProjector(true);
+            selectable.Entity.CCombat._attackDistanceDetector.EnableVisualisation(true);
         }
     }
 
@@ -32,9 +32,9 @@ public class SelectionComponent : MonoBehaviour{
         if (selectable.Entity.CHealth != null){
             selectable.Entity.CHealth.SetHpSliderActive(false);
         }
-        selectable.Entity.detector.EnableProjector(false);
+        selectable.Entity.detector.EnableVisualisation(false);
         if (selectable.Entity.CCombat != null){
-            selectable.Entity.CCombat._attackDistanceDetector.EnableProjector(false);
+            selectable.Entity.CCombat._attackDistanceDetector.EnableVisualisation(false);
         }
     }
 }

@@ -19,11 +19,10 @@ public class Entity : MonoBehaviour, Detectable, DetectorNotification{
         public List<Entity> _entitiesInVision = new();
         public Detector detector;
         public int ID;
-        public CapsuleCollider Collider;
-        [SerializeField] protected Player player;
+        [SerializeField] protected Player.Nations nation;
         [SerializeField] private int goldAmount;
         [SerializeField] private Sprite sprite;
-        [SerializeField] protected float viewDistance = 15;
+        [SerializeField] protected int viewDistance = 15;
 
     
         private bool isHovered = false;
@@ -43,35 +42,18 @@ public class Entity : MonoBehaviour, Detectable, DetectorNotification{
             cFormation = GetComponent<C_Formation>();
             cMoveable = GetComponent<C_Moveable>();
             
-            Collider = GetComponent<CapsuleCollider>();
             
             detector.SetOwner(this);
+            detector.SetRadius(viewDistance);
             detector.SetDetectorNotification(this);
             networkManager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
             gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         }
     
         protected virtual void Start(){
-            EventManager.Instance.playerSuccessfullyInitialized.AddListener(InitEntityAfterPlayerInit);
-            //It may occur, that some players are created before the player's Start method is called.
-            //Therefore, the event needs to be invoked as well as the InitEntityAfterPlayerInit function
-            //needs to be called.
-            if (player == null){
-                return;
-            }
-            if (player.PlayerLook == null){
-                return;
-            }
-            InitEntityAfterPlayerInit(player);
+            gameManager.AddEntityToPlayer(this);
         }
 
-        private void InitEntityAfterPlayerInit(Player p){
-            if (player != p){
-                return;
-            }
-            SetPlayer(player);
-            player.InitializeOwnedGameObject(this);
-        }
         
         protected virtual void Update(){
             
@@ -79,12 +61,12 @@ public class Entity : MonoBehaviour, Detectable, DetectorNotification{
 
 
         public void SetPlayer(Player p){
-            player = p;
-            GameResourceManager.AddResourceAmount(player,GameResourceManager.ResourceType.Gold,goldAmount);
+            nation= p.nation;
+            GameResourceManager.AddResourceAmount(GetNation(),GameResourceManager.ResourceType.Gold,goldAmount);
         }
     
-        public Player GetPlayer(){
-            return player;
+        public Player.Nations GetNation(){
+            return nation;
         }
 
         public void MovePlayer(Vector3 pos)
@@ -92,7 +74,7 @@ public class Entity : MonoBehaviour, Detectable, DetectorNotification{
             if (networkManager != null)
             {
                 //we only need to broadcast this if we are broadcasting our own positions
-                if (GetPlayer() == gameManager.player)
+                if (GetNation() == gameManager.player.nation)
                     networkManager.SendMsg("M:"+networkManager.playername+":"+pos.x+","+pos.y+","+pos.z+":"+ID);
             }
         }
@@ -179,7 +161,7 @@ public class Entity : MonoBehaviour, Detectable, DetectorNotification{
             foreach (C_Selectable selectable in selectionManager.selectedDictionary.selectedTable.Values){
                 if (selectable.Entity.CCombat != null){
                     if (CHealth != null){
-                        if (selectable.Entity.GetPlayer() != CHealth.Entity.GetPlayer()){
+                        if (selectable.Entity.GetNation() != CHealth.Entity.GetNation()){
                                 EventManager.Instance.setTarget.Invoke(selectable.Entity.CCombat,CHealth);
                         }
                     } 
@@ -203,7 +185,9 @@ public class Entity : MonoBehaviour, Detectable, DetectorNotification{
     }
 
     public void DestroyEntity(){
-        Animator.SetTrigger(Death);
+        if (Animator != null){
+            Animator.SetTrigger(Death);
+        }
         networkManager.SendMsg("K:"+networkManager.playername+":0.1,0,0:"+ID);
         if (CCombat != null){
            Destroy(CCombat._attackDistanceDetector.gameObject.GetComponent<Detector>());

@@ -47,9 +47,17 @@ public class C_Weapon : MonoBehaviour{
     }
 
     public void OnTriggerEnter(Collider other){
+        if (entity == null) return;
         if (other.gameObject.GetComponent<Entity>() != null){
             Entity hitEntity = other.gameObject.GetComponent<Entity>();
-            if (difficulty == GameManager.GameDifficulty.Easy && hitEntity.GetPlayer() == entity.GetPlayer()) return;
+            try{
+                if (difficulty == GameManager.GameDifficulty.Easy &&
+                    hitEntity.GetNation() == entity.GetNation()) return;
+            }
+            catch (Exception e){
+                Debug.Log("here");
+            }
+            if (difficulty == GameManager.GameDifficulty.Easy && hitEntity.GetNation() == entity.GetNation()) return;
             if (hitEntity.CHealth != null && hitEntity.CHealth.GetCurrentHp()>0){
                 EventManager.Instance.damageEvent.Invoke(hitEntity.CHealth,attackDmg);
             }
