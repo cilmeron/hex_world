@@ -45,11 +45,5 @@ public class Unit : Entity{
         gameObject.SetActive(false);
     }
     
-    public override void DetectorNotification(Component component, Detector.DetectionManagement direction){
-        base.DetectorNotification(component, direction);
-        if (cCombat != null){
-            cCombat.SetTarget();
-        }
-    }
    
 }

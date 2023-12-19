@@ -34,8 +34,8 @@ public class Building : Entity{
                 Instantiate(flagPrefab, flagPositions[archerContainer.transform.childCount]);
                 u.TowerCrew(this);
                 u.transform.SetParent(archerContainer);
-                if (cCombat != null && cCombat.GetWeapon()!=null){
-                    cCombat.GetWeapon().AttackSpeed /= 2;
+                foreach (C_Attack attack in cCombat.GetAttacks()){
+                    attack.weapon.AttackSpeed /= 2;
                 }
             }
         }

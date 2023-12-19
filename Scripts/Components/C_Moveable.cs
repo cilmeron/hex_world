@@ -85,7 +85,7 @@ namespace git.Scripts.Components
             if (owner.CCombat != null)
             {
                 owner.CCombat.userTarget = false;
-                owner.CCombat.ResetTarget();
+                owner.CCombat.ResetAllTargets();
             }
         }
 

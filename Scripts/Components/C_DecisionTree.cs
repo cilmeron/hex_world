@@ -32,7 +32,7 @@ public class DecisionTree
     }
     */
 
-    public C_Health ChooseTarget(List<Entity> entities, Entity selfEntity, C_Health oldTarget)
+    public C_Health ChooseTarget(List<Entity> entities, Entity selfEntity, C_Attack attack)
     {
         // get enemy targets (ingore friendlies)
         // get distances between selfEntity and target entities
@@ -53,7 +53,7 @@ public class DecisionTree
 
         var normalizedDistances = distances.Select(distance => distance / maxDistance).ToArray(); // maximu distance will be 1
 
-        int attackRange = selfEntity.CCombat.GetAttackRange();
+        int attackRange = attack.weapon.AttackRange;
         if (attackRange >= rangedUnitThreshold) // just an additional idea to weigh in the unit type. If it is a ranged unit -> weigh the distance less
         {
             rangedWeight = 0.5f;
@@ -69,7 +69,7 @@ public class DecisionTree
         foreach (Entity target in enemyTargets)
         {
             // three metrics are calculated which are used to estimat the target value. They are scaled from 0 (worst) to 1 (best)
-            swap = (target == oldTarget || oldTarget != null) ? 1 : 0;
+            swap = (target == attack.target || attack.target != null) ? 1 : 0;
             relativeHP = 1 - (target.CHealth.CurrentHP / target.CHealth.GetMaxHp());
             reversedDistance = 1 - normalizedDistances[i];
 

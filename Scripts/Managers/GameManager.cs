@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviour
     private string settingsFilePath;
 
     // Default settings values
-    private string serverHost = "pirotess.duckdns.org";
+    private string serverHost = "127.0.0.1";
     private string playerName = "playername";
     private string serverPort = "8044";
     private string musicVolume = "100";

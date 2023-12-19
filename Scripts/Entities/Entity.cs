@@ -8,7 +8,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.Search;
 using UnityEngine.UI;
 
-public class Entity : MonoBehaviour, Detectable, DetectorNotification{
+public class Entity : MonoBehaviour, Detectable{
         protected C_Health cHealth;
         protected C_Combat cCombat;
         protected C_Selectable cSelectable;
@@ -16,7 +16,6 @@ public class Entity : MonoBehaviour, Detectable, DetectorNotification{
         protected C_Moveable cMoveable;
         private NetworkManager networkManager;
         private GameManager gameManager;
-        public List<Entity> _entitiesInVision = new();
         public Detector detector;
         public int ID;
         [SerializeField] protected Player.Nations nation;
@@ -45,7 +44,6 @@ public class Entity : MonoBehaviour, Detectable, DetectorNotification{
             
             detector.SetOwner(this);
             detector.SetRadius(viewDistance);
-            detector.SetDetectorNotification(this);
             networkManager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
             gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         }
@@ -178,25 +176,25 @@ public class Entity : MonoBehaviour, Detectable, DetectorNotification{
             
         }
     }
-    
-    public virtual void DetectorNotification(Component component, Detector.DetectionManagement direction){
-        Entity e = component.GetComponent<Entity>();
-        if (e.CHealth == null) return;
-        if (direction == Detector.DetectionManagement.Enter && !_entitiesInVision.Contains(e)){
-            _entitiesInVision.Add(e);
-        }else if (direction == Detector.DetectionManagement.Exit && _entitiesInVision.Contains(e)){
-            _entitiesInVision.Remove(e);
-        }    
+
+    public List<Entity> GetEntitiesInVision(){
+        return detector.detectedObjects
+            .OfType<Entity>()
+            .Where(entity => entity.CHealth != null)
+            .ToList();
     }
+
+    public void RemoveEntityInVision(Entity e){
+        detector.detectedObjects.Remove(e);
+    }
+    
+   
 
     public void DestroyEntity(){
         if (Animator != null){
             Animator.SetTrigger(Death);
         }
         networkManager.SendMsg("K:"+networkManager.playername+":0.1,0,0:"+ID);
-        if (CCombat != null){
-           Destroy(CCombat._attackDistanceDetector.gameObject.GetComponent<Detector>());
-        }
         var components = GetComponents(typeof(Component));
         foreach (var comp in components){
             if(!(comp is Transform)){
@@ -204,4 +202,7 @@ public class Entity : MonoBehaviour, Detectable, DetectorNotification{
             }
         }
     }
+
+   
+    
 }

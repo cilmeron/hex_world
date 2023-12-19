@@ -11,7 +11,7 @@ public class C_Weapon : MonoBehaviour{
     [SerializeField] protected int attackRange;
     [SerializeField] protected float attackSpeed;
     public static readonly int AnimAttack = Animator.StringToHash("Attack");
-    private GameManager.GameDifficulty difficulty;
+    protected GameManager.GameDifficulty difficulty;
     protected virtual void Awake(){
         weapon = gameObject;
     }

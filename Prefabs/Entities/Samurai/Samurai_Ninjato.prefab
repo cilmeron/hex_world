@@ -230,7 +230,7 @@ Transform:
   - {fileID: 6286970787086223098}
   - {fileID: 5334132877138949456}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &8435929751578104814
 MeshRenderer:
@@ -286,7 +286,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53218d366a6815e4abef25638327162c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _entitiesInVision: []
   detector: {fileID: 3904342950679541250}
   ID: 0
   nation: 1
@@ -294,6 +293,7 @@ MonoBehaviour:
   sprite: {fileID: 21300000, guid: 0345dd6f47d0a4547af63bef5daa749d, type: 3}
   viewDistance: 15
   Animator: {fileID: 2152136461614870809}
+  crew: 0
 --- !u!114 &5449431308838393873
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -337,12 +337,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 770fc4240909f8a48a098effd01dac49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cHealthsInAttackRange: []
-  target: {fileID: 0}
   userTarget: 0
-  CWeapon: {fileID: 2050744191954341131}
-  timeTillAttack: 0
-  _attackDistanceDetector: {fileID: 3588087985528348663}
+  attacks:
+  - target: {fileID: 0}
+    timeTillAttack: 0
+    weapon: {fileID: 2050744191954341131}
+    attackVision: {fileID: 3588087985528348663}
 --- !u!114 &7386667836474742684
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -743,6 +743,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   visualisation: {fileID: 1666603742745095794}
   _detactables: C_Health
+  detectedObjects: []
 --- !u!135 &578277514839445661
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -2753,6 +2754,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   visualisation: {fileID: 8302350502598085193}
   _detactables: Entity
+  detectedObjects: []
 --- !u!135 &3718414767724899739
 SphereCollider:
   m_ObjectHideFlags: 0

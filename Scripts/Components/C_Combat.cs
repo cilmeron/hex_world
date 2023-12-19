@@ -1,44 +1,42 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-public class C_Combat : MonoBehaviour, DetectorNotification
+public class C_Combat : MonoBehaviour
 {
-    [SerializeField] private List<C_Health> cHealthsInAttackRange = new List<C_Health>();
-    [SerializeField] private C_Health target;
-    [SerializeField] public bool userTarget = false;
-    private Entity owner;
-    [SerializeField] private C_Weapon CWeapon;
-    private static readonly int PulledSword = Animator.StringToHash("PulledSword");
-    [SerializeField] private float timeTillAttack = 0f;
-    [SerializeField] public Detector _attackDistanceDetector;
-    private float timeTillTargetRotationCheck = 0f;
     private DecisionTree decisionTree;
+    private Entity owner;
+    [SerializeField] public bool userTarget = false;
+    private static readonly int PulledSword = Animator.StringToHash("PulledSword");
+    private float timeTillTargetRotationCheck = 0f;
+    
+    public List<C_Attack> attacks = new();
 
     void Awake()
     {
         owner = gameObject.GetComponent<Entity>();
-        _attackDistanceDetector.SetOwner(owner);
+        foreach (C_Attack attack in attacks){
+            attack.attackVision.SetOwner(owner);
+        }
         decisionTree = new DecisionTree();
     }
 
     void Start()
     {
-        if (CWeapon != null) CWeapon.SetEntity(owner);
+        foreach (C_Attack attack in attacks){
+            attack.weapon.SetEntity(owner);
+            attack.attackVision.SetRadius(attack.weapon.AttackRange);
+        }
         EventManager.Instance.deathEvent.AddListener(EntityDied);
         EventManager.Instance.setTarget.AddListener(SetSpecificUserTarget);
-        _attackDistanceDetector.SetDetectorNotification(this);
-        if (CWeapon != null){
-            //TODO REMOVE THIS IF
-            _attackDistanceDetector.SetRadius(CWeapon.AttackRange);
-        }
-        
+        EventManager.Instance.componentDetected.AddListener(ComponentDetection);
     }
 
-    private IEnumerator CheckTargetRotation()
+    private IEnumerator CheckTargetRotation(C_Attack attack)
     {
         if (owner is not Unit) yield return null;
-        if (target != null)
+        if (attack.target != null)
         {
             timeTillTargetRotationCheck = 3f;
             while (timeTillTargetRotationCheck > 0)
@@ -46,22 +44,22 @@ public class C_Combat : MonoBehaviour, DetectorNotification
                 yield return null; // wait for the next frame
                 timeTillTargetRotationCheck -= Time.deltaTime;
             }
-            if (target != null)
+            if (attack.target != null)
             {
-                StartCoroutine(TurnToTarget());
+                StartCoroutine(TurnToTarget(attack));
             }
 
-            StartCoroutine(CheckTargetRotation());
+            StartCoroutine(CheckTargetRotation(attack));
         }
     }
-    private IEnumerator TurnToTarget(){
+    private IEnumerator TurnToTarget(C_Attack attack){
       
         
         int rotationSpeed = 120;
-        if (target != null)
+        if (attack.target != null)
         {
             // Calculate the direction to the target
-            Vector3 targetDirection = target.transform.position - transform.position;
+            Vector3 targetDirection = attack.target.transform.position - transform.position;
             Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
 
             while (transform.rotation != targetRotation)
@@ -73,103 +71,105 @@ public class C_Combat : MonoBehaviour, DetectorNotification
         }
     }
 
-    private IEnumerator Attack()
+    private IEnumerator Attack(C_Attack attack)
     {
-        if (cHealthsInAttackRange.Contains(target))
+        if (attack.VisionContainsTarget())
         {
-            timeTillAttack = CWeapon.AttackSpeed;
-            if (CWeapon != null)
-            {
-                CWeapon.Attack(target, owner);
-            }
-            while (timeTillAttack > 0)
+            attack.timeTillAttack = attack.weapon.AttackSpeed;
+            
+            attack.weapon.Attack(attack.target, owner);
+            
+            while (attack.timeTillAttack > 0)
             {
                 yield return null; // wait for the next frame
-                timeTillAttack -= Time.deltaTime;
+                attack.timeTillAttack -= Time.deltaTime;
             }
-            if (target != null)
+            if (attack.target != null)
             {
-                StartCoroutine(Attack());
+                StartCoroutine(Attack(attack));
             }
         }
         else
         {
-            MoveToTarget();
+            MoveToTarget(attack);
         }
     }
 
-    private void MoveToTarget()
+    private void MoveToTarget(C_Attack attack)
     {
         if (owner.CMoveable != null)
         {
-            owner.CMoveable.SetMoveToTransform(target.transform, false);
+            owner.CMoveable.SetMoveToTransform(attack.target.transform, false);
         }
     }
 
     private void SetSpecificUserTarget(C_Combat attacker, C_Health target)
     {
-        // TODO: if owner has CMoveable, reset userTarget (CMoveable) and target (CMoveable) (basically, reset all movements)
-        if (attacker == this && target.Entity.GetNation() != attacker.owner.GetNation())
-        {
-            this.target = target;
-            userTarget = true;
-            if (owner.Animator != null)
+        foreach (C_Attack attack in attacks){
+            // TODO: if owner has CMoveable, reset userTarget (CMoveable) and target (CMoveable) (basically, reset all movements)
+            if (attacker == this && target.Entity.GetNation() != attacker.owner.GetNation())
             {
-                owner.Animator.SetBool(PulledSword, true);
-                if (CWeapon != null) CWeapon.SetWeaponActive(true);
+                attack.target = target;
+                userTarget = true;
+                if (owner.Animator != null)
+                {
+                    owner.Animator.SetBool(PulledSword, true);
+                    attack.weapon.SetWeaponActive(true);
+                }
+                MoveToTarget(attack);
             }
-            MoveToTarget();
         }
     }
 
-    private void SetSpecificTarget(C_Combat attacker, C_Health target)
+    private void SetSpecificTarget(C_Attack attack,C_Combat attacker, C_Health target)
     {
         // TODO: if owner has CMoveable, reset userTarget (CMoveable) and target (CMoveable) (basically, reset all movements)
         if (attacker == this && target.Entity.GetNation() != attacker.owner.GetNation())
         {
-            this.target = target;
+            attack.target = target;
             if (owner.Animator != null)
             {
                 owner.Animator.SetBool(PulledSword, true);
-                if (CWeapon != null) CWeapon.SetWeaponActive(true);
+                attack.weapon.SetWeaponActive(true);
             }
-            MoveToTarget();
+            MoveToTarget(attack);
         }
     }
 
-    public void ResetTarget()
+    public void ResetTarget(C_Attack attack)
     {
-        target = null;
+        attack.target = null;
         userTarget = false;
         if (owner.Animator != null)
         {
             owner.Animator.SetBool(PulledSword, false);
             owner.Animator.SetBool(C_Weapon.AnimAttack, false);
-            if (CWeapon != null) CWeapon.SetWeaponActive(false);
+            attack.weapon.SetWeaponActive(false);
         }
-        StopCoroutine(CheckTargetRotation());
+        StopCoroutine(CheckTargetRotation(attack));
     }
-    public void SetTarget()
+
+    private void SetTarget(C_Attack attack)
     {
         // if (target != null) return;
         if (userTarget) return;
-        if (owner._entitiesInVision.Count == 0)
+        if (owner.GetEntitiesInVision().Count == 0)
         {
-            ResetTarget();
+            ResetTarget(attack);
             return;
         }
 
-        target = decisionTree.ChooseTarget(owner._entitiesInVision, owner, target);
+        attack.target = decisionTree.ChooseTarget(owner.GetEntitiesInVision(), owner, attack);
 
-        if (target == null) return; // in case all entities in vision are from same faction
+        if (attack.target == null) return; // in case all entities in vision are from same faction
 
-        StartCoroutine(CheckTargetRotation());
+        StartCoroutine(CheckTargetRotation(attack));
         if (owner.Animator != null)
         {
             owner.Animator.SetBool(PulledSword, true);
-            if (CWeapon != null) CWeapon.SetWeaponActive(true);
+            attack.weapon.SetWeaponActive(true);
         }
-        MoveToTarget();
+        MoveToTarget(attack);
 
     }
 
@@ -178,65 +178,97 @@ public class C_Combat : MonoBehaviour, DetectorNotification
         if (cHealth == owner.CHealth){
             GameManager.Instance.GetPlayerWithNation(owner.GetNation()).OwnedEntities.Remove(owner);
         }
-        if (owner._entitiesInVision.Contains(cHealth.Entity))
+        if (owner.GetEntitiesInVision().Contains(cHealth.Entity))
         {
-            owner._entitiesInVision.Remove(cHealth.Entity);
+            owner.RemoveEntityInVision(cHealth.Entity);
         }
-        if (cHealthsInAttackRange.Contains(cHealth))
-        {
-            cHealthsInAttackRange.Remove(cHealth);
-            if (target == cHealth)
+
+        foreach (C_Attack attack in attacks){
+            if (GetCHealthsInAttackRange(attack.attackVision).Contains(cHealth))
             {
-                ResetTarget();
-                SetTarget();
+                GetCHealthsInAttackRange(attack.attackVision).Remove(cHealth);
+                if (attack.target == cHealth)
+                {
+                    ResetTarget(attack);
+                    SetTarget(attack);
+                }
             }
         }
-    }
-
-    public C_Health GetTarget()
-    {
-        return target;
-    }
-
-    public int GetAttackRange()
-    {
-        return CWeapon.AttackRange;
-    }
-
-    private bool IsTargetInAttackRange()
-    {
-        return CWeapon.AttackRange > Vector3.Distance(owner.transform.position, target.transform.position);
-    }
-
-    public C_Weapon GetWeapon(){
-        return CWeapon;
+        
     }
     
-    public void DetectorNotification(Component component, Detector.DetectionManagement direction)
-    {
-        Entity e = component.GetComponent<Entity>();
-        if (e.CHealth == null) return;
-        if (direction == Detector.DetectionManagement.Enter && !cHealthsInAttackRange.Contains(e.CHealth))
-        {
-            cHealthsInAttackRange.Add(e.CHealth);
+
+    public List<C_Attack> GetAttacks(){
+        return attacks;
+    }
+    
+    
+    public void ResetAllTargets(){
+        foreach (C_Attack attack in attacks){
+            ResetTarget(attack);
         }
-        else if (direction == Detector.DetectionManagement.Exit &&
-            cHealthsInAttackRange.Contains(e.CHealth) &&
-            e.GetNation() != owner.GetNation())
-        {
-            cHealthsInAttackRange.Remove(e.CHealth);
-            if (cHealthsInAttackRange.Count == 0 || e.CHealth == target)
-            {
-                ResetTarget();
+    }
+    
+    private void ComponentDetection(Detector detector,Component component, Detector.DetectionManagement direction){
+
+        foreach (C_Attack attack in attacks){
+            if (attack.attackVision == detector){
+                Entity e = component.GetComponent<Entity>();
+                if (e.CHealth == null) return;
+                if (attack.attackVision.detectedObjects.Count == 0 || e.CHealth == attack.target)
+                {
+                    ResetTarget(attack);
+                }
+                if (attack.target == null && e.CHealth.IsAlive())
+                {
+                    SetSpecificTarget(attack,this, e.CHealth);
+                }
+                if (e.CHealth == attack.target && direction == Detector.DetectionManagement.Enter)
+                {
+                    StartCoroutine(Attack(attack));
+                }
             }
+                
         }
-        if (target == null && e.CHealth.IsAlive())
-        {
-            SetSpecificTarget(this, e.CHealth);
-        }
-        if (e.CHealth == target && direction == Detector.DetectionManagement.Enter)
-        {
-            StartCoroutine(Attack());
+
+        
+        
+        //Entity e = component.GetComponent<Entity>();
+        //if (e.CHealth == null) return;
+        //if (direction == Detector.DetectionManagement.Enter && !GetCHealthsInAttackRange().Contains(e.CHealth))
+        //{
+        //    GetCHealthsInAttackRange().Add(e.CHealth);
+        //}
+        //else if (direction == Detector.DetectionManagement.Exit &&
+        //         GetCHealthsInAttackRange().Contains(e.CHealth) &&
+        //    e.GetNation() != owner.GetNation())
+        //{
+        //    GetCHealthsInAttackRange().Remove(e.CHealth);
+        //    if (GetCHealthsInAttackRange().Count == 0 || e.CHealth == target)
+        //    {
+        //        ResetTarget();
+        //    }
+        //}
+        //if (target == null && e.CHealth.IsAlive())
+        //{
+        //    SetSpecificTarget(this, e.CHealth);
+        //}
+        //if (e.CHealth == target && direction == Detector.DetectionManagement.Enter)
+        //{
+        //    StartCoroutine(Attack());
+        //}
+    }
+
+    public List<C_Health> GetCHealthsInAttackRange(Detector detector){
+        return detector.detectedObjects
+            .OfType<C_Health>()
+            .ToList();
+    }
+    
+    
+    public void EnableRangeVisualisation(bool enable){
+        foreach (C_Attack attack in attacks){
+            attack.attackVision.EnableVisualisation(enable);
         }
     }
 }

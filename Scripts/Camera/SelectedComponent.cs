@@ -24,7 +24,7 @@ public class SelectionComponent : MonoBehaviour{
         }
         selectable.Entity.detector.EnableVisualisation(true);
         if (selectable.Entity.CCombat != null){
-            selectable.Entity.CCombat._attackDistanceDetector.EnableVisualisation(true);
+            selectable.Entity.CCombat.EnableRangeVisualisation(true);
         }
     }
 
@@ -34,7 +34,7 @@ public class SelectionComponent : MonoBehaviour{
         }
         selectable.Entity.detector.EnableVisualisation(false);
         if (selectable.Entity.CCombat != null){
-            selectable.Entity.CCombat._attackDistanceDetector.EnableVisualisation(false);
+            selectable.Entity.CCombat.EnableRangeVisualisation(false);
         }
     }
 }
