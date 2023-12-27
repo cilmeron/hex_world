@@ -109,9 +109,9 @@ public class CameraManager : MonoBehaviour
         // Clamp the camera position based on the boundary GameObject
          
             Vector3 clampedPosition = new Vector3(
-                Mathf.Clamp(targetPosition.x, -240f, 240f),
+                Mathf.Clamp(targetPosition.x, 120f, 1170f),
                 targetPosition.y,
-                Mathf.Clamp(targetPosition.z, -240f, 240f)
+                Mathf.Clamp(targetPosition.z, 120f, 1159f)
             );
 
             // Apply the clamped position to the camera

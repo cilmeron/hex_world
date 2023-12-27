@@ -19,7 +19,7 @@ public class TownPlacer : MonoBehaviour
 
     public void StructurePlacement(TerrainGenerator[] terrainGenerators)
     {
-        chunkGen = GameObject.FindGameObjectWithTag("Manager").GetComponent<ChunkGeneration>();
+        chunkGen = GameObject.Find("MapGenerator").GetComponent<ChunkGeneration>();
         mainBuilding = chunkGen.mainBuilding;
         defenseBuilding = chunkGen.defenseBuilding;
         cosmeticBuilding = chunkGen.cosmeticBuilding;
@@ -64,6 +64,7 @@ public class TownPlacer : MonoBehaviour
         GameObject mainBuildingInstance = Instantiate(selectedMainBuilding, centerPosition, Quaternion.identity);
         mainBuildingInstance.transform.parent = terrainChunk.transform;
         mainBuildingInstance.tag = "MainBuilding";
+        Camera.main.transform.position = new Vector3(centerPosition.x, Camera.main.GetComponent<CameraManager>().altitude, centerPosition.z);
     }
 
     private void PlaceDefenseBuildings(TerrainGenerator terrainChunk, Vector3 centerPosition)

@@ -73,20 +73,24 @@ public class ChunkGeneration : MonoBehaviour
     private float minHeight = float.MaxValue;
     private float maxHeight = float.MinValue;
 
-    private AssetPlacer AssetPlacer = new AssetPlacer();
-    private TownPlacer TownPlacer = new TownPlacer();
-    private UnitPlacer UnitPlacer = new UnitPlacer();
+    private AssetPlacer AssetPlacer;
+    private TownPlacer TownPlacer;// = new TownPlacer();
+    private UnitPlacer UnitPlacer;// = new UnitPlacer();
 
     private System.Random random;
 
     private void Start()
     {
+        AssetPlacer = gameObject.AddComponent<AssetPlacer>();
+        TownPlacer = gameObject.AddComponent<TownPlacer>();
+        UnitPlacer = gameObject.AddComponent<UnitPlacer>();
         // Map Generation
         random = new System.Random(seed);
         waterLevel = 35;
         GenerateChunksEditor();
         GameObject current = Instantiate(water, new Vector3((128 * chunks.x) / 2, waterLevel, (128 * chunks.y) / 2), Quaternion.identity);
         current.transform.localScale = new Vector3(32 * chunks.x, 128, 32 * chunks.y);
+        current.layer = LayerMask.NameToLayer("Selection");
 
         TerrainGenerator[] terrainGenerators = this.GetComponentsInChildren<TerrainGenerator>();
         NavMeshSurface navMeshSurface = this.GetComponentInChildren<NavMeshSurface>();
@@ -108,20 +112,27 @@ public class ChunkGeneration : MonoBehaviour
         }
 
         // Unit Placement
-        if (UnitPlacer.FindSpawnAreas(terrainGenerators))
-        {
+        //if (UnitPlacer.FindSpawnAreas(terrainGenerators))
+        //{
             //p1
-            UnitPlacer.SpawnUnits(0, 50, UnitPlacer.attackerSpawnChunk);
+       //     UnitPlacer.SpawnUnits(0, 50, UnitPlacer.attackerSpawnChunk);
             //p1
-            UnitPlacer.SpawnUnits(1, 50, UnitPlacer.defenderSpawnChunk);
-        }
+         //   UnitPlacer.SpawnUnits(1, 50, UnitPlacer.defenderSpawnChunk);
+        //}
 
         // Asset Placement: 
         AssetPlacer.AssetPlacement(terrainGenerators);
         // Building Placement: @David you can use the FindPossibleBuildingSite() from TownPlacer as the initialy start point
         TownPlacer.StructurePlacement(terrainGenerators);
     }
-
+    public TerrainGenerator[] GetTerrainGenerators()
+    {
+        return this.GetComponentsInChildren<TerrainGenerator>();
+    }
+    public UnitPlacer GetUnitPlacer()
+    {
+        return UnitPlacer;
+    }
     public void EditorStart()
     {
         GameObject current = Instantiate(water, new Vector3((128 * chunks.x) / 2, waterLevel, (128 * chunks.y) / 2), Quaternion.identity);

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using git.Scripts.Components;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 using UnityEngine.Search;
 using UnityEngine.UI;
@@ -205,6 +206,14 @@ public class Entity : MonoBehaviour, Detectable, DetectorNotification{
     public void DestroyEntity(){
         Animator.SetTrigger(Death);
         networkManager.SendMsg("K:"+networkManager.playername+":0.1,0,0:"+ID);
+        if (gameManager.opponents.Count == 0)
+        {
+            SceneManager.LoadScene("victory");
+        }
+        else if (gameManager.myunits.Count == 0)
+        {
+            SceneManager.LoadScene("gameover");
+        }
         if (CCombat != null){
            Destroy(CCombat._attackDistanceDetector.gameObject.GetComponent<Detector>());
         }

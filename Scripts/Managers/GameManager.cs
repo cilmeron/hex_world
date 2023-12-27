@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviour
     public GameObject p2pos;
     public Camera maincam;
     public Slider soundv;
+    private ChunkGeneration chunkGeneration;
     public Slider musicv;
 
     private string settingsFilePath;
@@ -95,7 +96,7 @@ public class GameManager : MonoBehaviour
     {
         player = p1;
         Vector3 place = p1pos.transform.position;
-        maincam.transform.position = new Vector3(place.x, maincam.GetComponent<CameraManager>().altitude, place.z);
+        //maincam.transform.position = new Vector3(place.x, maincam.GetComponent<CameraManager>().altitude, place.z);
         if (!reconnect)
             SpawnStartUnits(p1pos.transform.position, p1, p1prefab);
     }
@@ -104,28 +105,30 @@ public class GameManager : MonoBehaviour
     {
         player = p2;
         Vector3 place = p2pos.transform.position;
-        maincam.transform.position = new Vector3(place.x, maincam.GetComponent<CameraManager>().altitude, place.z);
+        //maincam.transform.position = new Vector3(place.x, maincam.GetComponent<CameraManager>().altitude, place.z);
         if (!reconnect)
             SpawnStartUnits(p2pos.transform.position, p2, p2prefab);
     }
 
     void SpawnStartUnits(Vector3 pos, Player p, GameObject prefab)
     {
-        for (int i = 0; i < numstartunits; i++)
+        chunkGeneration.GetUnitPlacer().FindSpawnAreas(chunkGeneration.GetTerrainGenerators());
+        TerrainGenerator chunk;
+        if (p == p1)
+            chunk = chunkGeneration.GetUnitPlacer().attackerSpawnChunk;
+        else
+            chunk = chunkGeneration.GetUnitPlacer().defenderSpawnChunk;
+        List<Vector3> spawns = chunkGeneration.GetUnitPlacer().GetSpawnVectorList(numstartunits, chunk, chunkGeneration.GetUnitPlacer().GetCenterPosition(chunk));
+        foreach (Vector3 vector in spawns)
         {
-            float angle = UnityEngine.Random.Range(0f, 360f);
-            float radians = angle * Mathf.Deg2Rad;
-            float x = pos.x + 4f * Mathf.Cos(radians);
-            float z = pos.z + 4f * Mathf.Sin(radians);
-            Vector3 placepos = new Vector3(x, prefab.transform.position.y, z);
-            GameObject placedunit = Instantiate(prefab, placepos, Quaternion.identity);
+            GameObject placedunit = Instantiate(prefab, vector, Quaternion.identity);
             placedunit.GetComponent<Unit>().SetPlayer(p);
             int ID = units++;
             placedunit.GetComponent<Unit>().ID = ID;
             myunits.Add(ID, placedunit);
             if (networkManager != null)
             {
-               networkManager.SendMsg("C:"+playerName+":"+placepos.x+","+placepos.y+","+placepos.z+":"+ID);
+               networkManager.SendMsg("C:"+playerName+":"+vector.x+","+vector.y+","+vector.z+":"+ID);
             }
         }
     }
@@ -153,6 +156,8 @@ public class GameManager : MonoBehaviour
     }
 
     void Start(){
+        chunkGeneration = GameObject.Find("MapGenerator").GetComponent<ChunkGeneration>();
+
         settingsFilePath = Path.Combine(Path.GetDirectoryName(Application.dataPath), "settings.ini");
         ReadOrCreateSettings();
         if (EventManager.Instance != null)

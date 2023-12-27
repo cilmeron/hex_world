@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.UI;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -109,6 +108,7 @@ public class TerrainGenerator : MonoBehaviour
         collider.sharedMesh = mesh;
         mesh.RecalculateNormals();
         meshFilter.mesh = mesh;
+        gameObject.layer = LayerMask.NameToLayer("Selection");
     }
 
     public float ModifyHeight(float input)
@@ -119,7 +119,7 @@ public class TerrainGenerator : MonoBehaviour
 
     public void GenerateTerrainNova()
     {
-        chunkGen = GameObject.FindGameObjectWithTag("Manager").GetComponent<ChunkGeneration>();
+        chunkGen = GameObject.Find("MapGenerator").GetComponent<ChunkGeneration>();
         if (chunkGen == null)
         {
             return;

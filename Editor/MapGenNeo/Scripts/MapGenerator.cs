@@ -67,9 +67,9 @@ public class MapGeneratorEditor : Editor
         if (UnitPlacer.FindSpawnAreas(terrainGenerators))
         {
             //p1
-            UnitPlacer.SpawnUnits(0, 10, UnitPlacer.attackerSpawnChunk);
+            //UnitPlacer.SpawnUnits(0, 10, UnitPlacer.attackerSpawnChunk);
             //p1
-            UnitPlacer.SpawnUnits(1, 10, UnitPlacer.defenderSpawnChunk);
+            //UnitPlacer.SpawnUnits(1, 10, UnitPlacer.defenderSpawnChunk);
         }
 
         // place assets

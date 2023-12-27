@@ -24,7 +24,7 @@ public class UnitPlacer : MonoBehaviour
         defenderSpawnChunk = defenderChunk;
         if (defenderChunk == null) return false;
 
-        chunkGen = GameObject.FindGameObjectWithTag("Manager").GetComponent<ChunkGeneration>();
+        chunkGen = GameObject.Find("MapGenerator").GetComponent<ChunkGeneration>();
         defenderSpawnArea = GetCenterPosition(defenderChunk);
         defenderSpawnArea.y = GetTerrainHeight(defenderSpawnArea, defenderChunk);
 
@@ -101,6 +101,10 @@ public class UnitPlacer : MonoBehaviour
 
     public Vector3 GetCenterPosition(TerrainGenerator chunk)
     {
+        if (chunkGen == null)
+        {
+            chunkGen = GameObject.Find("MapGenerator").GetComponent<ChunkGeneration>();
+        }
         Vector3 centerPosition = new Vector3(
             chunkGen.chunkResolution.x / 2f * (128 / chunkGen.chunkResolution.x) + chunk.transform.position.x,
             chunk.transform.position.y + chunk.mesh.vertices[(int)((chunkGen.chunkResolution.x * chunkGen.chunkResolution.x) / 2f)].y,

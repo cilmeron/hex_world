@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.AI.Navigation;
-using UnityEditor.ShaderGraph.Internal;
-using UnityEditor.VersionControl;
 using UnityEngine;
 
 public class AssetPlacer : MonoBehaviour
@@ -33,7 +31,7 @@ public class AssetPlacer : MonoBehaviour
 
     public void AssetPlacement(TerrainGenerator[] terrainGenerators)
     {
-        chunkGen = GameObject.FindGameObjectWithTag("Manager").GetComponent<ChunkGeneration>();
+        chunkGen = GameObject.Find("MapGenerator").GetComponent<ChunkGeneration>();
         chunkGen.GetMinHeight();
         chunkGen.GetMaxHeight();
         foreach (TerrainGenerator terrainGenerator in terrainGenerators)
