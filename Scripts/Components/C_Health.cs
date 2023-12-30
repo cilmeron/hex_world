@@ -27,14 +27,14 @@ public class C_Health : MonoBehaviour, Detectable
 
     private void RemoveHp(C_Health cHealth, int hpToRemove)
     {
-        if (this != cHealth) return;
-        CurrentHP -= hpToRemove;
-        hpSlider.UpdateHpSlider();
-        if (CurrentHP > 0) return;
-        Debug.Log("Dead");
-        EventManager.Instance.deathEvent.Invoke(this);
-        owner.DestroyEntity();
-        Destroy(gameObject, 10);
+        owner.removehp(hpToRemove, (int)CurrentHP);
+        return;
+     //   if (this != cHealth) return;
+        //CurrentHP -= hpToRemove;
+        //hpSlider.UpdateHpSlider();
+        //if (CurrentHP > 0) return;
+        //owner.DestroyEntity();
+        //Destroy(gameObject, 10);
 
     }
 

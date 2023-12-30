@@ -87,24 +87,25 @@ public class ChunkGeneration : MonoBehaviour
         // Map Generation
         random = new System.Random(seed);
         waterLevel = 35;
-        GenerateChunksEditor();
-        GameObject current = Instantiate(water, new Vector3((128 * chunks.x) / 2, waterLevel, (128 * chunks.y) / 2), Quaternion.identity);
-        current.transform.localScale = new Vector3(32 * chunks.x, 128, 32 * chunks.y);
-        current.layer = LayerMask.NameToLayer("Selection");
+       // GenerateChunksEditor();
+        //GameObject current = Instantiate(water, new Vector3((128 * chunks.x) / 2, waterLevel, (128 * chunks.y) / 2), Quaternion.identity);
+        
+        //current.transform.localScale = new Vector3(32 * chunks.x, 128, 32 * chunks.y);
+        //current.layer = LayerMask.NameToLayer("Selection");
 
         TerrainGenerator[] terrainGenerators = this.GetComponentsInChildren<TerrainGenerator>();
         NavMeshSurface navMeshSurface = this.GetComponentInChildren<NavMeshSurface>();
 
         foreach (TerrainGenerator generator in terrainGenerators)
         {
-            generator.GenerateTerrain();
+           // generator.GenerateTerrain();
         }
 
         // Nav Mesh Baking
         if (navMeshSurface != null)
         {
             // You can perform additional configuration or trigger navmesh building
-            navMeshSurface.BuildNavMesh();
+           // navMeshSurface.BuildNavMesh();
         }
         else
         {

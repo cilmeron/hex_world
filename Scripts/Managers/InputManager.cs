@@ -21,7 +21,7 @@ public class InputManager : MonoBehaviour{
         if (selectionManager.selectedDictionary.selectedTable.Keys.Count > 0)
         {
             // Check if the space key was just pressed down
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Mouse1))
             {
                 // Create a ray from the camera to the mouse position
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);

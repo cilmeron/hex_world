@@ -241,6 +241,15 @@ public class NetworkManager : MonoBehaviour
 
     }
 
+    private void SynchMainThread(int UID, Vector3 pos, String Type)
+    {
+        PimDeWitte.UnityMainThreadDispatcher.UnityMainThreadDispatcher.Instance().Enqueue(() =>
+        {
+            gameManager.SynchOpponent(UID, pos, Type);
+        });
+
+    }
+
     private void CreateOpponentMainThread(int UID, Vector3 pos)
     {
         PimDeWitte.UnityMainThreadDispatcher.UnityMainThreadDispatcher.Instance().Enqueue(() =>
@@ -267,7 +276,7 @@ public class NetworkManager : MonoBehaviour
     {
         lock (netlock)
         {
-            if (response.Substring(0, 1) != "P" && response.Substring(0, 1) != "T" && response.Substring(0, 1) != "H" && response.Substring(0, 1) != "M" && response.Substring(0, 1) != "C" && response.Substring(0, 1) != "Q" && response.Substring(0, 1) != "A" && response.Substring(0, 1) != "K" && response.Substring(0, 1) != "G")
+            if (response.Substring(0, 1) != "P" && response.Substring(0, 1) != "T" && response.Substring(0, 1) != "I" && response.Substring(0, 1) != "S" && response.Substring(0, 1) != "H" && response.Substring(0, 1) != "M" && response.Substring(0, 1) != "C" && response.Substring(0, 1) != "Q" && response.Substring(0, 1) != "A" && response.Substring(0, 1) != "K" && response.Substring(0, 1) != "G")
             {
                 buffer += response;
             }
@@ -306,7 +315,7 @@ public class NetworkManager : MonoBehaviour
             else if (answer[0].Contains("T"))
             {
                 answer[2] = answer[2].Replace(";;;pipesymbol;;;", "|").Replace(";;;colon;;;", ":");
-                if (playername != null && answer[1] != null && answer[1].Contains(playername) && answer[1].Length == playername.Length)
+                if (playername != null && answer[1] != null && answer[1].Equals(playername) && answer[1].Length == playername.Length)
                 {
                     //This is a chat message by ourselves - let's handle it here because that means everything worked
                     try
@@ -338,7 +347,7 @@ public class NetworkManager : MonoBehaviour
             }
             else if (answer[0].Contains("G"))
             {
-                if (answer[1].Contains(playername))
+                if (answer[1].Equals(playername))
                 {
                     //Game Over
                     PimDeWitte.UnityMainThreadDispatcher.UnityMainThreadDispatcher.Instance().Enqueue(() =>
@@ -357,7 +366,7 @@ public class NetworkManager : MonoBehaviour
             }
             else if (answer[0].Contains("K"))
             {
-                if (!answer[1].Contains(playername))
+                if (!answer[1].Equals(playername))
                 {
                     //Enemy unit has fallen
                      PimDeWitte.UnityMainThreadDispatcher.UnityMainThreadDispatcher.Instance().Enqueue(() =>
@@ -366,6 +375,20 @@ public class NetworkManager : MonoBehaviour
                     });
                 }
 
+            }
+
+            else if (answer[0].Contains("S"))
+            {
+                if (answer[1].Equals(playername))
+                {
+                    //We don't need to synch ourselves
+                }
+                else
+                {
+                    string[] coords = answer[2].Split(',');
+                    Vector3 moveto = ConvertToVector3(coords[0], coords[1], coords[2]);
+                    SynchMainThread(Int32.Parse(answer[3]), moveto, answer[4]);
+                }
             }
             else if (answer[0].Contains("H") && !playeractive)
             {
@@ -407,10 +430,29 @@ public class NetworkManager : MonoBehaviour
                     }
                 }
             }
+            else if (answer[0].Contains("I"))
+            {
+                //Get hp update info from server
+                if (answer[1].Equals(playername))
+                {
+                    //this is about our own unit - got message from server so update hp
+                    PimDeWitte.UnityMainThreadDispatcher.UnityMainThreadDispatcher.Instance().Enqueue(() =>
+                    {
+                        gameManager.HPUpdate(Int32.Parse(answer[2]), Int32.Parse(answer[3]), 1);
+                    });
+                }
+                else
+                {
+                    //opponentunit
+                    PimDeWitte.UnityMainThreadDispatcher.UnityMainThreadDispatcher.Instance().Enqueue(() =>
+                    {
+                        gameManager.HPUpdate(Int32.Parse(answer[2]), Int32.Parse(answer[3]), 2);
+                    });
+                }
+            }
             else if (answer[0].Contains("M"))
             {
-                Debug.Log(response);
-                if (!answer[1].Contains(playername))
+                if (!answer[1].Equals(playername))
                 {
                     string[] coords = answer[2].Split(',');
                     Vector3 moveto = ConvertToVector3(coords[0], coords[1], coords[2]);
@@ -422,8 +464,7 @@ public class NetworkManager : MonoBehaviour
             }
              else if (answer[0].Contains("A"))
             {
-                Debug.Log(response);
-                if (!answer[1].Contains(playername))
+                if (!answer[1].Equals(playername))
                 {
                     AttackOpponentMainThread(Int32.Parse(answer[2]), Int32.Parse(answer[3]));
                 }
@@ -431,7 +472,7 @@ public class NetworkManager : MonoBehaviour
             else if (answer[0].Contains("C"))
             {
                 Debug.Log(response);
-                if (!answer[1].Contains(playername))
+                if (!answer[1].Equals(playername))
                 {
                     string[] coords = answer[2].Split(',');
                     Vector3 place = ConvertToVector3(coords[0], coords[1], coords[2]);

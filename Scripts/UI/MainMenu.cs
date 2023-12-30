@@ -28,10 +28,7 @@ public class MainMenu : MonoBehaviour
             }
         }
     }
-    public void PlayGame()
-    {
-        SceneManager.LoadScene("sandbox_test");
-    }
+    
 
     public void QuitGame()
     {

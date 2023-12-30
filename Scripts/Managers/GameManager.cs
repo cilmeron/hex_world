@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour
     public Player player;
     public Player p1;
     public bool settingsread;
+    float ticker = 0f;
+    int totaltime = 0;
     public AudioSource MusicManager;
     public AudioSource SoundManager;
     public GameObject p1prefab;
@@ -91,6 +93,99 @@ public class GameManager : MonoBehaviour
             outg.GetComponent<git.Scripts.Components.C_Moveable>().SetMoveToPosition(pos,true);
         }
     }
+    public void HPUpdate(int UID, int HP, int player)
+    {
+        GameObject outg;
+        if (player == 1)
+        {
+            myunits.TryGetValue(UID, out outg);
+        }
+        else
+        {
+            opponents.TryGetValue(UID, out outg);
+        }
+        if (outg != null)
+        {
+            outg.GetComponent<C_Health>().CurrentHP = (float)HP;
+            if (HP <= 1)
+            {
+                //unit dies
+                outg.GetComponent<Unit>().DestroyEntity();
+                Destroy(outg, 10);
+                if (player == 1)
+                    myunits.Remove(UID);
+                else
+                    opponents.Remove(UID);
+                //owner.DestroyEntity();
+                //Destroy(gameObject, 10);
+            }
+        }
+    }
+    public void SynchOpponent(int UID, Vector3 pos, String Type)
+    {
+        GameObject outg;
+        if (Type.Equals("O"))
+        {
+            //our units
+            myunits.TryGetValue(UID, out outg);
+            if (outg == null)
+            {
+                GameObject placeable;
+                Player setplayer;
+                //unit doesn't exist so let's remake 
+                if (player == p1)
+                {
+                    placeable = p1prefab;
+                    setplayer = p1;
+                }
+                else
+                {
+                    setplayer = p2;
+                    placeable = p2prefab;
+                }
+                outg = Instantiate(placeable, pos, Quaternion.identity);
+                outg.GetComponent<Unit>().SetPlayer(setplayer);
+                outg.GetComponent<Unit>().ID = UID;
+                outg.GetComponent<Unit>().SetHPLow();
+                myunits.Add(UID, outg);
+            }
+            else
+            {
+                outg.GetComponent<git.Scripts.Components.C_Moveable>().Adjustpos(pos);
+            }
+        }
+        else
+        {
+            //enemy units
+            opponents.TryGetValue(UID, out outg);
+            if (outg == null)
+            {
+                GameObject placeable;
+                Player setplayer;
+                //unit doesn't exist (anymore?) so let's remake it
+                if (player == p1)
+                {
+                    placeable = p2prefab;
+                    setplayer = p2;
+                }
+                else
+                {
+                    setplayer = p1;
+                    placeable = p1prefab;
+                }
+                outg = Instantiate(placeable, pos, Quaternion.identity);
+                outg.GetComponent<Unit>().SetPlayer(setplayer);
+                outg.GetComponent<Unit>().ID = UID;
+                outg.GetComponent<Unit>().SetHPLow();
+                opponents.Add(UID, outg);
+            }
+            else
+            {
+                outg.GetComponent<git.Scripts.Components.C_Moveable>().SetMoveToPosition(pos,true);
+            }
+        }
+        
+    }
     public void setplayer1(bool reconnect)
     {
         player = p1;
@@ -159,8 +254,34 @@ public class GameManager : MonoBehaviour
         ReadOrCreateSettings();
         if (EventManager.Instance != null)
             EventManager.Instance.deathEvent.AddListener(DeathListener);
+        ticker = 0f;
     }
 
+    void Update()
+    {
+        if (player == p1)
+        {
+            ticker = ticker + (Time.deltaTime * 1000f);
+            if (ticker >= 4000)
+            {
+                totaltime = totaltime+4;
+                foreach (KeyValuePair<int, GameObject> a in opponents)
+                {
+                    networkManager.SendMsg("S:"+playerName+":"+a.Value.transform.position.x+","+a.Value.transform.position.y+","+a.Value.transform.position.z+":"+a.Key+":O");
+                }
+                foreach (KeyValuePair<int, GameObject> a in myunits)
+                {
+                    networkManager.SendMsg("S:"+playerName+":"+a.Value.transform.position.x+","+a.Value.transform.position.y+","+a.Value.transform.position.z+":"+a.Key+":K");
+                }
+                ticker = 0f;
+            }
+            if (totaltime >= 600)
+            {
+                // Game time limit reached - let's send something to the server
+                networkManager.SendMsg("Z:"+playerName+":0");
+            }
+        }
+    }
     private void DeathListener(C_Health c){
         if (c.Entity.GetPlayer().OwnedEntities.Count <= 0){
             Debug.Log(c.Entity.GetPlayer().nation + " lost the game");
@@ -189,7 +310,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            myunits.TryGetValue(Victim, out killed);
+            myunits.TryGetValue(Victim, out killed); 
         }
         killed.GetComponent<Entity>().DestroyEntity();
         Destroy(killed, 10);

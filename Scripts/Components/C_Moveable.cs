@@ -14,7 +14,8 @@ namespace git.Scripts.Components
         [SerializeField] public bool userTarget = false;
         private NavMeshAgent navMeshAgent;
 
-
+        private Vector3 adjustpos;
+        private bool adjustposbool;
 
         void Awake()
         {
@@ -60,8 +61,17 @@ namespace git.Scripts.Components
                     owner.CCombat._attackDistanceDetector.GetRangeProjector().UpdateMaterialProperties();
                 }
             }
+            if (adjustposbool)
+            {
+                transform.position = Vector3.Lerp(transform.position, adjustpos, Time.deltaTime);
+                adjustposbool = false;
+            }
         }
 
+        public void Adjustpos(Vector3 pos)
+        {
+            adjustpos = pos;
+        }
         private Vector3 GetDestination()
         {
             if (moveToTransform != null)

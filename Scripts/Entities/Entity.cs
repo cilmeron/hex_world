@@ -51,7 +51,17 @@ public class Entity : MonoBehaviour, Detectable, DetectorNotification{
             networkManager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
             gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         }
-    
+        public void SetHPLow()
+        {
+            cHealth.CurrentHP = cHealth.GetMaxHp()*0.1f;
+        }
+
+        public void removehp(int hp, int current)
+        {
+            //only send remove hp if this is our own unit since that means we recognize the hit
+            if (GetPlayer() == gameManager.player)
+                networkManager.SendMsg("I:"+networkManager.playername+":"+hp+":"+current+":"+ID);
+        }
         protected virtual void Start(){
             EventManager.Instance.playerSuccessfullyInitialized.AddListener(InitEntityAfterPlayerInit);
             //It may occur, that some players are created before the player's Start method is called.
