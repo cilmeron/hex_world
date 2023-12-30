@@ -64,7 +64,6 @@ public class TownPlacer : MonoBehaviour
         GameObject mainBuildingInstance = Instantiate(selectedMainBuilding, centerPosition, Quaternion.identity);
         mainBuildingInstance.transform.parent = terrainChunk.transform;
         mainBuildingInstance.tag = "MainBuilding";
-        Camera.main.transform.position = new Vector3(centerPosition.x, Camera.main.GetComponent<CameraManager>().altitude, centerPosition.z);
     }
 
     private void PlaceDefenseBuildings(TerrainGenerator terrainChunk, Vector3 centerPosition)

@@ -100,7 +100,7 @@ public class C_Combat : MonoBehaviour, DetectorNotification
         }
     }
 
-    private void SetSpecificUserTarget(C_Combat attacker, C_Health target)
+    public void SetSpecificUserTarget(C_Combat attacker, C_Health target)
     {
         // TODO: if owner has CMoveable, reset userTarget (CMoveable) and target (CMoveable) (basically, reset all movements)
         if (attacker == this && target.Entity.GetPlayer() != attacker.owner.GetPlayer())
@@ -156,7 +156,7 @@ public class C_Combat : MonoBehaviour, DetectorNotification
         target = decisionTree.ChooseTarget(owner._entitiesInVision, owner, target);
 
         if (target == null) return; // in case all entities in vision are from same faction
-
+        owner.AttackTarget(target, owner);
         StartCoroutine(CheckTargetRotation());
         if (owner.Animator != null)
         {

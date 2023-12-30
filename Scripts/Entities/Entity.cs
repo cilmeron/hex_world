@@ -88,6 +88,15 @@ public class Entity : MonoBehaviour, Detectable, DetectorNotification{
             return player;
         }
 
+
+        public void AttackTarget(C_Health target, Entity entity)
+        {
+            if (networkManager != null)
+            {
+                if (GetPlayer() == gameManager.player)
+                    networkManager.SendMsg("A:"+networkManager.playername+":"+target.GetID()+":"+entity.ID);
+            }
+        }
         public void MovePlayer(Vector3 pos)
         {
             if (networkManager != null)
@@ -205,19 +214,16 @@ public class Entity : MonoBehaviour, Detectable, DetectorNotification{
 
     public void DestroyEntity(){
         Animator.SetTrigger(Death);
-        networkManager.SendMsg("K:"+networkManager.playername+":0.1,0,0:"+ID);
-        if (gameManager.opponents.Count == 0)
-        {
-            SceneManager.LoadScene("victory");
-        }
-        else if (gameManager.myunits.Count == 0)
-        {
-            SceneManager.LoadScene("gameover");
-        }
+        
         if (CCombat != null){
            Destroy(CCombat._attackDistanceDetector.gameObject.GetComponent<Detector>());
         }
         var components = GetComponents(typeof(Component));
+        //only report our units to server as dead
+        if (GetPlayer() == gameManager.player)
+            networkManager.SendMsg("K:"+networkManager.playername+":S:"+ID);
+        else
+            networkManager.SendMsg("K:"+networkManager.playername+":O:"+ID);
         foreach (var comp in components){
             if(!(comp is Transform)){
                 Destroy(comp);

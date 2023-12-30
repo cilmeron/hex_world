@@ -10,6 +10,10 @@ public class C_Health : MonoBehaviour, Detectable
     [SerializeField] private HpSlider hpSlider;
     private Entity owner;
 
+    public int GetID()
+    {
+        return owner.ID;
+    }
     void Awake()
     {
         owner = GetComponent<Entity>();

@@ -25,7 +25,6 @@ public class GameManager : MonoBehaviour
     public Player p2;
     public GameObject p1pos;
     public GameObject p2pos;
-    public Camera maincam;
     public Slider soundv;
     private ChunkGeneration chunkGeneration;
     public Slider musicv;
@@ -96,7 +95,6 @@ public class GameManager : MonoBehaviour
     {
         player = p1;
         Vector3 place = p1pos.transform.position;
-        //maincam.transform.position = new Vector3(place.x, maincam.GetComponent<CameraManager>().altitude, place.z);
         if (!reconnect)
             SpawnStartUnits(p1pos.transform.position, p1, p1prefab);
     }
@@ -105,7 +103,6 @@ public class GameManager : MonoBehaviour
     {
         player = p2;
         Vector3 place = p2pos.transform.position;
-        //maincam.transform.position = new Vector3(place.x, maincam.GetComponent<CameraManager>().altitude, place.z);
         if (!reconnect)
             SpawnStartUnits(p2pos.transform.position, p2, p2prefab);
     }
@@ -118,7 +115,7 @@ public class GameManager : MonoBehaviour
             chunk = chunkGeneration.GetUnitPlacer().attackerSpawnChunk;
         else
             chunk = chunkGeneration.GetUnitPlacer().defenderSpawnChunk;
-        List<Vector3> spawns = chunkGeneration.GetUnitPlacer().GetSpawnVectorList(numstartunits, chunk, chunkGeneration.GetUnitPlacer().GetCenterPosition(chunk));
+        List<Vector3> spawns = chunkGeneration.GetUnitPlacer().GetSpawnVectorList(numstartunits, chunk, chunkGeneration.GetUnitPlacer().GetCenterPosition(chunk, 1));
         foreach (Vector3 vector in spawns)
         {
             GameObject placedunit = Instantiate(prefab, vector, Quaternion.identity);
@@ -169,6 +166,34 @@ public class GameManager : MonoBehaviour
             Debug.Log(c.Entity.GetPlayer().nation + " lost the game");
             //Add Player won UI
         }
+    }
+    public void AttackOpponent(int Victim, int Attacker)
+    {
+        GameObject attack;
+        myunits.TryGetValue(Attacker, out attack);
+        GameObject outg;
+        opponents.TryGetValue(Victim, out outg);
+        
+        if (outg != null && attack != null)
+        {
+            attack.GetComponent<C_Combat>().SetSpecificUserTarget(attack.GetComponent<C_Combat>(), outg.GetComponent<C_Health>());
+        }
+    }
+
+    public void KillOpponent(int Victim, String type)
+    {
+        GameObject killed;
+        if (type == "O")
+        {
+            opponents.TryGetValue(Victim, out killed);
+        }
+        else
+        {
+            myunits.TryGetValue(Victim, out killed);
+        }
+        killed.GetComponent<Entity>().DestroyEntity();
+        Destroy(killed, 10);
+        opponents.Remove(Victim);
     }
 
     public void setSoundVolume(float val)

@@ -256,11 +256,18 @@ public class NetworkManager : MonoBehaviour
             gameManager.CheckOrCreateOwnUnit(UID, pos);
         });
     }
+    private void AttackOpponentMainThread(int Victim, int Attacker)
+    {
+        PimDeWitte.UnityMainThreadDispatcher.UnityMainThreadDispatcher.Instance().Enqueue(() =>
+        {
+            gameManager.AttackOpponent(Victim, Attacker);
+        });
+    }
     private void CheckMessages(string response)
     {
         lock (netlock)
         {
-            if (response.Substring(0, 1) != "P" && response.Substring(0, 1) != "T" && response.Substring(0, 1) != "H" && response.Substring(0, 1) != "M" && response.Substring(0, 1) != "C" && response.Substring(0, 1) != "Q")
+            if (response.Substring(0, 1) != "P" && response.Substring(0, 1) != "T" && response.Substring(0, 1) != "H" && response.Substring(0, 1) != "M" && response.Substring(0, 1) != "C" && response.Substring(0, 1) != "Q" && response.Substring(0, 1) != "A" && response.Substring(0, 1) != "K" && response.Substring(0, 1) != "G")
             {
                 buffer += response;
             }
@@ -329,6 +336,37 @@ public class NetworkManager : MonoBehaviour
 
                 }
             }
+            else if (answer[0].Contains("G"))
+            {
+                if (answer[1].Contains(playername))
+                {
+                    //Game Over
+                    PimDeWitte.UnityMainThreadDispatcher.UnityMainThreadDispatcher.Instance().Enqueue(() =>
+                    {
+                        SceneManager.LoadScene("gameover");
+                    });
+                }
+                else
+                {
+                    //Victory
+                    PimDeWitte.UnityMainThreadDispatcher.UnityMainThreadDispatcher.Instance().Enqueue(() =>
+                    {
+                        SceneManager.LoadScene("victory");
+                    });
+                }
+            }
+            else if (answer[0].Contains("K"))
+            {
+                if (!answer[1].Contains(playername))
+                {
+                    //Enemy unit has fallen
+                     PimDeWitte.UnityMainThreadDispatcher.UnityMainThreadDispatcher.Instance().Enqueue(() =>
+                    {
+                        gameManager.KillOpponent(Int32.Parse(answer[3]), answer[2]);
+                    });
+                }
+
+            }
             else if (answer[0].Contains("H") && !playeractive)
             {
                 //We receive a hello message - let's see who this is about and what role they play
@@ -380,6 +418,14 @@ public class NetworkManager : MonoBehaviour
                     Debug.Log("Moving Unit" + answer[3] + " to x:" + moveto.x + " y:" + moveto.y + " z:" + moveto.z);
                     MoveOpponentMainThread(Int32.Parse(answer[3]), moveto);
 
+                }
+            }
+             else if (answer[0].Contains("A"))
+            {
+                Debug.Log(response);
+                if (!answer[1].Contains(playername))
+                {
+                    AttackOpponentMainThread(Int32.Parse(answer[2]), Int32.Parse(answer[3]));
                 }
             }
             else if (answer[0].Contains("C"))

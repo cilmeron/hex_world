@@ -99,7 +99,7 @@ public class UnitPlacer : MonoBehaviour
         // ignore this
     }
 
-    public Vector3 GetCenterPosition(TerrainGenerator chunk)
+    public Vector3 GetCenterPosition(TerrainGenerator chunk, int cam=0)
     {
         if (chunkGen == null)
         {
@@ -110,6 +110,8 @@ public class UnitPlacer : MonoBehaviour
             chunk.transform.position.y + chunk.mesh.vertices[(int)((chunkGen.chunkResolution.x * chunkGen.chunkResolution.x) / 2f)].y,
             chunkGen.chunkResolution.y / 2f * (128 / chunkGen.chunkResolution.y) + chunk.transform.position.z
         );
+        if (cam == 1)
+            Camera.main.transform.position = new Vector3(centerPosition.x, Camera.main.GetComponent<CameraManager>().altitude, centerPosition.z);
         return centerPosition;
     }
 
