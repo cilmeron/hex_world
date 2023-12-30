@@ -85,6 +85,7 @@ public class UnitPlacer : MonoBehaviour
         foreach (Vector3 vector in spawnVectors)
         {
             GameObject placedUnit = Instantiate(placeable, vector, Quaternion.identity);
+            placedUnit.GetComponent<Unit>().ActivateUnit();
             // placedUnit.GetComponent<Unit>().SetPlayer();
         }
     }

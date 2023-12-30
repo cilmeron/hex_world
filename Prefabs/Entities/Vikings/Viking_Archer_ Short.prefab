@@ -250,12 +250,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53218d366a6815e4abef25638327162c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vision: {fileID: 538703604205305907}
-  collider: {fileID: 0}
-  player: {fileID: 0}
+  detector: {fileID: 0}
+  ID: 0
+  nation: 0
   goldAmount: 30
   sprite: {fileID: 21300000, guid: 1d6f8eb17accbea4f8635f7ac2ba2b35, type: 3}
+  viewDistance: 15
   Animator: {fileID: 4663286251191692210}
+  crew: 0
 --- !u!114 &5449431308838393873
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -284,10 +286,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3998015b809bcb4dbb51b3fb72259ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentHP: 200
+  CurrentHP: 0
   maxHP: 200
   hpSlider: {fileID: 5741764590666716778}
-  entity: {fileID: 0}
 --- !u!114 &8682277960915804418
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -300,16 +301,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 770fc4240909f8a48a098effd01dac49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectorController: {fileID: 6578140339930997583}
-  range: 25
-  vision: {fileID: 538703604205305907}
-  attackTime: 5
-  attackDmg: 20
-  projectile: {fileID: 3164007927888127725, guid: 5a2606daf4c8b7041acd31a60968cf68, type: 3}
-  bulletStart: {fileID: 5360331651360859000}
-  cHealthsInVision: []
-  target: {fileID: 0}
-  CWeapon: {fileID: 0}
+  userTarget: 0
+  attacks: []
 --- !u!114 &7386667836474742684
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -350,9 +343,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveToPosition: {x: 0, y: 0, z: 0}
+  moveToTransform: {fileID: 0}
   shouldMove: 1
   stoppingDistance: 2
-  navMeshAgent: {fileID: 3240667480195804951}
+  userTarget: 0
 --- !u!195 &3240667480195804951
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -2511,8 +2505,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6f80e2f42752f84bbfdb22a6606861e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 43
-  cCombat: {fileID: 8682277960915804418}
+  visualisation: {fileID: 0}
+  _detactables: 
+  detectedObjects: []
 --- !u!1 &5561916577021533090
 GameObject:
   m_ObjectHideFlags: 0
@@ -3164,6 +3159,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseMaterial: {fileID: 2100000, guid: 5105ef8771ea2e540973f5e01e3d1e1a, type: 2}
   shouldDisplayBorderOnly: 0
+  borderThickness: 0.05
   circleColor: {r: 0.07539296, g: 1, b: 0, a: 1}
   displayLayers:
     serializedVersion: 2
