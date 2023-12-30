@@ -24,7 +24,7 @@ public class CameraManager : MonoBehaviour
 
     void Update()
     {
-      if (IsMouseInGameWindow() && !networkManager.chatactive)
+        if (IsMouseInGameWindow() && !networkManager.chatactive)
         {
             if (Input.GetAxis("Vertical") > 0)
                 _TranslateCamera(0);
@@ -82,7 +82,7 @@ public class CameraManager : MonoBehaviour
     private void _TranslateCamera(int dir)
     {
         Vector3 translation = Vector3.zero;
-        
+
         if (dir == 0)       // top
             translation = Vector3.forward;
         else if (dir == 1)  // right
@@ -97,7 +97,7 @@ public class CameraManager : MonoBehaviour
 
         // Calculate the camera's target position at the proper altitude
         Vector3 targetPosition = transform.position;
-        
+
         // Cast a ray to the ground and move up to the hit point
         _ray = new Ray(transform.position, Vector3.up * -1000f);
 
@@ -107,16 +107,16 @@ public class CameraManager : MonoBehaviour
         }
 
         // Clamp the camera position based on the boundary GameObject
-         
-            Vector3 clampedPosition = new Vector3(
-                Mathf.Clamp(targetPosition.x, -240f, 240f),
-                targetPosition.y,
-                Mathf.Clamp(targetPosition.z, -240f, 240f)
-            );
 
-            // Apply the clamped position to the camera
-            transform.position = clampedPosition;
-        
+        Vector3 clampedPosition = new Vector3(
+            Mathf.Clamp(targetPosition.x, 120f, 1170f),
+            targetPosition.y,
+            Mathf.Clamp(targetPosition.z, 120f, 1170f)
+        );
+
+        // Apply the clamped position to the camera
+        transform.position = clampedPosition;
+
     }
     private Vector3 GetTopLeftCornerPosition(Transform planeTransform)
     {

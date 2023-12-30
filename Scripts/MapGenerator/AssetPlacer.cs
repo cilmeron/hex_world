@@ -1,8 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.AI.Navigation;
-using UnityEditor.ShaderGraph.Internal;
-using UnityEditor.VersionControl;
 using UnityEngine;
 
 public class AssetPlacer : MonoBehaviour
