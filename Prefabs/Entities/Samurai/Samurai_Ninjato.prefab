@@ -102,7 +102,7 @@ MonoBehaviour:
   circleColor: {r: 0.07539296, g: 1, b: 0, a: 1}
   displayLayers:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 0
   circleRadius: 2
 --- !u!1 &445500006893997307
 GameObject:
@@ -230,7 +230,7 @@ Transform:
   - {fileID: 6286970787086223098}
   - {fileID: 5334132877138949456}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &8435929751578104814
 MeshRenderer:
@@ -2918,7 +2918,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8905996051548850078
 Transform:
   m_ObjectHideFlags: 0
@@ -3521,7 +3521,7 @@ MonoBehaviour:
   circleColor: {r: 0.07539296, g: 1, b: 0, a: 1}
   displayLayers:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 0
   circleRadius: 2
 --- !u!1 &7459482996786122532
 GameObject:

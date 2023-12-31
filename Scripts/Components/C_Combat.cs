@@ -10,13 +10,14 @@ public class C_Combat : MonoBehaviour
     [SerializeField] public bool userTarget = false;
     private static readonly int PulledSword = Animator.StringToHash("PulledSword");
     private float timeTillTargetRotationCheck = 0f;
-    
+
     public List<C_Attack> attacks = new();
 
     void Awake()
     {
         owner = gameObject.GetComponent<Entity>();
-        foreach (C_Attack attack in attacks){
+        foreach (C_Attack attack in attacks)
+        {
             attack.attackVision.SetOwner(owner);
         }
         decisionTree = new DecisionTree();
@@ -24,7 +25,8 @@ public class C_Combat : MonoBehaviour
 
     void Start()
     {
-        foreach (C_Attack attack in attacks){
+        foreach (C_Attack attack in attacks)
+        {
             attack.weapon.SetEntity(owner);
             attack.attackVision.SetRadius(attack.weapon.AttackRange);
         }
@@ -52,10 +54,11 @@ public class C_Combat : MonoBehaviour
             StartCoroutine(CheckTargetRotation(attack));
         }
     }
-    private IEnumerator TurnToTarget(C_Attack attack){
-      
-        
+    private IEnumerator TurnToTarget(C_Attack attack)
+    {
         int rotationSpeed = 120;
+        if (owner is not Unit) yield return null;
+        if (owner is Building) rotationSpeed = 0;
         if (attack.target != null)
         {
             // Calculate the direction to the target
@@ -76,9 +79,9 @@ public class C_Combat : MonoBehaviour
         if (attack.VisionContainsTarget())
         {
             attack.timeTillAttack = attack.weapon.AttackSpeed;
-            
+
             attack.weapon.Attack(attack.target, owner);
-            
+
             while (attack.timeTillAttack > 0)
             {
                 yield return null; // wait for the next frame
@@ -97,7 +100,7 @@ public class C_Combat : MonoBehaviour
 
     private void MoveToTarget(C_Attack attack)
     {
-        if (owner.CMoveable != null)
+        if (owner.CMoveable != null && owner is Unit)
         {
             owner.CMoveable.SetMoveToTransform(attack.target.transform, false);
         }
@@ -105,7 +108,8 @@ public class C_Combat : MonoBehaviour
 
     private void SetSpecificUserTarget(C_Combat attacker, C_Health target)
     {
-        foreach (C_Attack attack in attacks){
+        foreach (C_Attack attack in attacks)
+        {
             // TODO: if owner has CMoveable, reset userTarget (CMoveable) and target (CMoveable) (basically, reset all movements)
             if (attacker == this && target.Entity.GetNation() != attacker.owner.GetNation())
             {
@@ -121,7 +125,7 @@ public class C_Combat : MonoBehaviour
         }
     }
 
-    private void SetSpecificTarget(C_Attack attack,C_Combat attacker, C_Health target)
+    private void SetSpecificTarget(C_Attack attack, C_Combat attacker, C_Health target)
     {
         // TODO: if owner has CMoveable, reset userTarget (CMoveable) and target (CMoveable) (basically, reset all movements)
         if (attacker == this && target.Entity.GetNation() != attacker.owner.GetNation())
@@ -175,7 +179,8 @@ public class C_Combat : MonoBehaviour
 
     private void EntityDied(C_Health cHealth)
     {
-        if (cHealth == owner.CHealth){
+        if (cHealth == owner.CHealth)
+        {
             GameManager.Instance.GetPlayerWithNation(owner.GetNation()).OwnedEntities.Remove(owner);
         }
         if (owner.GetEntitiesInVision().Contains(cHealth.Entity))
@@ -183,7 +188,8 @@ public class C_Combat : MonoBehaviour
             owner.RemoveEntityInVision(cHealth.Entity);
         }
 
-        foreach (C_Attack attack in attacks){
+        foreach (C_Attack attack in attacks)
+        {
             if (GetCHealthsInAttackRange(attack.attackVision).Contains(cHealth))
             {
                 GetCHealthsInAttackRange(attack.attackVision).Remove(cHealth);
@@ -194,25 +200,31 @@ public class C_Combat : MonoBehaviour
                 }
             }
         }
-        
-    }
-    
 
-    public List<C_Attack> GetAttacks(){
+    }
+
+
+    public List<C_Attack> GetAttacks()
+    {
         return attacks;
     }
-    
-    
-    public void ResetAllTargets(){
-        foreach (C_Attack attack in attacks){
+
+
+    public void ResetAllTargets()
+    {
+        foreach (C_Attack attack in attacks)
+        {
             ResetTarget(attack);
         }
     }
-    
-    private void ComponentDetection(Detector detector,Component component, Detector.DetectionManagement direction){
 
-        foreach (C_Attack attack in attacks){
-            if (attack.attackVision == detector){
+    private void ComponentDetection(Detector detector, Component component, Detector.DetectionManagement direction)
+    {
+
+        foreach (C_Attack attack in attacks)
+        {
+            if (attack.attackVision == detector)
+            {
                 Entity e = component.GetComponent<Entity>();
                 if (e.CHealth == null) return;
                 if (attack.attackVision.detectedObjects.Count == 0 || e.CHealth == attack.target)
@@ -221,18 +233,18 @@ public class C_Combat : MonoBehaviour
                 }
                 if (attack.target == null && e.CHealth.IsAlive())
                 {
-                    SetSpecificTarget(attack,this, e.CHealth);
+                    SetSpecificTarget(attack, this, e.CHealth);
                 }
                 if (e.CHealth == attack.target && direction == Detector.DetectionManagement.Enter)
                 {
                     StartCoroutine(Attack(attack));
                 }
             }
-                
+
         }
 
-        
-        
+
+
         //Entity e = component.GetComponent<Entity>();
         //if (e.CHealth == null) return;
         //if (direction == Detector.DetectionManagement.Enter && !GetCHealthsInAttackRange().Contains(e.CHealth))
@@ -259,15 +271,18 @@ public class C_Combat : MonoBehaviour
         //}
     }
 
-    public List<C_Health> GetCHealthsInAttackRange(Detector detector){
+    public List<C_Health> GetCHealthsInAttackRange(Detector detector)
+    {
         return detector.detectedObjects
             .OfType<C_Health>()
             .ToList();
     }
-    
-    
-    public void EnableRangeVisualisation(bool enable){
-        foreach (C_Attack attack in attacks){
+
+
+    public void EnableRangeVisualisation(bool enable)
+    {
+        foreach (C_Attack attack in attacks)
+        {
             attack.attackVision.EnableVisualisation(enable);
         }
     }

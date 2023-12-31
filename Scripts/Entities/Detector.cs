@@ -24,7 +24,7 @@ public class Detector : MonoBehaviour
                 try
                 {
                     detectedObjects.Add(triggeredComponent);
-                    EventManager.Instance.componentDetected.Invoke(this,triggeredComponent,DetectionManagement.Enter);
+                    EventManager.Instance.componentDetected.Invoke(this, triggeredComponent, DetectionManagement.Enter);
                 }
                 catch (Exception e)
                 {
@@ -45,7 +45,7 @@ public class Detector : MonoBehaviour
             if (triggeredComponent is Detectable)
             {
                 detectedObjects.Remove(triggeredComponent);
-                EventManager.Instance.componentDetected.Invoke(this,triggeredComponent,DetectionManagement.Exit);
+                EventManager.Instance.componentDetected.Invoke(this, triggeredComponent, DetectionManagement.Exit);
             }
         }
     }
@@ -69,7 +69,8 @@ public class Detector : MonoBehaviour
         Exit
     }
 
-    public void SetRadius(int r){
+    public void SetRadius(int r)
+    {
         col = GetComponent<SphereCollider>();
         col.radius = r;
         var t = visualisation.transform;
@@ -79,6 +80,6 @@ public class Detector : MonoBehaviour
 
     public void EnableVisualisation(bool b)
     {
-        visualisation.SetActive(b);
+        visualisation.SetActive(false);
     }
 }

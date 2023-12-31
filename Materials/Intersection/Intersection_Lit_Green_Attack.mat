@@ -67,7 +67,7 @@ Material:
     - _ZWriteControl: 0
     m_Colors:
     - _Color: {r: 0, g: 0.014227471, b: 0.3773585, a: 0}
-    - _IntersectionColor: {r: 32.551247, g: 145.31857, b: 5.3258133, a: 1}
+    - _IntersectionColor: {r: 766.99615, g: 341.26038, b: 0, a: 0}
     - _IntersectionNoiseSpeed: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &5499120239184788620

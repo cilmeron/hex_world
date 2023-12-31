@@ -228,7 +228,10 @@ public class Entity : MonoBehaviour, Detectable
         {
             Animator.SetTrigger(Death);
         }
-        networkManager.SendMsg("K:" + networkManager.playername + ":0.1,0,0:" + ID);
+        if (networkManager != null)
+        {
+            networkManager.SendMsg("K:" + networkManager.playername + ":0.1,0,0:" + ID);
+        }
         var components = GetComponents(typeof(Component));
         foreach (var comp in components)
         {
