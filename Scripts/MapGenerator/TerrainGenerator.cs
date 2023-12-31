@@ -26,7 +26,6 @@ public class TerrainGenerator : MonoBehaviour
         {
             return;
         }
-
         meshFilter = GetComponent<MeshFilter>();
         meshRenderer = GetComponent<MeshRenderer>();
         collider = GetComponent<MeshCollider>();

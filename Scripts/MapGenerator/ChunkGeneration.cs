@@ -94,6 +94,8 @@ public class ChunkGeneration : MonoBehaviour
         foreach (TerrainGenerator generator in terrainGenerators)
         {
             generator.GenerateTerrain();
+            int layerIndex = 8;
+            generator.gameObject.layer = layerIndex;
         }
 
         // Nav Mesh Baking
