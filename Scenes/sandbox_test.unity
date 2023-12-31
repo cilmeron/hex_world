@@ -2050,8 +2050,8 @@ MonoBehaviour:
   - {fileID: 104350, guid: d87f80d13c8f1ac4e8d5a2a5f23d6df8, type: 3}
   - {fileID: 172610, guid: f6a4c13be7c8fc4419af1757ac773720, type: 3}
   clouds: []
-  p1Prefab: {fileID: 651052253316306241, guid: a036ed07392852c4985a4424f5af7bd8, type: 3}
-  p2Prefab: {fileID: 651052253316306241, guid: a036ed07392852c4985a4424f5af7bd8, type: 3}
+  p1Prefab: {fileID: 1490302032}
+  p2Prefab: {fileID: 1793738238}
   heightOffSet: 0
   player: {fileID: 0}
   chunksChunkLoaded: 0
@@ -5105,6 +5105,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a036ed07392852c4985a4424f5af7bd8, type: 3}
+--- !u!1 &1490302032 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 651052253316306241, guid: a036ed07392852c4985a4424f5af7bd8, type: 3}
+  m_PrefabInstance: {fileID: 1480993866}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1502472587
 GameObject:
   m_ObjectHideFlags: 0
@@ -5854,6 +5859,11 @@ Canvas:
 Transform:
   m_CorrespondingSourceObject: {fileID: 5463338146734804439, guid: a036ed07392852c4985a4424f5af7bd8, type: 3}
   m_PrefabInstance: {fileID: 522982329}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1793738238 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 651052253316306241, guid: a89efb4f56ece2f43ae67aeb67135319, type: 3}
+  m_PrefabInstance: {fileID: 451460834}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &1804826335 stripped
 MonoBehaviour:

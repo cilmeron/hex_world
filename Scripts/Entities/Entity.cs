@@ -220,8 +220,6 @@ public class Entity : MonoBehaviour, Detectable
         detector.detectedObjects.Remove(e);
     }
 
-
-
     public void DestroyEntity()
     {
         if (Animator != null)
