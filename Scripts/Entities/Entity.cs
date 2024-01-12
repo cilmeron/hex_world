@@ -230,10 +230,10 @@ public class Entity : MonoBehaviour, Detectable, DetectorNotification{
         }
         var components = GetComponents(typeof(Component));
         //only report our units to server as dead
-        if (GetPlayer() == gameManager.player)
-            networkManager.SendMsg("K:"+networkManager.playername+":S:"+ID);
-        else
-            networkManager.SendMsg("K:"+networkManager.playername+":O:"+ID);
+        //if (GetPlayer() == gameManager.player)
+            //networkManager.SendMsg("K:"+networkManager.playername+":S:"+ID);
+        //else
+          //  networkManager.SendMsg("K:"+networkManager.playername+":O:"+ID);
         foreach (var comp in components){
             if(!(comp is Transform)){
                 Destroy(comp);

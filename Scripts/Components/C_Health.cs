@@ -27,6 +27,7 @@ public class C_Health : MonoBehaviour, Detectable
 
     private void RemoveHp(C_Health cHealth, int hpToRemove)
     {
+        if (this != cHealth) return;
         owner.removehp(hpToRemove, (int)CurrentHP);
         return;
      //   if (this != cHealth) return;
@@ -37,7 +38,10 @@ public class C_Health : MonoBehaviour, Detectable
         //Destroy(gameObject, 10);
 
     }
-
+    public void UpdateSlider()
+    {
+        hpSlider.UpdateHpSlider();
+    }
     public void AddHp(int hpToAdd)
     {
         CurrentHP += hpToAdd;

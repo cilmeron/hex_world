@@ -107,6 +107,7 @@ public class GameManager : MonoBehaviour
         if (outg != null)
         {
             outg.GetComponent<C_Health>().CurrentHP = (float)HP;
+            outg.GetComponent<C_Health>().UpdateSlider();
             if (HP <= 1)
             {
                 //unit dies

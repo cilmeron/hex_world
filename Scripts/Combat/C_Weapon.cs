@@ -50,7 +50,9 @@ public class C_Weapon : MonoBehaviour{
         if (other.gameObject.GetComponent<Entity>() != null){
             Entity hitEntity = other.gameObject.GetComponent<Entity>();
             if (difficulty == GameManager.GameDifficulty.Easy && hitEntity.GetPlayer() == entity.GetPlayer()) return;
-            if (hitEntity.CHealth != null && hitEntity.CHealth.GetCurrentHp()>0){
+            if (hitEntity.CHealth != null && hitEntity.CHealth.GetCurrentHp()>0)
+            {
+                Debug.Log("Hitting with "+attackDmg+" dmg");
                 EventManager.Instance.damageEvent.Invoke(hitEntity.CHealth,attackDmg);
             }
         }
