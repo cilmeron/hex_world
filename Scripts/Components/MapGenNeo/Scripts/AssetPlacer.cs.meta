@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+<<<<<<<< HEAD:Scripts/Components/C_DecisionTree.cs.meta
+guid: 87e2eecb1c5f7164e8aad806e7480ddd
+========
+guid: 8aac46b5031326d40858d4bdba4d384d
+>>>>>>>> TowerBehaviour:Scripts/Components/MapGenNeo/Scripts/AssetPlacer.cs.meta
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

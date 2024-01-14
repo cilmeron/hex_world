@@ -5,36 +5,45 @@ using System.Security.Cryptography;
 using UnityEngine;
 using Debug = System.Diagnostics.Debug;
 
-public class SelectionComponent : MonoBehaviour{
+public class SelectionComponent : MonoBehaviour
+{
     private C_Selectable selectable;
-    private Entity entity;
-    
-    void Start(){
-        
+
+    void Start()
+    {
+
         selectable = GetComponent<C_Selectable>();
-        if (selectable == null){
+        if (selectable == null)
+        {
             throw new Exception("Selectable is non existing");
         }
-        if (selectable.Entity == null){
+        if (selectable.Entity == null)
+        {
             throw new Exception("Selectable has no Entity");
         }
-        entity = selectable.Entity;
         //entity.SetMaterialToRenderer(entity.CLook.MSelected);
-        if (entity.CHealth != null){
-            entity.CHealth.SetHpSliderActive(true);
-            
+        if (selectable.Entity.CHealth != null)
+        {
+            selectable.Entity.CHealth.SetHpSliderActive(true);
+
         }
-        if (entity.CCombat!=null){
-            entity.CCombat.projectorController.gameObject.SetActive(true);
+        selectable.Entity.detector.EnableVisualisation(true);
+        if (selectable.Entity.CCombat != null)
+        {
+            selectable.Entity.CCombat.EnableRangeVisualisation(true);
         }
     }
 
-    private void OnDestroy(){
-        if (selectable.Entity.CHealth != null){
+    private void OnDestroy()
+    {
+        if (selectable.Entity.CHealth != null)
+        {
             selectable.Entity.CHealth.SetHpSliderActive(false);
         }
-        if (selectable.Entity.CCombat!=null){
-            selectable.Entity.CCombat.projectorController.gameObject.SetActive(false);
+        selectable.Entity.detector.EnableVisualisation(false);
+        if (selectable.Entity.CCombat != null)
+        {
+            selectable.Entity.CCombat.EnableRangeVisualisation(false);
         }
     }
 }

@@ -7,6 +7,7 @@ public class ProjectorController : MonoBehaviour
     public Material baseMaterial; // Assign the base material in the Inspector.
     private Material _materialInstance; // This will be a unique instance of the base material.
     public bool shouldDisplayBorderOnly; // Set this in the Inspector.
+    public float borderThickness = 0.05f; // Adjust the default value as needed.
     public Color circleColor = UnityEngine.Color.blue; // Set the initial color of the circle in the Inspector.
     public LayerMask displayLayers; // Specify the layers on which to display the circle.
     public float circleRadius = 0.5f; // Set the initial radius of the circle.
@@ -15,6 +16,7 @@ public class ProjectorController : MonoBehaviour
     private static readonly int WorldPosProperty = Shader.PropertyToID("_WorldPos");
     private static readonly int ShouldDisplayBorderOnlyProperty = Shader.PropertyToID("_ShouldDisplayBorderOnly");
     private static readonly int RadiusProperty = Shader.PropertyToID("_Radius");
+    private static readonly int BorderThicknessProperty = Shader.PropertyToID("_BorderSize");
 
     void Start()
     {
@@ -47,7 +49,7 @@ public class ProjectorController : MonoBehaviour
         if (_materialInstance != null)
         {
             // Set the color of the circle.
-            _materialInstance.SetColor(ColorProperty, new Color(circleColor.r,circleColor.g,circleColor.b,80/255f));
+            _materialInstance.SetColor(ColorProperty, new Color(circleColor.r, circleColor.g, circleColor.b, 80 / 255f));
 
             // Set the world position.
             Vector3 worldPosition = transform.position;
@@ -57,8 +59,10 @@ public class ProjectorController : MonoBehaviour
             float shouldDisplayBorderOnlyFloat = shouldDisplayBorderOnly ? 1 : 0;
             _materialInstance.SetFloat(ShouldDisplayBorderOnlyProperty, shouldDisplayBorderOnlyFloat);
 
-            // Set the radius of the circle.
+            // Set the radius and border thickness.
             _materialInstance.SetFloat(RadiusProperty, circleRadius);
+            _materialInstance.SetFloat(BorderThicknessProperty, borderThickness);
         }
     }
+
 }

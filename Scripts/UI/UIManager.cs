@@ -71,7 +71,7 @@ public class UIManager : MonoBehaviour{
     
     #region Topbar
         private void SetTopBarUI(){
-            topBarUITopbar.Nodes[0].SetText(GameResourceManager.GetResourceAmount(player,GameResourceManager.ResourceType.Gold).ToString());
+            topBarUITopbar.Nodes[0].SetText(GameResourceManager.GetResourceAmount(player.nation,GameResourceManager.ResourceType.Gold).ToString());
             topBarUITopbar.Nodes[1].SetText(player.CalculateUnits().ToString());
             topBarUITopbar.Nodes[2].SetText(player.CalculateBuildings().ToString());
             topBarUITopbar.Nodes[3].SetText(player.Formations.Count.ToString());

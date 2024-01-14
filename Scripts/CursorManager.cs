@@ -6,30 +6,46 @@ public class CursorManager : MonoBehaviour{
     
     //public Sprite defaultCursorSprite;
     public Sprite attackCursorSprite;
+    public Sprite supportCursorSprite;
 
     private Texture2D defaultCursorTexture;
     private Texture2D attackCursorTexture;
+    private Texture2D supportCursorTexture;
 
     private void Start()
     {
         //defaultCursorTexture = ConvertSpriteToTexture(defaultCursorSprite);
         attackCursorTexture = ConvertSpriteToTexture(attackCursorSprite);
+        supportCursorTexture = ConvertSpriteToTexture(supportCursorSprite);
         Cursor.SetCursor(defaultCursorTexture, Vector2.zero, CursorMode.Auto);
-        EventManager.Instance.mouseEnteredEntity.AddListener(AttackCursor);
+        EventManager.Instance.mouseEnteredEntity.AddListener(ChangeCursor);
         EventManager.Instance.mouseExitedEntity.AddListener(DefaultCursor);
         _gameManager = GameManager.Instance;
         _selectionManager = SelectionManager.Instance;
     }
 
-    private void AttackCursor(Entity hoveredEntity)
-    {
-        if (_gameManager.player == hoveredEntity.GetPlayer()){
-            return;
+    private void ChangeCursor(Entity hoveredEntity){
+        if (_gameManager.player.nation == hoveredEntity.GetNation() && hoveredEntity is Building){
+            SupportCursor();
+        }else if (_gameManager.player.nation != hoveredEntity.GetNation()){
+            AttackCursor();
         }
+    }
+    
+    private void AttackCursor()
+    {
         if (_selectionManager.selectedDictionary.selectedTable.Keys.Count == 0){
             return;
         }
         Cursor.SetCursor(attackCursorTexture, new Vector2(attackCursorTexture.width / 2f, attackCursorTexture.height / 2f), CursorMode.Auto); 
+    }
+    
+    private void SupportCursor()
+    {
+        if (_selectionManager.selectedDictionary.selectedTable.Keys.Count == 0){
+            return;
+        }
+        Cursor.SetCursor(supportCursorTexture, new Vector2(supportCursorTexture.width / 2f, supportCursorTexture.height / 2f), CursorMode.Auto); 
     }
 
     private void DefaultCursor(Entity e)

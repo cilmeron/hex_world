@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 public class SetTarget : UnityEvent<C_Combat,C_Health> { }
+public class SupportBuilding : UnityEvent<C_Combat,C_Health> { }
 public class DeathEvent : UnityEvent<C_Health> { }
 public class DamageEvent : UnityEvent<C_Health, int> { }
 public class FormationChanged : UnityEvent<IFormation> { }
@@ -9,6 +10,7 @@ public class FormationDeleted : UnityEvent<IFormation> { }
 public class PlayerInitialized : UnityEvent<Player> { }
 public class MouseEnteredEntity : UnityEvent<Entity> { }
 public class MouseExitedEntity : UnityEvent<Entity> { }
+public class ComponentDetected : UnityEvent<Detector,Component,Detector.DetectionManagement> { }
 
 
 public class EventManager : MonoBehaviour
@@ -23,6 +25,8 @@ public class EventManager : MonoBehaviour
     public MouseEnteredEntity mouseEnteredEntity;
     public MouseExitedEntity mouseExitedEntity;
     public SetTarget setTarget;
+    public SupportBuilding supportBuilding;
+    public ComponentDetected componentDetected;
 
     void Awake()
     {
@@ -36,7 +40,6 @@ public class EventManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
         // Initialize the events
         deathEvent = new DeathEvent();
         damageEvent = new DamageEvent();
@@ -46,6 +49,7 @@ public class EventManager : MonoBehaviour
         mouseEnteredEntity = new MouseEnteredEntity();
         mouseExitedEntity = new MouseExitedEntity();
         setTarget = new SetTarget();
-        
+        supportBuilding = new SupportBuilding();
+        componentDetected = new ComponentDetected();
     }
 }

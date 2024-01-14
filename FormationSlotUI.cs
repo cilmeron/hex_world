@@ -31,7 +31,7 @@ public class FormationSlotUI : MonoBehaviour, IDropHandler{
         if (formationElement == null){
             return;
         }
-        if (formationElement.Entity.GetPlayer() != GameManager.Instance.player){
+        if (formationElement.Entity.GetNation() != GameManager.Instance.player.nation){
             return;
         }
         if (formationElement.GetType() != typeof(Unit)){
